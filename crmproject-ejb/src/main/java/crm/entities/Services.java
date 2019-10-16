@@ -26,18 +26,15 @@ public class Services implements Serializable{
 	private int id;
 	@Column(name="serviceDescription")
 	private String serviceDescription;
-	@Column(name="complaintObject")
-	private String complaintObject;
 	@Column(name="serviceName")
 	private String serviceName;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="service")
 	private Set<TelephoneLines> Lines;
-	public Services(int id, String serviceDescription, String complaintObject, String serviceName,
+	public Services(int id, String serviceDescription, String serviceName,
 			Set<TelephoneLines> lines) {
 		super();
 		this.id = id;
 		this.serviceDescription = serviceDescription;
-		this.complaintObject = complaintObject;
 		this.serviceName = serviceName;
 		Lines = lines;
 	}
@@ -53,12 +50,7 @@ public class Services implements Serializable{
 	public void setServiceDescription(String serviceDescription) {
 		this.serviceDescription = serviceDescription;
 	}
-	public String getComplaintObject() {
-		return complaintObject;
-	}
-	public void setComplaintObject(String complaintObject) {
-		this.complaintObject = complaintObject;
-	}
+	
 	public String getServiceName() {
 		return serviceName;
 	}
