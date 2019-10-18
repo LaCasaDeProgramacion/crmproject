@@ -29,16 +29,17 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 
 	@Override
 	public void DeleteService(int id) {
-		Query q = em.createQuery("DELETE FROM services s WHERE s.serviceId = :id");
+		/*Query q = em.createQuery("DELETE FROM services s WHERE s.serviceId = :id");
 		q.setParameter("id", id);
-		q.executeUpdate();
+		q.executeUpdate();*/
+		em.remove(em.find(Services.class, id));
 
 	}
 
 	@Override
 	public void UpdateService(Services service) {
 		Query q = em.createQuery("UPDATE services s SET s.serviceDescription = :serviceDescription, "
-				+ "s.serviceName = :serviceName WHERE s.serviceId := id");
+				+ "s.serviceName = :serviceName WHERE s.serviceId = :id");
 
 		q.setParameter("id", service.getId());
 		q.setParameter("serviceDescription", service.getServiceDescription());

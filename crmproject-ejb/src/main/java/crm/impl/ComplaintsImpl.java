@@ -30,16 +30,17 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public void DeleteComplaint(int id) {
-		Query q = em.createQuery("DELETE FROM complaints c WHERE c.complaintId = :id");
+		/*Query q = em.createQuery("DELETE FROM complaints c WHERE c.complaintId = :id");
 		q.setParameter("id", id);
-		q.executeUpdate();
+		q.executeUpdate();*/
+		em.remove(em.find(Complaints.class, id));
 
 	}
 
 	@Override
 	public void UpdateComplaint(Complaints complaint) {
 		Query q = em.createQuery("UPDATE complaints c SET c.complaintBody = :complaintBody, "
-				+ "c.complaintObject = :complaintObject,c.complaintState = :complaintState,c.user_userid = :user_userid,c.ComplaintType_TypeId = :ComplaintType_TypeId WHERE c.complaintId := id");
+				+ "c.complaintObject = :complaintObject,c.complaintState = :complaintState,c.user_userid = :user_userid,c.ComplaintType_TypeId = :ComplaintType_TypeId WHERE c.complaintId = :id");
 
 		q.setParameter("id", complaint.getId());
 		q.setParameter("complaintBody", complaint.getComplaintBody());
@@ -54,34 +55,35 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public List<Complaints> GetAllComplaints() {
-		Query q = em.createQuery("SELECT c FROM complaints c");
-		return (List<Complaints>) q.getResultList();
+		Query q = em.createQuery("SELECT c FROM complaints c", Complaints.class);
+		return  q.getResultList();
 	}
 
 	@Override
 	public Complaints GetComplaintsById(int id) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.complaintId =: id");
+		/*Query q = em.createQuery("SELECT c FROM complaints c WHERE c.complaintId = :id");
 		q.setParameter("id", id);
-		return (Complaints) q.getSingleResult();
+		return (Complaints) q.getSingleResult();*/
+		return em.find(Complaints.class, id);
 	}
 
 	@Override
 	public List<Complaints> GetComplaintsByUser(User user) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.user_userid =: iduser");
+		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.user_userid = :iduser");
 		q.setParameter("iduser", user.getId());
 		return (List<Complaints>) q.getResultList();
 	}
 
 	@Override
 	public List<Complaints> GetComplaintsByState(String State) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.complaintState =: state");
+		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.complaintState = :state");
 		q.setParameter("state", State);
 		return (List<Complaints>) q.getResultList();
 	}
 
 	@Override
 	public List<Complaints> GetComplaintsByType(TypeComplaint typecomplaint) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.ComplaintType_TypeId =: Type");
+		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.ComplaintType_TypeId = :Type");
 		q.setParameter("Type", typecomplaint.getId());
 		return (List<Complaints>) q.getResultList();
 	}
@@ -89,12 +91,16 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	@Override
 	public void TreatComplaint(Complaints complaint, String State) {
 
-		Query q = em
-				.createQuery("UPDATE complaints c SET c.complaintState = :complaintState WHERE c.complaintId := id");
+		/*Query q = em
+				.createQuery("UPDATE complaints c SET c.complaintState = :complaintState WHERE c.complaintId = :id");
 
 		q.setParameter("id", complaint.getId());
 		q.setParameter("complaintState", complaint.getComplaintState());
-		q.executeUpdate();
+		q.executeUpdate();*/
+		Complaints complaintBD = em.find(Complaints.class, complaint.getId());
+		complaintBD.setComplaintState(State);
+		
+		em.merge(complaintBD);
 	}
 
 }

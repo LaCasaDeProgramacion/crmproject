@@ -30,16 +30,17 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 
 	@Override
 	public void DeleteTelephoneLines(int id) {
-		Query q = em.createQuery("DELETE FROM telephone_lines t WHERE t.lineId = :id");
+		/*Query q = em.createQuery("DELETE FROM telephone_lines t WHERE t.lineId = :id");
 		q.setParameter("id", id);
-		q.executeUpdate();
+		q.executeUpdate();*/
+		em.remove(em.find(TelephoneLines.class, id));
 
 	}
 
 	@Override
 	public void UpdateTelephoneLines(TelephoneLines telephoneline) {
 		Query q = em.createQuery("UPDATE telephone_lines t SET t.lineNumber = :lineNumber, "
-				+ "t.dateCreation = :dateCreation,t.service_serviceId = :service_serviceId,t.user_userid = :user_userid,t.codePIN = :codePIN,t.codePUK = :codePUK,t.validityDate = :validityDate WHERE t.lineId := id");
+				+ "t.dateCreation = :dateCreation,t.service_serviceId = :service_serviceId,t.user_userid = :user_userid,t.codePIN = :codePIN,t.codePUK = :codePUK,t.validityDate = :validityDate WHERE t.lineId = :id");
 
 		q.setParameter("id", telephoneline.getId());
 		q.setParameter("lineNumber", telephoneline.getLineNumber());
@@ -62,19 +63,23 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 
 	@Override
 	public List<TelephoneLines> GetMyTelephoneLines(User user) {
-		Query q = em.createQuery("SELECT t FROM telephone_lines c WHERE c.user_userid =: iduser");
+		Query q = em.createQuery("SELECT t FROM telephone_lines c WHERE c.user_userid = :iduser");
 		q.setParameter("iduser", user.getId());
 		return (List<TelephoneLines>) q.getResultList();
 	}
 
 	@Override
 	public void AffectService(TelephoneLines telephoneline, Services service) {
-		Query q = em.createQuery(
-				"UPDATE telephone_lines t SET t.service_serviceId = :service_serviceId WHERE t.lineId := id");
+		/*Query q = em.createQuery(
+				"UPDATE telephone_lines t SET t.service_serviceId = :service_serviceId WHERE t.lineId = :id");
 
 		q.setParameter("id", telephoneline.getId());
 		q.setParameter("service_serviceId", service.getId());
-		q.executeUpdate();
+		q.executeUpdate();*/
+		TelephoneLines telephonelineBD = em.find(TelephoneLines.class, telephoneline.getId());
+		telephonelineBD.setServices(service);
+		
+		em.merge(telephonelineBD);
 
 	}
 
