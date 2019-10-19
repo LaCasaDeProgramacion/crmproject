@@ -62,7 +62,7 @@ public class ComplaintsWS {
 		Complaints c = new Complaints(id, complaintBody, complaintObject, complaintState, complaintDate);
 		complaintws.UpdateComplaint(c);
 
-		return Response.status(200).entity(status).build();ldhgydgfucygdcg
+		return Response.status(200).entity(status).build();
 	}
 
 	@DELETE
