@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import crm.entities.Complaints;
 import crm.entities.Product;
@@ -38,8 +39,8 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 
 	@Override
 	public void UpdateService(Services service) {
-		Query q = em.createQuery("UPDATE services s SET s.serviceDescription = :serviceDescription, "
-				+ "s.serviceName = :serviceName WHERE s.serviceId = :id");
+		Query q = em.createQuery("UPDATE Services s SET s.serviceDescription = :serviceDescription, "
+				+ "s.serviceName = :serviceName WHERE s.id = :id");
 
 		q.setParameter("id", service.getId());
 		q.setParameter("serviceDescription", service.getServiceDescription());
@@ -51,13 +52,13 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 
 	@Override
 	public List<Services> GetAll() {
-		Query q = em.createQuery("SELECT s FROM services s");
+		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s",Services.class);
 		return (List<Services>) q.getResultList();
 	}
 
 	@Override
 	public Services SearchServicesByName(String Name) {
-		Query q = em.createQuery("SELECT s FROM services s where s.serviceName = :serviceName");
+		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s where s.serviceName = :serviceName",Services.class);
 		q.setParameter("serviceName", Name);
 	return (Services) q.getSingleResult();
 	}

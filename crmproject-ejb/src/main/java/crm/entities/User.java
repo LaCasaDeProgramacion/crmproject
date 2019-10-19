@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,10 +35,10 @@ public class User implements Serializable{
 	private String adresse;
 	@Column(name="mail")
 	private String mail;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="user")
-	private Set<TelephoneLines> Lines;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="user")
-	private Set<Complaints> complaints;
+	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="user")
+	private Set<TelephoneLines> Lines;*/
+	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="user" ,fetch = FetchType.EAGER)
+	private Set<Complaints> complaints;*/
 	public User(int id, String login, String password, String role, String adresse, String mail,
 			Set<TelephoneLines> lines, Set<Complaints> complaints) {
 		super();
@@ -47,9 +48,14 @@ public class User implements Serializable{
 		this.role = role;
 		this.adresse = adresse;
 		this.mail = mail;
-		Lines = lines;
-		this.complaints = complaints;
+		//Lines = lines;
+		//this.complaints = complaints;
 	}
+	
+	public User() {
+		super();
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -86,7 +92,7 @@ public class User implements Serializable{
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-	public Set<TelephoneLines> getLines() {
+	/*public Set<TelephoneLines> getLines() {
 		return Lines;
 	}
 	public void setLines(Set<TelephoneLines> lines) {
@@ -97,6 +103,6 @@ public class User implements Serializable{
 	}
 	public void setComplaints(Set<Complaints> complaints) {
 		this.complaints = complaints;
-	}
+	}*/
 	
 }

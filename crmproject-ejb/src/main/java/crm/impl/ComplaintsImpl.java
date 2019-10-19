@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import crm.entities.Complaints;
 import crm.entities.Product;
@@ -23,7 +24,11 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	EntityManager em;
 
 	@Override
-	public void AddComplaint(Complaints complaint) {
+	public void AddComplaint(Complaints complaint,int iduser,int idtypeComplaint) {
+		User user=em.find(User.class, iduser);
+		TypeComplaint typeComplaint=em.find(TypeComplaint.class, idtypeComplaint);
+		complaint.setUser(user);
+		complaint.setTypeComplaint(typeComplaint);
 		em.persist(complaint);
 
 	}
@@ -39,8 +44,8 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public void UpdateComplaint(Complaints complaint) {
-		Query q = em.createQuery("UPDATE complaints c SET c.complaintBody = :complaintBody, "
-				+ "c.complaintObject = :complaintObject,c.complaintState = :complaintState,c.user_userid = :user_userid,c.ComplaintType_TypeId = :ComplaintType_TypeId WHERE c.complaintId = :id");
+		Query q = em.createQuery("UPDATE Complaints c SET c.complaintBody = :complaintBody, "
+				+ "c.complaintObject = :complaintObject,c.complaintState = :complaintState,c.user = :user_userid,c.TypeComplaint = :ComplaintType_TypeId WHERE c.id = :id");
 
 		q.setParameter("id", complaint.getId());
 		q.setParameter("complaintBody", complaint.getComplaintBody());
@@ -55,8 +60,8 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public List<Complaints> GetAllComplaints() {
-		Query q = em.createQuery("SELECT c FROM complaints c", Complaints.class);
-		return  q.getResultList();
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c", Complaints.class);
+		return  (List<Complaints>)q.getResultList();
 	}
 
 	@Override
@@ -68,28 +73,47 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	}
 
 	@Override
-	public List<Complaints> GetComplaintsByUser(User user) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.user_userid = :iduser");
-		q.setParameter("iduser", user.getId());
+	public List<Complaints> GetComplaintsByUser(int iduser) {
+		User user=em.find(User.class, iduser);
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c WHERE c.user = :User",Complaints.class);
+		q.setParameter("User", user);
 		return (List<Complaints>) q.getResultList();
 	}
 
 	@Override
 	public List<Complaints> GetComplaintsByState(String State) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.complaintState = :state");
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c WHERE c.complaintState = :state",Complaints.class);
 		q.setParameter("state", State);
 		return (List<Complaints>) q.getResultList();
 	}
 
 	@Override
-	public List<Complaints> GetComplaintsByType(TypeComplaint typecomplaint) {
-		Query q = em.createQuery("SELECT c FROM complaints c WHERE c.ComplaintType_TypeId = :Type");
-		q.setParameter("Type", typecomplaint.getId());
+	public List<Complaints> GetComplaintsByType(int idtypecomplaint) {
+		TypeComplaint typecomplaint=em.find(TypeComplaint.class, idtypecomplaint);
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c WHERE c.TypeComplaint = :Type",Complaints.class);
+		q.setParameter("Type", typecomplaint);
 		return (List<Complaints>) q.getResultList();
 	}
+	
+	@Override
+	public List<Complaints> GetComplaintsOrderByDateASC() {
+		
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c ORDER BY c.complaintDate ASC",Complaints.class);
+		
+		return (List<Complaints>) q.getResultList();
+	}
+	
+	@Override
+	public List<Complaints> GetComplaintsOrderByDateDESC() {
+		
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c ORDER BY c.complaintDate DESC",Complaints.class);
+		
+		return (List<Complaints>) q.getResultList();
+	}
+	
 
 	@Override
-	public void TreatComplaint(Complaints complaint, String State) {
+	public void TreatComplaint(int idcomplaint, String State) {
 
 		/*Query q = em
 				.createQuery("UPDATE complaints c SET c.complaintState = :complaintState WHERE c.complaintId = :id");
@@ -97,7 +121,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		q.setParameter("id", complaint.getId());
 		q.setParameter("complaintState", complaint.getComplaintState());
 		q.executeUpdate();*/
-		Complaints complaintBD = em.find(Complaints.class, complaint.getId());
+		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
 		complaintBD.setComplaintState(State);
 		
 		em.merge(complaintBD);

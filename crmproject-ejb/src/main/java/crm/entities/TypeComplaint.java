@@ -26,14 +26,19 @@ public class TypeComplaint implements Serializable{
 	private int id;
 	@Column(name="TypeName")
 	private String TypeName;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="TypeComplaint")
-	private Set<Complaints> complaints;
+	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="TypeComplaint")
+	private Set<Complaints> complaints;*/
 	public TypeComplaint(int id, String typeName, Set<Complaints> complaints) {
 		super();
 		this.id = id;
 		TypeName = typeName;
-		this.complaints = complaints;
+		//this.complaints = complaints;
 	}
+	
+	public TypeComplaint() {
+		super();
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -46,11 +51,11 @@ public class TypeComplaint implements Serializable{
 	public void setTypeName(String typeName) {
 		TypeName = typeName;
 	}
-	public Set<Complaints> getComplaints() {
+	/*public Set<Complaints> getComplaints() {
 		return complaints;
 	}
 	public void setComplaints(Set<Complaints> complaints) {
 		this.complaints = complaints;
-	}
+	}*/
 	
 }

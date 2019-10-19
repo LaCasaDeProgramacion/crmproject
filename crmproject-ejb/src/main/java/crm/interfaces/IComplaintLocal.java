@@ -10,15 +10,19 @@ import crm.entities.User;
 
 @Local
 public interface IComplaintLocal {
-	void AddComplaint(Complaints complaint);
+	void AddComplaint(Complaints complaint,int iduser,int idtypeComplaint);
 	void DeleteComplaint(int id);
 	void UpdateComplaint(Complaints complaint);
 	List<Complaints> GetAllComplaints();
 	Complaints GetComplaintsById(int id);
-	List<Complaints> GetComplaintsByUser(User user);
+	List<Complaints> GetComplaintsByUser(int iduser);
 	List<Complaints> GetComplaintsByState(String State);
-	List<Complaints> GetComplaintsByType(TypeComplaint typecomplaint);
-	void TreatComplaint(Complaints complaint,String State);
+	List<Complaints> GetComplaintsByType(int idtypecomplaint);
+	void TreatComplaint(int idcomplaint,String State);
+
+	List<Complaints> GetComplaintsOrderByDateASC();
+
+	List<Complaints> GetComplaintsOrderByDateDESC();
 	
 
 }

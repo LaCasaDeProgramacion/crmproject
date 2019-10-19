@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import crm.entities.Complaints;
 import crm.entities.Services;
@@ -39,8 +40,8 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 
 	@Override
 	public void UpdateTelephoneLines(TelephoneLines telephoneline) {
-		Query q = em.createQuery("UPDATE telephone_lines t SET t.lineNumber = :lineNumber, "
-				+ "t.dateCreation = :dateCreation,t.service_serviceId = :service_serviceId,t.user_userid = :user_userid,t.codePIN = :codePIN,t.codePUK = :codePUK,t.validityDate = :validityDate WHERE t.lineId = :id");
+		Query q = em.createQuery("UPDATE TelephoneLines t SET t.lineNumber = :lineNumber, "
+				+ "t.dateCreation = :dateCreation,t.service = :service_serviceId,t.user = :user_userid,t.codePIN = :codePIN,t.codePUK = :codePUK,t.validityDate = :validityDate WHERE t.id = :id");
 
 		q.setParameter("id", telephoneline.getId());
 		q.setParameter("lineNumber", telephoneline.getLineNumber());
@@ -57,13 +58,13 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 
 	@Override
 	public List<TelephoneLines> GetAll() {
-		Query q = em.createQuery("SELECT t FROM telephone_lines t");
+		Query q = em.createQuery("SELECT t FROM TelephoneLines t");
 		return (List<TelephoneLines>) q.getResultList();
 	}
 
 	@Override
 	public List<TelephoneLines> GetMyTelephoneLines(User user) {
-		Query q = em.createQuery("SELECT t FROM telephone_lines c WHERE c.user_userid = :iduser");
+		TypedQuery<TelephoneLines> q = em.createQuery("SELECT t FROM TelephoneLines c WHERE c.user = :iduser",TelephoneLines.class);
 		q.setParameter("iduser", user.getId());
 		return (List<TelephoneLines>) q.getResultList();
 	}

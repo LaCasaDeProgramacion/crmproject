@@ -1,6 +1,7 @@
 package crm.entities;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,20 +29,46 @@ public class Complaints implements Serializable{
 	private String complaintObject;
 	@Column(name="complaintStatee")
 	private String complaintState;
+	@Column(name="complaintDate")
+	private Date complaintDate;
 	@ManyToOne
 	User user;
 	@ManyToOne
 	TypeComplaint TypeComplaint;
-	public Complaints(int id, String complaintBody, String complaintObject, String complaintState, User user,
-			crm.entities.TypeComplaint typeComplaint) {
+	public Complaints(String complaintBody, String complaintObject, String complaintState, User user,
+			crm.entities.TypeComplaint typeComplaint,Date complaintDate) {
 		super();
-		this.id = id;
+		
 		this.complaintBody = complaintBody;
 		this.complaintObject = complaintObject;
 		this.complaintState = complaintState;
 		this.user = user;
 		TypeComplaint = typeComplaint;
+		this.complaintDate=complaintDate;
 	}
+	
+	public Complaints(String complaintBody, String complaintObject, String complaintState,Date complaintDate) {
+		super();
+		
+		this.complaintBody = complaintBody;
+		this.complaintObject = complaintObject;
+		this.complaintState = complaintState;
+		this.complaintDate=complaintDate;
+	}
+
+	public Complaints(int id, String complaintBody, String complaintObject, String complaintState,Date complaintDate) {
+		super();
+		this.id = id;
+		this.complaintBody = complaintBody;
+		this.complaintObject = complaintObject;
+		this.complaintState = complaintState;
+		this.complaintDate=complaintDate;
+	}
+
+	public Complaints() {
+		super();
+	}
+
 	public int getId() {
 		return id;
 	}
