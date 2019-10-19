@@ -12,6 +12,8 @@ import javax.persistence.TypedQuery;
 import crm.entities.Complaints;
 import crm.entities.Product;
 import crm.entities.Services;
+import crm.entities.TelephoneLines;
+import crm.entities.User;
 import crm.interfaces.IServiceLocal;
 import crm.interfaces.IServiceRemote;
 
@@ -30,9 +32,10 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 
 	@Override
 	public void DeleteService(int id) {
-		/*Query q = em.createQuery("DELETE FROM services s WHERE s.serviceId = :id");
-		q.setParameter("id", id);
-		q.executeUpdate();*/
+		/*
+		 * Query q = em.createQuery("DELETE FROM services s WHERE s.serviceId = :id");
+		 * q.setParameter("id", id); q.executeUpdate();
+		 */
 		em.remove(em.find(Services.class, id));
 
 	}
@@ -52,15 +55,24 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 
 	@Override
 	public List<Services> GetAll() {
-		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s",Services.class);
+		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s", Services.class);
 		return (List<Services>) q.getResultList();
 	}
 
 	@Override
 	public Services SearchServicesByName(String Name) {
-		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s where s.serviceName = :serviceName",Services.class);
+		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s where s.serviceName = :serviceName",
+				Services.class);
 		q.setParameter("serviceName", Name);
-	return (Services) q.getSingleResult();
+		return (Services) q.getSingleResult();
+	}
+
+	@Override
+	public int NbServiceUsed(int idService) {
+		Services service = em.find(Services.class, idService);
+		Query q = em.createQuery("SELECT Count(t) FROM TelephoneLines t WHERE t.service = :service_serviceId");
+		q.setParameter("service_serviceId", service);
+		return ((Number) q.getSingleResult()).intValue();
 	}
 
 }

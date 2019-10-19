@@ -14,31 +14,36 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user")
-public class User implements Serializable{
+@Table(name = "user")
+public class User implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
-	@Column(name="userid")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "userid")
 	private int id;
-	@Column(name="login")
+	@Column(name = "login")
 	private String login;
-	@Column(name="password")
+	@Column(name = "password")
 	private String password;
-	@Column(name="role")
+	@Column(name = "role")
 	private String role;
-	@Column(name="adresse")
+	@Column(name = "adresse")
 	private String adresse;
-	@Column(name="mail")
+	@Column(name = "mail")
 	private String mail;
-	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="user")
-	private Set<TelephoneLines> Lines;*/
-	/*@OneToMany(cascade = CascadeType.ALL, mappedBy="user" ,fetch = FetchType.EAGER)
-	private Set<Complaints> complaints;*/
+
+	/*
+	 * @OneToMany(cascade = CascadeType.ALL, mappedBy="user") private
+	 * Set<TelephoneLines> Lines;
+	 */
+	/*
+	 * @OneToMany(cascade = CascadeType.ALL, mappedBy="user" ,fetch =
+	 * FetchType.EAGER) private Set<Complaints> complaints;
+	 */
 	public User(int id, String login, String password, String role, String adresse, String mail,
 			Set<TelephoneLines> lines, Set<Complaints> complaints) {
 		super();
@@ -48,10 +53,10 @@ public class User implements Serializable{
 		this.role = role;
 		this.adresse = adresse;
 		this.mail = mail;
-		//Lines = lines;
-		//this.complaints = complaints;
+		// Lines = lines;
+		// this.complaints = complaints;
 	}
-	
+
 	public User() {
 		super();
 	}
@@ -59,50 +64,55 @@ public class User implements Serializable{
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public String getLogin() {
 		return login;
 	}
+
 	public void setLogin(String login) {
 		this.login = login;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public String getRole() {
 		return role;
 	}
+
 	public void setRole(String role) {
 		this.role = role;
 	}
+
 	public String getAdresse() {
 		return adresse;
 	}
+
 	public void setAdresse(String adresse) {
 		this.adresse = adresse;
 	}
+
 	public String getMail() {
 		return mail;
 	}
+
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-	/*public Set<TelephoneLines> getLines() {
-		return Lines;
-	}
-	public void setLines(Set<TelephoneLines> lines) {
-		Lines = lines;
-	}
-	public Set<Complaints> getComplaints() {
-		return complaints;
-	}
-	public void setComplaints(Set<Complaints> complaints) {
-		this.complaints = complaints;
-	}*/
-	
+	/*
+	 * public Set<TelephoneLines> getLines() { return Lines; } public void
+	 * setLines(Set<TelephoneLines> lines) { Lines = lines; } public Set<Complaints>
+	 * getComplaints() { return complaints; } public void
+	 * setComplaints(Set<Complaints> complaints) { this.complaints = complaints; }
+	 */
+
 }

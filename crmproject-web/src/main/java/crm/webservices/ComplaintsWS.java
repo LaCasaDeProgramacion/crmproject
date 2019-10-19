@@ -39,12 +39,11 @@ public class ComplaintsWS {
 	@Path("addComplaint")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addComplaint(@QueryParam("complaintBody") String complaintBody,
-			@QueryParam("complaintObject") String complaintObject, @QueryParam("complaintState") String complaintState,
-			@QueryParam("complaintDate") Date complaintDate, @QueryParam("user") int user,
+			@QueryParam("complaintObject") String complaintObject, @QueryParam("user") int user,
 			@QueryParam("typeComplaint") int typeComplaint
 
 	) {
-		Complaints c = new Complaints(complaintBody, complaintObject, complaintState, complaintDate);
+		Complaints c = new Complaints(complaintBody, complaintObject);
 
 		complaintws.AddComplaint(c, user, typeComplaint);
 		return Response.status(200).entity(status).build();
@@ -55,11 +54,10 @@ public class ComplaintsWS {
 	@Produces(MediaType.APPLICATION_JSON)
 
 	public Response updateComplaint(@QueryParam("id") int id, @QueryParam("complaintBody") String complaintBody,
-			@QueryParam("complaintObject") String complaintObject, @QueryParam("complaintState") String complaintState,
-			@QueryParam("complaintDate") Date complaintDate
+			@QueryParam("complaintObject") String complaintObject, @QueryParam("complaintState") String complaintState
 
 	) {
-		Complaints c = new Complaints(id, complaintBody, complaintObject, complaintState, complaintDate);
+		Complaints c = new Complaints(id, complaintBody, complaintObject);
 		complaintws.UpdateComplaint(c);
 
 		return Response.status(200).entity(status).build();
@@ -125,6 +123,34 @@ public class ComplaintsWS {
 		complaintws.TreatComplaint(id, State);
 
 		return Response.status(200).entity(status).build();
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nbcomplaintbyuser")
+	public int NbComplaintByUser(@QueryParam("iduser") int id) {
+		return complaintws.NbComplaintByUser(id);
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nbcomplaintbytype")
+	public int NbComplaintByType(@QueryParam("idType") int id) {
+		return complaintws.NbComplaintByType(id);
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nbcomplaintbystate")
+	public int NbComplaintByState(@QueryParam("idState") String state) {
+		return complaintws.NbComplaintByState(state);
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nbcomplaintbyperiod")
+	public int NbComplaintByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Ddebut") Date d2) {
+		return complaintws.NbComplaintByperiod(d1, d2);
 	}
 
 }

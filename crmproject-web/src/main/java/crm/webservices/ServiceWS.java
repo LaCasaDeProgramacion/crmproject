@@ -67,10 +67,18 @@ public class ServiceWS {
 		servicews.DeleteService(id);
 		return Response.status(200).entity(status).build();
 	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("searchservice")
 	public Services SearchServiceByName(@QueryParam("name") String Name) {
 		return servicews.SearchServicesByName(Name);
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nbserviceused")
+	public int NbServiceUsed(@QueryParam("idService") int id) {
+		return servicews.NbServiceUsed(id);
 	}
 }

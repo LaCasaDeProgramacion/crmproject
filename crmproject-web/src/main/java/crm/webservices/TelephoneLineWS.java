@@ -24,7 +24,7 @@ public class TelephoneLineWS {
 	@EJB
 	TelphoneLinesImpl tellinews;
 	private final String status = "{\"status\":\"ok\"}";
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("alltellines")
@@ -35,14 +35,11 @@ public class TelephoneLineWS {
 	@POST
 	@Path("addtellines")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addtelline(@QueryParam("lineNumber") String lineNumber,
-			@QueryParam("dateCreation") Date dateCreation, @QueryParam("codePIN") int codePIN,
-			@QueryParam("codePUK") int codePUK, @QueryParam("user") int user,
-			@QueryParam("service") int idservice,@QueryParam("validityDate") Date validityDate,
-			@QueryParam("lineState") int lineState
+	public Response addtelline(@QueryParam("lineNumber") String lineNumber, @QueryParam("codePIN") int codePIN,
+			@QueryParam("codePUK") int codePUK, @QueryParam("user") int user, @QueryParam("service") int idservice
 
 	) {
-		TelephoneLines t = new TelephoneLines(lineNumber, dateCreation, codePIN, codePUK, validityDate,lineState);
+		TelephoneLines t = new TelephoneLines(lineNumber, codePIN, codePUK);
 
 		tellinews.AddTelephoneLines(t, user, idservice);
 		return Response.status(200).entity(status).build();
@@ -52,16 +49,14 @@ public class TelephoneLineWS {
 	@Path("updatetelline")
 	@Produces(MediaType.APPLICATION_JSON)
 
-	public Response updateComplaint(@QueryParam("id") int id,@QueryParam("lineNumber") String lineNumber,
-			@QueryParam("dateCreation") Date dateCreation, @QueryParam("codePIN") int codePIN,
-			@QueryParam("codePUK") int codePUK, @QueryParam("user") int user,
-			@QueryParam("service") int idservice,@QueryParam("validityDate") Date validityDate,
-			@QueryParam("lineState") int lineState
+	public Response updateComplaint(@QueryParam("id") int id, @QueryParam("lineNumber") String lineNumber,
+			@QueryParam("codePIN") int codePIN, @QueryParam("codePUK") int codePUK, @QueryParam("user") int user,
+			@QueryParam("validityDate") Date validityDate
 
 	) {
-		
-		TelephoneLines t = new TelephoneLines(id, lineNumber, dateCreation, codePIN, codePUK, validityDate,lineState);
-		tellinews.UpdateTelephoneLines(t,user,idservice);
+
+		TelephoneLines t = new TelephoneLines(id, lineNumber, codePIN, codePUK, validityDate);
+		tellinews.UpdateTelephoneLines(t, user);
 
 		return Response.status(200).entity(status).build();
 	}
@@ -73,21 +68,21 @@ public class TelephoneLineWS {
 		tellinews.DeleteTelephoneLines(id);
 		return Response.status(200).entity(status).build();
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("myTellines")
 	public List<TelephoneLines> getMytelLine(@QueryParam("iduser") int id) {
 		return tellinews.GetMyTelephoneLines(id);
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("TellinesByState")
 	public List<TelephoneLines> GetTelLinesByState(@QueryParam("state") int state) {
 		return tellinews.GetTelLinesByState(state);
 	}
-	
+
 	@PUT
 	@Path("affectservice")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -99,7 +94,7 @@ public class TelephoneLineWS {
 
 		return Response.status(200).entity(status).build();
 	}
-	
+
 	@PUT
 	@Path("changelinestate")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -111,7 +106,7 @@ public class TelephoneLineWS {
 
 		return Response.status(200).entity(status).build();
 	}
-	
+
 	@PUT
 	@Path("changelinestate")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -122,5 +117,12 @@ public class TelephoneLineWS {
 		tellinews.ChangeLineState(id);
 
 		return Response.status(200).entity(status).build();
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nblinebyperiod")
+	public int NbLineByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Dfin") Date d2) {
+		return tellinews.NbLineByperiod(d1, d2);
 	}
 }
