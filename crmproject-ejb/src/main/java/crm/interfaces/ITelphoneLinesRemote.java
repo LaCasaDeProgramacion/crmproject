@@ -10,10 +10,13 @@ import crm.entities.User;
 @Remote
 public interface ITelphoneLinesRemote {
 
-	void AddTelephoneLines(TelephoneLines telephoneline);
+	void AddTelephoneLines(TelephoneLines telephoneline,int iduser,int idservice);
 	void DeleteTelephoneLines(int id);
-	void UpdateTelephoneLines(TelephoneLines telephoneline);
+	void UpdateTelephoneLines(TelephoneLines telephoneline,int iduser,int idservice);
 	List<TelephoneLines> GetAll();
-	List<TelephoneLines> GetMyTelephoneLines(User user);
-	void AffectService(TelephoneLines telephoneline,Services service);
+	List<TelephoneLines> GetMyTelephoneLines(int iduser);
+	void AffectService(int idtelephoneline,int idservice);
+	List<TelephoneLines> GetTelLinesByState(int lineState);
+	void ChangeLineState(int idteline,int lineState);
+	void ChangeLineState(int idtelline);
 }

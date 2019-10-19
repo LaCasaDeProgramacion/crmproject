@@ -33,12 +33,14 @@ public class TelephoneLines implements Serializable{
 	private int codePUK;
 	@Column(name="validityDate")
 	private Date validityDate;
+	@Column(name="lineState")
+	private int lineState;
 	@ManyToOne
 	Services service;
 	@ManyToOne
 	User user;
-	public TelephoneLines(int id, String lineNumber, Date dateCreation, int codePIN, int codePUK, Date validityDate,
-			Services services, User user) {
+	public TelephoneLines(int id, String lineNumber, Date dateCreation, int codePIN, int codePUK, Date validityDate,int lineState
+			) {
 		super();
 		this.id = id;
 		this.lineNumber = lineNumber;
@@ -46,9 +48,38 @@ public class TelephoneLines implements Serializable{
 		this.codePIN = codePIN;
 		this.codePUK = codePUK;
 		this.validityDate = validityDate;
-		this.service = services;
-		this.user = user;
+		this.lineState=lineState;
+		
+		
 	}
+	
+	public TelephoneLines(String lineNumber, Date dateCreation, int codePIN, int codePUK, Date validityDate,
+			Services service, User user,int lineState) {
+		super();
+		this.lineNumber = lineNumber;
+		this.dateCreation = dateCreation;
+		this.codePIN = codePIN;
+		this.codePUK = codePUK;
+		this.validityDate = validityDate;
+		this.service = service;
+		this.user = user;
+		this.lineState=lineState;
+	}
+
+	public TelephoneLines(String lineNumber, Date dateCreation, int codePIN, int codePUK, Date validityDate,int lineState) {
+		super();
+		this.lineNumber = lineNumber;
+		this.dateCreation = dateCreation;
+		this.codePIN = codePIN;
+		this.codePUK = codePUK;
+		this.validityDate = validityDate;
+		this.lineState=lineState;
+	}
+
+	public TelephoneLines() {
+		super();
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -96,6 +127,14 @@ public class TelephoneLines implements Serializable{
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public int getLineState() {
+		return lineState;
+	}
+
+	public void setLineState(int lineState) {
+		this.lineState = lineState;
 	}
 	
 }
