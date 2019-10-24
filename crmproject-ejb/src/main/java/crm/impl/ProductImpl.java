@@ -15,10 +15,13 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.xml.parsers.ParserConfigurationException;
 
+<<<<<<< HEAD
 import org.xml.sax.SAXException;
 
 import javax.mail.MessagingException;
 import crm.entities.Category;
+=======
+>>>>>>> 0b7cac55fdc2d01658b1dffadf82572f67e3719f
 import crm.entities.Product;
 
 import crm.entities.Store;
@@ -95,6 +98,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	
 	
 	@Override
+<<<<<<< HEAD
 	public Product getrandompro() {
 		Random r = new Random();
 		
@@ -109,6 +113,25 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	@Override
 	public void activateproduct(Product product) {
 	
+=======
+	public void updateProduct(int id, String productDescription, String productName, double productPrice,
+			int productQuantity, String productStatus) {
+		 Query q = em.createQuery("UPDATE Product p SET p.productName = :productName, "
+			 		+ "p.productDescription = :productDescription,p.productQuantity = :productQuantity,p.productPrice = :productPrice,p.productStatus = :productStatus"
+			 		);
+
+		  
+
+		        
+		        q.setParameter("id", id);
+		        q.setParameter("productName", productName);
+		        q.setParameter("productDescription", productDescription);
+		        q.setParameter("productQuantity", productPrice);
+		        q.setParameter("productPrice", productPrice);
+		        q.setParameter("productStatus", productStatus);
+		        
+		        q.executeUpdate();
+>>>>>>> 0b7cac55fdc2d01658b1dffadf82572f67e3719f
 		
 	}
 
