@@ -25,10 +25,13 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	EntityManager em;
 
 	@Override
-	public List<Product> allProducts() {
+	public List<Product> allProducts() 
+	{
+		
 		Query q = em.createQuery("SELECT p FROM Product p where p.productStatus = :productStatus");
 		q.setParameter("productStatus", "active");
 		return (List<Product>) q.getResultList();
+	
 	}
 	@Override
 	public Product searchForProduct(String productName) {

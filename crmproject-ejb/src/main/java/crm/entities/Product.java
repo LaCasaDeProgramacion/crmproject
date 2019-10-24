@@ -2,7 +2,9 @@ package crm.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+
+
 
 
 @Entity
@@ -37,7 +41,8 @@ public class Product implements Serializable{
 	@Column(name="productStatus")
 	String productStatus;
 
-	
+	@ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+	public Set<Pack> pack;
 	 
 
 	 
@@ -79,6 +84,12 @@ public class Product implements Serializable{
 	}
 	public void setProductStatus(String productStatus) {
 		this.productStatus = productStatus;
+	}
+	public Set<Pack> getPack() {
+		return pack;
+	}
+	public void setPack(Set<Pack> pack) {
+		this.pack = pack;
 	}
 
 	
