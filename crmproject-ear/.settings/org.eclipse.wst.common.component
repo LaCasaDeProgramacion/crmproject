@@ -8,6 +8,24 @@
         <dependent-module archiveName="crmproject-ejb.jar" deploy-path="/" handle="module:/resource/crmproject-ejb/crmproject-ejb">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="mail.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/javax/mail/mail/1.4/mail-1.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="activation.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/javax/activation/activation/1.1.1/activation-1.1.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ipinfo-api.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/io/ipinfo/ipinfo-api/1.0/ipinfo-api-1.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="gson.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/com/google/code/gson/gson/2.8.2/gson-2.8.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="okhttp.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/com/squareup/okhttp3/okhttp/3.9.0/okhttp-3.9.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="okio.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/com/squareup/okio/okio/1.13.0/okio-1.13.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="javax.ws.rs-api.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0-m02/javax.ws.rs-api-2.0-m02.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>

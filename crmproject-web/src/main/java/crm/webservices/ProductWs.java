@@ -1,10 +1,12 @@
 package crm.webservices;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,7 +19,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import crm.entities.Category;
 import crm.entities.Product;
+import crm.entities.Store;
 import crm.impl.ProductImpl;
 
 
@@ -27,7 +31,7 @@ import crm.impl.ProductImpl;
 
 
 public class ProductWs   {
-
+	EntityManager em;
 	@EJB
 	ProductImpl productImpl;
 	  private final String status = "{\"status\":\"ok\"}";
@@ -36,10 +40,27 @@ public class ProductWs   {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("allproducts")
-    public List<Product> getProducts(@QueryParam(value = "pro")String pro)
+    public List<Product> getProducts()
     {
         return productImpl.allProducts();
     }
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("allinactiveproducts")
+    public List<Product> getinactiveProducts()
+    {
+        return productImpl.allinactiveProducts();
+    }
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("getrandompro")
+    public Product getRandom()
+    {
+        return productImpl.getrandompro();
+    }
+	
 	
 	 @GET
      @Path("search")
@@ -60,39 +81,36 @@ public class ProductWs   {
 	            @QueryParam("productDescription")String productDescription,
 	            @QueryParam("productQuantity")int productQuantity,
 	            @QueryParam("productPrice")double productPrice,
-	            @QueryParam("productStatus")String productStatus
-	       
+	            @QueryParam("productStatus")String productStatus,
+	            @QueryParam("category_id")int category_id,
+	            @QueryParam("store_id")int store_id
 	    
 	    ){
 		 
-		 productImpl.addProduct(productName, productDescription, productQuantity, productPrice, productStatus);
+		 productImpl.addProduct(productName, productDescription, productQuantity, productPrice, productStatus, category_id,store_id);
 	        return Response.status(200).entity(status).build();
 	    }
 	 
 	 
-	 
-	 @PUT
-     @Path("updateProduct")
-     @Produces(MediaType.APPLICATION_JSON)
+		@PUT
+		@Path("updateProduct")
+		public Response updateProduct( 
+				@QueryParam("id")int id,
+				@QueryParam("ProductName")String productName,
+				@QueryParam("ProductDescription")String productDescription,
+				@QueryParam("ProductQuantity")int productQuantity,
+				@QueryParam("ProductPrice")double productPrice,
+				@QueryParam("productStatus")String productStatus,
+				@QueryParam("category_id")int category_id,
+				@QueryParam("store_id")int store_id
 
-     public Response updateProduct(
-             @QueryParam("id")int id,
-             @QueryParam("productDescription")String productDescription,
-             @QueryParam("productName")String productName,
-             @QueryParam("productPrice")double productPrice,
-             @QueryParam("productQuantity")int productQuantity,
-             @QueryParam("productStatus")String productStatus
-      
-     ){
- 		
+				) {
+			
 		
-				productImpl.updateProduct(id, productDescription, productName, productPrice,productQuantity,productStatus);
-		
-	
-         return Response.status(200).entity(status).build();
-     }
- 	 
-	 
+			if(productImpl.updateProduct(id, productName, productDescription, productQuantity, productPrice, productStatus, category_id, store_id)==1)
+			Response.status(200).entity(status).build();
+			return Response.ok("Your product has been Modified!").build();
+		}
 	 
 	 
 	 
@@ -107,5 +125,37 @@ public class ProductWs   {
 	    }
 
 	  
-	 
+	  
+		 @PUT
+		    @Path("activateproduct")
+		    @Produces(MediaType.APPLICATION_JSON)
+		  
+		    public void activateproduct(Product product)  {
+			 productImpl.activateproduct(product);
+		    }
+		 @GET
+			@Produces(MediaType.APPLICATION_JSON)
+			@Path("getProductByDate")
+		    public List<Product> getProductByDate()
+		    {
+		        return productImpl.getProductbydate();
+		    }
+		 
+		 @GET
+			@Produces(MediaType.APPLICATION_JSON)
+			@Path("getProductByPriceDesc")
+		    public List<Product> getProductByPriceDesc()
+		    {
+		        return productImpl.getProductbypricedesc();
+		    }
+		 
+		 @GET
+			@Produces(MediaType.APPLICATION_JSON)
+			@Path("getProductByPriceAsc")
+		    public List<Product> getProductByPriceAsc()
+		    {
+		        return productImpl.getProductbypricedasc();
+		    }
 }
+
+	  

@@ -1,8 +1,12 @@
 package crm.entities;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,20 +36,56 @@ public class Product implements Serializable{
 	String productDescription;
 	@Column(name="productPrice")
 	double productPrice;
+	@Column(name="productImage")
+	String productImage;
 
+	
 	@Column(name="productQuantity")
 	int productQuantity;
 
 	@Column(name="productStatus")
 	String productStatus;
+	@Column(name="productDate")
+	Date productDate;
+	@ManyToOne
+    @JoinColumn(name="category_id")
+    private Category category;
+	 
+	@ManyToOne
+    @JoinColumn(name="store_id")
+    private Store store;
 
 	
-	 
-
-	 
-	
-	
-	
+	public Store getStore() {
+		return store;
+	}
+	public String getProductImage() {
+		return productImage;
+	}
+	public void setProductImage(String productImage) {
+		this.productImage = productImage;
+	}
+	public int getProductQuantity() {
+		return productQuantity;
+	}
+	public void setProductQuantity(int productQuantity) {
+		this.productQuantity = productQuantity;
+	}
+	public Date getProductDate() {
+		return productDate;
+	}
+	public void setProductDate(Date productDate) {
+		this.productDate = productDate;
+	}
+	public void setStore(Store store) {
+		this.store = store;
+	}
+	public Category getCategory() {
+		return category;
+	}
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 	public int getId() {
 		return id;
 	}
@@ -68,12 +110,7 @@ public class Product implements Serializable{
 	public void setProductPrice(double productPrice) {
 		this.productPrice = productPrice;
 	}
-	public long getProductQuantity() {
-		return productQuantity;
-	}
-	public void setProductQuantity(int productQuantity) {
-		this.productQuantity = productQuantity;
-	}
+	
 	public String getProductStatus() {
 		return productStatus;
 	}
