@@ -18,6 +18,7 @@ import crm.entities.TypeComplaint;
 import crm.entities.User;
 import crm.interfaces.ITelephoneLinesLocal;
 import crm.interfaces.ITelphoneLinesRemote;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -27,8 +28,8 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 	EntityManager em;
 
 	@Override
-	public void AddTelephoneLines(TelephoneLines telephoneline, int iduser, int idservice) {
-		User user = em.find(User.class, iduser);
+	public void AddTelephoneLines(TelephoneLines telephoneline, int idservice) {
+		User user = em.find(User.class, UserSession.id);
 		Services service = em.find(Services.class, idservice);
 		Calendar currenttime = Calendar.getInstance();
 		Date dateCreation = new Date((currenttime.getTime()).getTime());

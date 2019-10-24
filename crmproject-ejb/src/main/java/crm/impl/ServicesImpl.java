@@ -25,8 +25,21 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 	EntityManager em;
 
 	@Override
-	public void AddService(Services service) {
-		em.persist(service);
+	public String AddService(Services service) {
+		TypedQuery<String> q = em.createQuery("SELECT s.serviceDescription FROM Services s WHERE s.serviceName = :serviceName", String.class);
+		q.setParameter("serviceName", service.getServiceName());
+		List<String> descriptions=q.getResultList();
+		if(descriptions.isEmpty())
+		{
+			em.persist(service);
+			return "ADDED";
+			
+		}
+		else
+		{
+			return "SERVICE EXIST";
+		}
+		
 
 	}
 

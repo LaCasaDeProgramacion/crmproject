@@ -5,6 +5,8 @@ import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,15 +30,20 @@ public class Complaints implements Serializable {
 	@Column(name = "complaintObject")
 	private String complaintObject;
 	@Column(name = "complaintStatee")
-	private String complaintState;
+	@Enumerated(EnumType.STRING)
+	private ComplaintState complaintState;
 	@Column(name = "complaintDate")
 	private Date complaintDate;
 	@ManyToOne
 	User user;
 	@ManyToOne
+	User admin;
+	@ManyToOne
+	Technician technician;
+	@ManyToOne
 	TypeComplaint TypeComplaint;
 
-	public Complaints(String complaintBody, String complaintObject, String complaintState, User user,
+	public Complaints(String complaintBody, String complaintObject, ComplaintState complaintState, User user,
 			crm.entities.TypeComplaint typeComplaint, Date complaintDate) {
 		super();
 
@@ -54,7 +61,7 @@ public class Complaints implements Serializable {
 		this.complaintObject = complaintObject;
 	}
 
-	public Complaints(String complaintBody, String complaintObject, String complaintState, Date complaintDate) {
+	public Complaints(String complaintBody, String complaintObject, ComplaintState complaintState, Date complaintDate) {
 		super();
 
 		this.complaintBody = complaintBody;
@@ -99,11 +106,11 @@ public class Complaints implements Serializable {
 		this.complaintObject = complaintObject;
 	}
 
-	public String getComplaintState() {
+	public ComplaintState getComplaintState() {
 		return complaintState;
 	}
 
-	public void setComplaintState(String complaintState) {
+	public void setComplaintState(ComplaintState complaintState) {
 		this.complaintState = complaintState;
 	}
 
@@ -129,6 +136,22 @@ public class Complaints implements Serializable {
 
 	public void setComplaintDate(Date complaintDate) {
 		this.complaintDate = complaintDate;
+	}
+
+	public User getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(User admin) {
+		this.admin = admin;
+	}
+
+	public Technician getTechnicien() {
+		return technician;
+	}
+
+	public void setTechnicien(Technician technician) {
+		this.technician = technician;
 	}
 
 }

@@ -12,7 +12,7 @@ import crm.entities.User;
 @Remote
 public interface ITelphoneLinesRemote {
 
-	void AddTelephoneLines(TelephoneLines telephoneline, int iduser, int idservice);
+	void AddTelephoneLines(TelephoneLines telephoneline, int idservice);
 
 	void DeleteTelephoneLines(int id);
 

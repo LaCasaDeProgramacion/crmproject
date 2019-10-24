@@ -41,4 +41,6 @@ public interface IComplaintRemote {
 	int NbComplaintByState(String State);
 	
 	int NbComplaintByperiod(Date d1 ,Date d2);
+	
+	void AffectTechnicien(int idcomplaint,int idtechnician);
 }

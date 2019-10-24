@@ -9,7 +9,7 @@ import crm.entities.Services;
 @Local
 public interface IServiceLocal {
 
-	void AddService(Services service);
+	String AddService(Services service);
 
 	void DeleteService(int id);
 

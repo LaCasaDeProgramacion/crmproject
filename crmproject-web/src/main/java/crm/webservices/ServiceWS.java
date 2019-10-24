@@ -25,6 +25,7 @@ public class ServiceWS {
 	@EJB
 	ServicesImpl servicews;
 	private final String status = "{\"status\":\"ok\"}";
+	private  String status2;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -42,8 +43,15 @@ public class ServiceWS {
 	) {
 		Services s = new Services(serviceDescription, serviceName);
 
-		servicews.AddService(s);
-		return Response.status(200).entity(status).build();
+		String res=servicews.AddService(s);
+		if(res.equals("SERVICE EXIST"))
+		{
+			status2="{\"status\":\"SERVICE EXIST\"}";
+			return Response.status(200).entity(status2).build();
+			
+		}
+				
+		 return Response.status(200).entity(status).build();
 	}
 
 	@PUT

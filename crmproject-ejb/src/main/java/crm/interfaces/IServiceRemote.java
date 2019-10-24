@@ -9,7 +9,7 @@ import crm.entities.Services;
 @Remote
 public interface IServiceRemote {
 
-	void AddService(Services service);
+	String AddService(Services service);
 
 	void DeleteService(int id);
 

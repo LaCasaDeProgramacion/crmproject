@@ -1,118 +1,140 @@
 package crm.entities;
 
 import java.io.Serializable;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
+import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@Table(name="User")
 public class User implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "userid")
-	private int id;
-	@Column(name = "login")
-	private String login;
-	@Column(name = "password")
-	private String password;
-	@Column(name = "role")
-	private String role;
-	@Column(name = "adresse")
-	private String adresse;
-	@Column(name = "mail")
-	private String mail;
-
-	/*
-	 * @OneToMany(cascade = CascadeType.ALL, mappedBy="user") private
-	 * Set<TelephoneLines> Lines;
-	 */
-	/*
-	 * @OneToMany(cascade = CascadeType.ALL, mappedBy="user" ,fetch =
-	 * FetchType.EAGER) private Set<Complaints> complaints;
-	 */
-	public User(int id, String login, String password, String role, String adresse, String mail,
-			Set<TelephoneLines> lines, Set<Complaints> complaints) {
+	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@Column(name="id")
+    private int id;
+	@Column(name="cin")
+	private int cin ; 
+	
+	@Column(name="username")
+    private String username;
+	@Column(name="email")
+    private String email;
+	@Column(name="enabled")
+    private boolean enabled;
+	@Column(name="password")
+    private String password;
+	@Column(name="confirm")
+    private String confirm;
+	@Column(name="token")
+    private String token;
+	@Column(name="firstName")
+    private String firstName;
+	@Column(name="lastName")
+    private String lastName;
+	@Column(name="role")
+	@Enumerated(EnumType.STRING)
+    private Roles role ; 
+	@Column(name="dateBirth")
+    private Date dateBirth;
+	
+	
+	
+	public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
+			Date dateBirth) {
 		super();
-		this.id = id;
-		this.login = login;
+		this.cin = cin;
+		this.username = username;
+		this.email = email;
 		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.role = role;
-		this.adresse = adresse;
-		this.mail = mail;
-		// Lines = lines;
-		// this.complaints = complaints;
+		this.dateBirth = dateBirth;
 	}
-
+	public String getConfirm() {
+		return confirm;
+	}
+	public void setConfirm(String confirm) {
+		this.confirm = confirm;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 	public User() {
 		super();
 	}
-
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public String getLogin() {
-		return login;
+	public int getCin() {
+		return cin;
 	}
-
-	public void setLogin(String login) {
-		this.login = login;
+	public void setCin(int cin) {
+		this.cin = cin;
 	}
-
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public boolean isEnabled() {
+		return enabled;
+	}
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 	public String getPassword() {
 		return password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public String getRole() {
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public Roles getRole() {
 		return role;
 	}
-
-	public void setRole(String role) {
+	public void setRole(Roles role) {
 		this.role = role;
 	}
-
-	public String getAdresse() {
-		return adresse;
+	public Date getDateBirth() {
+		return dateBirth;
 	}
-
-	public void setAdresse(String adresse) {
-		this.adresse = adresse;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-	/*
-	 * public Set<TelephoneLines> getLines() { return Lines; } public void
-	 * setLines(Set<TelephoneLines> lines) { Lines = lines; } public Set<Complaints>
-	 * getComplaints() { return complaints; } public void
-	 * setComplaints(Set<Complaints> complaints) { this.complaints = complaints; }
-	 */
+	public void setDateBirth(Date dateBirth) {
+		this.dateBirth = dateBirth;
+	} 
+	
+	
+    
+    
 
 }

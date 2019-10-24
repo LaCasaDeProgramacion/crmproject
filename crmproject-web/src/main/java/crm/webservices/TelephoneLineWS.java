@@ -36,17 +36,17 @@ public class TelephoneLineWS {
 	@Path("addtellines")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addtelline(@QueryParam("lineNumber") String lineNumber, @QueryParam("codePIN") int codePIN,
-			@QueryParam("codePUK") int codePUK, @QueryParam("user") int user, @QueryParam("service") int idservice
+			@QueryParam("codePUK") int codePUK, @QueryParam("service") int idservice
 
 	) {
 		TelephoneLines t = new TelephoneLines(lineNumber, codePIN, codePUK);
 
-		tellinews.AddTelephoneLines(t, user, idservice);
+		tellinews.AddTelephoneLines(t, idservice);
 		return Response.status(200).entity(status).build();
 	}
 
 	@PUT
-	@Path("updatetelline")
+	@Path("?id=")
 	@Produces(MediaType.APPLICATION_JSON)
 
 	public Response updateComplaint(@QueryParam("id") int id, @QueryParam("lineNumber") String lineNumber,

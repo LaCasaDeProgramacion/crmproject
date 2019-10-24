@@ -14,6 +14,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Complaints;
 import crm.entities.Product;
 import crm.entities.TypeComplaint;
@@ -126,6 +127,7 @@ public class ComplaintsWS {
 	}
 
 	@GET
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbyuser")
 	public int NbComplaintByUser(@QueryParam("iduser") int id) {
@@ -142,15 +144,23 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbystate")
-	public int NbComplaintByState(@QueryParam("idState") String state) {
+	public int NbComplaintByState(@QueryParam("State") String state) {
 		return complaintws.NbComplaintByState(state);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbyperiod")
-	public int NbComplaintByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Ddebut") Date d2) {
+	public int NbComplaintByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Dfin") Date d2) {
 		return complaintws.NbComplaintByperiod(d1, d2);
+	}
+	
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("affectTechnician")
+	public Response AffectTechnician(@QueryParam("idcomplaint") int id, @QueryParam("idtechnician") int idtech) {
+		complaintws.AffectTechnicien(id, idtech);
+		return Response.status(200).entity(status).build();
 	}
 
 }

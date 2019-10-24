@@ -11,8 +11,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import crm.entities.ComplaintState;
 import crm.entities.Complaints;
 import crm.entities.Product;
+import crm.entities.Technician;
 import crm.entities.TypeComplaint;
 import crm.entities.User;
 import crm.interfaces.IComplaintLocal;
@@ -32,7 +34,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		Calendar currenttime = Calendar.getInstance();
 		Date dateComplaint = new Date((currenttime.getTime()).getTime());
 		complaint.setComplaintDate(dateComplaint);
-		complaint.setComplaintState("In-progress");
+		complaint.setComplaintState(ComplaintState.Opened);
 		complaint.setUser(user);
 		complaint.setTypeComplaint(typeComplaint);
 		em.persist(complaint);
@@ -88,9 +90,10 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public List<Complaints> GetComplaintsByState(String State) {
+		ComplaintState cm=ComplaintState.valueOf(State);
 		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c WHERE c.complaintState = :state",
 				Complaints.class);
-		q.setParameter("state", State);
+		q.setParameter("state", cm);
 		return (List<Complaints>) q.getResultList();
 	}
 
@@ -132,8 +135,9 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		 * q.setParameter("id", complaint.getId()); q.setParameter("complaintState",
 		 * complaint.getComplaintState()); q.executeUpdate();
 		 */
+		ComplaintState cm=ComplaintState.valueOf(State);
 		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
-		complaintBD.setComplaintState(State);
+		complaintBD.setComplaintState(cm);
 
 		em.merge(complaintBD);
 	}
@@ -157,18 +161,30 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public int NbComplaintByState(String State) {
+		ComplaintState cm=ComplaintState.valueOf(State);
 		Query q = em.createQuery("SELECT Count(c) FROM Complaints c WHERE c.complaintState = :state");
-		q.setParameter("state", State);
+		q.setParameter("state", cm);
 		return ((Number) q.getSingleResult()).intValue();
 	}
 
 	@Override
 	public int NbComplaintByperiod(Date d1, Date d2) {
 		Query q = em
-				.createQuery("SELECT COUNT(c) FROM Complaints t WHERE t.complaintDate> :d1 AND t.complaintDate< :d2");
+				.createQuery("SELECT COUNT(c) FROM Complaints c WHERE c.complaintDate > :d1 AND c.complaintDate < :d2");
 		q.setParameter("d1", d1);
 		q.setParameter("d2", d2);
 		return ((Number) q.getSingleResult()).intValue();
+	}
+
+	@Override
+	public void AffectTechnicien(int idcomplaint, int idtechnician) {
+		
+		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
+		Technician technician = em.find(Technician.class, idtechnician);
+		complaintBD.setComplaintState(ComplaintState.In_progress);
+		complaintBD.setTechnicien(technician);
+		em.merge(complaintBD);
+		
 	}
 
 }
