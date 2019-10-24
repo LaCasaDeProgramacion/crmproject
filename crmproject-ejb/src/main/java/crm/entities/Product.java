@@ -47,17 +47,16 @@ public class Product implements Serializable{
 
 	@Column(name="productStatus")
 	String productStatus;
-<<<<<<< HEAD
+
 
 	@ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
 	public Set<Pack> pack;
-=======
 	@Column(name="productDate")
 	Date productDate;
 	@ManyToOne
     @JoinColumn(name="category_id")
     private Category category;
->>>>>>> 925c37d7ce4dcc2e304d685bfc886a92a456e214
+
 	 
 	@ManyToOne
     @JoinColumn(name="store_id")
