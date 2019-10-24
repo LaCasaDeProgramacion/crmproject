@@ -26,6 +26,10 @@ import javax.ws.rs.core.UriInfo;
 import crm.entities.Roles;
 import crm.entities.User;
 import crm.impl.UserImpl;
+<<<<<<< HEAD
+=======
+import crm.utils.BCrypt;
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -40,7 +44,11 @@ public class UserWs {
 	@POST
     @Path("add")
     @Produces(MediaType.APPLICATION_JSON)
+<<<<<<< HEAD
     public Response addEvent(
+=======
+    public Response addUser(
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
     		@QueryParam("cin")int cin , 
     		@QueryParam("username")String username, 
     		@QueryParam("email")String email,
@@ -66,7 +74,11 @@ public class UserWs {
 	@Path("authenticate")
 	public Response authenticateUser(@QueryParam("username") String username, @QueryParam("password") String password) {
 		
+<<<<<<< HEAD
 
+=======
+           
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 			Boolean test = userImpl.authenticate(username, password);
 				if (test)
 				{
@@ -84,6 +96,31 @@ public class UserWs {
 
 		
 	}
+<<<<<<< HEAD
+=======
+	@PUT
+	@Path("confirm")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	public Response Confirm(@QueryParam("code") String code, @QueryParam("idUser") int idUser
+
+	) {
+		userImpl.confirmCode(code, idUser);
+
+		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+	}
+	@PUT
+	@Path("logout")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	public Response Logout(
+
+	) {
+		userImpl.logout();
+
+		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+	}
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 	private String issueToken(String username) {
 		// Issue a token (can be a random String persisted to a database or a JWT token)
 		// The issued token must be associated to a user

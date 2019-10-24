@@ -16,6 +16,10 @@ import crm.entities.User;
 import crm.interfaces.IUserLocal;
 import crm.interfaces.IUserRemote;
 import crm.utils.BCrypt;
+<<<<<<< HEAD
+=======
+import crm.utils.UserSession;
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 import crm.utils.codeGen;
 
 
@@ -25,7 +29,11 @@ public class UserImpl implements IUserLocal, IUserRemote{
 
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
+<<<<<<< HEAD
 	
+=======
+	UserSession usersession;
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 	@Override
 	public void addUser(User user) {
 		 
@@ -41,12 +49,25 @@ public class UserImpl implements IUserLocal, IUserRemote{
 	}
 	@Override
 	public boolean authenticate(String username, String password) {
+<<<<<<< HEAD
 		TypedQuery<String> q=  em.createQuery("SELECT u.password from User u where u.username= :username ",String.class); 
 		q.setParameter("username", username);
 		
 		String passBD=q.getSingleResult();
 		if(passBD.equals(password))
 			return true;
+=======
+		TypedQuery<User> q=  em.createQuery("SELECT u from User u where u.username= :username ",User.class); 
+		q.setParameter("username", username);
+		
+		User user=q.getSingleResult();
+		
+		if(BCrypt.checkpw(password, user.getPassword()) && user.isEnabled()==true)
+		{
+			UserSession usersession=new UserSession(user);
+			return true;
+		}
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 		else
 			return false;
 
@@ -60,6 +81,29 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		u.setToken(token);
 		em.merge(u);
 	}
+<<<<<<< HEAD
+=======
+	@Override
+	public void confirmCode(String code, int idUser) {
+		User user=em.find(User.class, idUser);
+		if(code.equals(user.getConfirm()))
+		{
+			user.setEnabled(true);
+			em.merge(user);
+		}
+		
+	}
+	@Override
+	public void logout() {
+		System.out.println(UserSession.id);
+		User user=em.find(User.class, UserSession.id);
+		user.setToken(null);
+		em.merge(user);
+		
+		
+		
+	}
+>>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
 
 	
 
