@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-
 import crm.entities.Product;
 import crm.interfaces.IProductServiceLocal;
 import crm.interfaces.IProductServiceRemote;
@@ -59,7 +58,8 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	public void updateProduct(int id, String productDescription, String productName, double productPrice,
 			int productQuantity, String productStatus) {
 		 Query q = em.createQuery("UPDATE Product p SET p.productName = :productName, "
-			 		+ "p.productDescription = :productDescription,p.productQuantity = :productQuantity,p.productPrice = :productPrice,p.productStatus = :productStatus");
+			 		+ "p.productDescription = :productDescription,p.productQuantity = :productQuantity,p.productPrice = :productPrice,p.productStatus = :productStatus"
+			 		);
 
 		  
 
