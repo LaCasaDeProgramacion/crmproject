@@ -40,8 +40,16 @@ public class Product implements Serializable{
 	double productPrice;
 	@Column(name="productImage")
 	String productImage;
+	@Column(name="numberOfViews")
+	int numberOfViews;
 
 	
+	public int getNumberOfViews() {
+		return numberOfViews;
+	}
+	public void setNumberOfViews(int numberOfViews) {
+		this.numberOfViews = numberOfViews;
+	}
 	@Column(name="productQuantity")
 	int productQuantity;
 
@@ -62,6 +70,9 @@ public class Product implements Serializable{
     @JoinColumn(name="store_id")
     private Store store;
 
+	
+
+	
 	
 	public Store getStore() {
 		return store;

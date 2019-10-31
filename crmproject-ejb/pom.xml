@@ -103,7 +103,9 @@
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
-      
+    <!-- https://mvnrepository.com/artifact/org.goldrenard/jb -->
+
+
         <dependency>
             <groupId>org.jboss.arquillian.protocol</groupId>
             <artifactId>arquillian-protocol-servlet</artifactId>
