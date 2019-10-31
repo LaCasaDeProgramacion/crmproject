@@ -20,13 +20,13 @@ public class CarModelImpl implements ICarModelLocal, ICarModelRemote {
 	@Override
 	public List<CarModel> allModels() {
 		Query q = em.createQuery(
-				"SELECT b.brand,  m.model  FROM CarModel m JOIN m.carbrand b");
+				"SELECT m.id,  b.brand,  m.model  FROM CarModel m JOIN m.carbrand b");
 		return (List<CarModel>) q.getResultList();
 	}
 
 	@Override
 	public List<CarModel> searchForModel(String model) {
-		Query q = em.createQuery("SELECT c.model FROM CarModel c where c.model = :name");
+		Query q = em.createQuery("SELECT c.id,  c.model FROM CarModel c where c.model = :name");
 		q.setParameter("name", model);
 		return (List<CarModel>) q.getResultList(); 
 	}
@@ -50,9 +50,10 @@ public class CarModelImpl implements ICarModelLocal, ICarModelRemote {
 		CarModel c = em.find(CarModel.class, id); 
 		if (c!=null)
 		{
-			Query q = em.createQuery("DELETE FROM CarModel a WHERE a.id = :id");
-	        q.setParameter("id", id);
-	        q.executeUpdate();
+			em.remove(c);
+			//Query q = em.createQuery("DELETE FROM CarModel a WHERE a.id = :id");
+	       // q.setParameter("id", id);
+	       // q.executeUpdate();
 	        return true ; 
 		}
 		
@@ -75,10 +76,16 @@ public class CarModelImpl implements ICarModelLocal, ICarModelRemote {
 	@Override
 	public List<Object> BrandsOfModel(int idModel) {
 		CarModel model = em.find(CarModel.class, idModel); 
-		Query query = em.createQuery("SELECT b.brand,  m.model  FROM CarModel m JOIN m.carbrand b  WHERE  m.id=:idModel and b.id = :idBrand");
-		query.setParameter("idModel",idModel );
-		query.setParameter("idBrand",model.getCarbrand().getId() );
-		return (List<Object>) query.getResultList();
+		if (model!= null)
+		{
+			Query query = em.createQuery("SELECT b.brand,  m.model  FROM CarModel m JOIN m.carbrand b  WHERE  m.id=:idModel and b.id = :idBrand");
+			query.setParameter("idModel",idModel );
+			query.setParameter("idBrand",model.getCarbrand().getId() );
+			return  query.getResultList();
+		}
+		return null; 
+	
+		
 	}
 
 

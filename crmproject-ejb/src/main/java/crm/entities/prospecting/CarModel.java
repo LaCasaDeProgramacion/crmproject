@@ -25,7 +25,7 @@ public class CarModel implements Serializable
 	@Transient 
 	private int carbrand_id ; 
 	
-	@OneToMany (mappedBy="carmodel")
+	@OneToMany (mappedBy="carmodel",cascade = CascadeType.ALL)
 	private List<Vehicule> vehicules ; 
 
 	public CarModel() {

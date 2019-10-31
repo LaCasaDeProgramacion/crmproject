@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import crm.entities.prospecting.Agent;
-import crm.entities.prospecting.Role;
+import crm.entities.prospecting.RoleAgent;
 import crm.entities.prospecting.Vehicule;
 import crm.impl.prospecting.VehiculeImpl;
 

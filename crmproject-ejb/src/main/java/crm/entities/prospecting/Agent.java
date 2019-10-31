@@ -1,7 +1,7 @@
 package crm.entities.prospecting;
 
 import java.io.Serializable;
-import java.util.Date ;
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -23,10 +23,10 @@ public class Agent implements Serializable {
 	private String lastName ; 
 	@Column(name="email")
 	private String email ; 
-	@Temporal(TemporalType.DATE)
+	@Column(name="dateBirth")
 	private Date dateBirth ; 
 	@Enumerated(EnumType.STRING)
-	private Role role ; 
+	private RoleAgent role ; 
 	@Column(name="accessPerm")
 	private boolean accessPerm ; 
 	@Column(name="drivenLicence")
@@ -35,7 +35,7 @@ public class Agent implements Serializable {
 	@ManyToOne
 	private PointOfSale pointofsale; 
 	
-	@OneToOne (mappedBy="agent")
+	@OneToOne (cascade=CascadeType.ALL)
 	private Contract contract ; 
 	
 	@OneToMany (mappedBy="agent")
@@ -46,7 +46,7 @@ public class Agent implements Serializable {
 	}
 	
 	public Agent (int cin, int number, String firstName,String  lastName,String  email, 
-				Date datebirth, Role role, boolean accessPerm,boolean drivenLicence)
+				Date datebirth, RoleAgent role, boolean accessPerm,boolean drivenLicence)
 	{
 		this.cin= cin ; 
 		this.number = number ; 
@@ -60,7 +60,7 @@ public class Agent implements Serializable {
 		
 	}
 	public Agent (int id, int cin, int number, String firstName,String  lastName,String  email, 
-			Date datebirth, Role role, boolean accessPerm,boolean drivenLicence)
+			Date datebirth, RoleAgent Agent, boolean accessPerm,boolean drivenLicence)
 {
 		this.id=id; 
 		this.cin= cin ; 
@@ -111,10 +111,10 @@ public class Agent implements Serializable {
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
 	}
-	public Role getRole() {
+	public RoleAgent getRole() {
 		return role;
 	}
-	public void setRole(Role role) {
+	public void setRole(RoleAgent role) {
 		this.role = role;
 	}
 	public boolean isAccessPerm() {

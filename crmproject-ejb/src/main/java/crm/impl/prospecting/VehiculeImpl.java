@@ -20,14 +20,14 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 	
 	@Override
 	public List<Vehicule> allVehicules() {
-		Query q = em.createQuery("SELECT v.registration, v.color, v.inUse, v.picture,  m.model , b.brand "
+		Query q = em.createQuery("SELECT v.id,  v.registration, v.color, v.inUse, v.picture,  m.model , b.brand "
 				+ " FROM Vehicule v JOIN v.carmodel m JOIN m.carbrand b " );
 		return (List<Vehicule>) q.getResultList();
 	}
 
 	@Override
 	public List<Vehicule> searchForVehicule(String registration) {
-		Query q = em.createQuery("SELECT v.registration, v.color, v.inUse, v.picture,  m.model , b.brand "
+		Query q = em.createQuery("SELECT v.id, v.registration, v.color, v.inUse, v.picture,  m.model , b.brand "
 				+ " FROM Vehicule v JOIN v.carmodel m JOIN m.carbrand b where "
 				+ "  v.registration = :registration " );
 		q.setParameter("registration", registration); 
@@ -59,9 +59,10 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 		Vehicule a = em.find(Vehicule.class, id); 
 		if (a!=null)
 		{
-			Query q = em.createQuery("DELETE FROM Vehicule a WHERE a.id = :id");
-	        q.setParameter("id", id);
-	        q.executeUpdate();
+			em.remove(a);
+			//Query q = em.createQuery("DELETE FROM Vehicule a WHERE a.id = :id");
+	        //q.setParameter("id", id);
+	       // q.executeUpdate();
 	        return true ; 
 			
 		}

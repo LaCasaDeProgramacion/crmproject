@@ -1,6 +1,6 @@
 package crm.webservices;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -86,7 +86,7 @@ public class ContractWs {
 		 {
 			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
 		 }
-		 else return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 else return Response.status(Status.NOT_FOUND).entity(" CONTRACT/AGENT NOT FOUND").build();
          
      }
  	 

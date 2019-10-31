@@ -6,7 +6,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.*;
 
-class Mail_API {
+public class Mail_API {
     public static void sendMail(String to,String subject,String message) throws MessagingException
     {
         String host="smtp.gmail.com";

@@ -18,14 +18,14 @@ public class AgentImpl implements IAgentLocal, IAgentRemote {
 
 	@Override
 	public List<Agent> allAgents() {
-		Query q = em.createQuery("SELECT a.cin , a.number, a.firstName, a.lastName, a.role, a.email, a.dateBirth, a.accessPerm"
+		Query q = em.createQuery("SELECT a.id,  a.cin , a.number, a.firstName, a.lastName, a.role, a.email, a.dateBirth, a.accessPerm"
 				+ ", a.drivenLicence FROM Agent a");
 		return (List<Agent>) q.getResultList();
 	}
 
 	@Override
 	public List<Agent> searchForAgent(int cin) {
-		Query q = em.createQuery("SELECT a.cin , a.number, a.firstName, a.lastName,  a.email, a.dateBirth, a.accessPerm"
+		Query q = em.createQuery("SELECT a.id, a.cin , a.number, a.firstName, a.lastName,  a.email, a.dateBirth, a.accessPerm"
 				+ ", a.drivenLicence FROM Agent a where a.cin = :cin");
 		q.setParameter("cin", cin);
 		return (List<Agent>) q.getResultList();
@@ -41,9 +41,10 @@ public class AgentImpl implements IAgentLocal, IAgentRemote {
 			Agent a = em.find(Agent.class, id); 
 			if (a!=null)
 			{
-				Query q = em.createQuery("DELETE FROM Agent a WHERE a.id = :id");
-		        q.setParameter("id", id);
-		        q.executeUpdate();
+				em.remove(a);
+				//Query q = em.createQuery("DELETE FROM Agent a WHERE a.id = :id");
+		       // q.setParameter("id", id);
+		       // q.executeUpdate();
 		        return true ; 
 				
 			}

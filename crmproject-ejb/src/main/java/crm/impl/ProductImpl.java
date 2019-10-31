@@ -60,8 +60,8 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 		 Product emp = new Product();
 		
 		
-		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-		   LocalDateTime now = LocalDateTime.now();  
+		    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		    LocalDateTime now = LocalDateTime.now();  
 	        Query q = em.createQuery("SELECT d FROM Category d WHERE d.category_id = :category_id");
 	        q.setParameter("category_id",category_id);
 

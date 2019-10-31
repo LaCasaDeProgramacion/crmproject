@@ -7,8 +7,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
+import crm.entities.Roles;
 import crm.entities.prospecting.PointOfSale;
 import crm.impl.prospecting.PointOfSaleImpl;
+import crm.utils.UserSession;
 
 @Path("pointofsale")
 public class PointOfSaleWs {
@@ -44,15 +47,22 @@ public class PointOfSaleWs {
 			return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
      }
 	 
-	 @POST
+	 	@POST
 	    @Path("add")
 	    @Produces(MediaType.APPLICATION_JSON)
+	 	@Secured
 	    public Response addPOS(@QueryParam("name")String name,
 	    		@QueryParam("latitude")float latitude, 
 	    		@QueryParam("longitude")float longitude){
 		 
-				 pointOfSaleImpl.addPointOfSale(name, latitude, longitude);
-				 return Response.status(Status.CREATED).entity("ADDED").build();
+		 if (UserSession.roles.equals(Roles.ADMIN))
+		 {
+			 pointOfSaleImpl.addPointOfSale(name, latitude, longitude);
+			 return Response.status(Status.CREATED).entity("ADDED").build();
+		 }
+		 else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
+		 
+				 
 	    }
 	 
 

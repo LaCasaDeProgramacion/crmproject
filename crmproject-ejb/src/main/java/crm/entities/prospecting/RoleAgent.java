@@ -1,5 +1,5 @@
 package crm.entities.prospecting;
 
-public enum Role {
+public enum RoleAgent {
 SEASONAL, TEMPORARY, CONTRACT
 }

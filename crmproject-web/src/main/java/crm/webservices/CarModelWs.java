@@ -39,12 +39,15 @@ public class CarModelWs {
 	@Path("brandmodel")
     public Response getBrandModel(@QueryParam("idmodel")int idmodel)
     {
-		List<Object> list = carModelImpl.BrandsOfModel(idmodel); 
-        if (!list.isEmpty())
-        {
+		List  list = carModelImpl.BrandsOfModel(idmodel); 
+		if (list ==null )
+		{
+			return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		}
+		else
         	return Response.status(Status.FOUND).entity(list).build();
-        }
-        return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+        
+        
         
     }
 	

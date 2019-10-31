@@ -3,6 +3,7 @@ package crm.entities;
 import java.io.Serializable;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,7 +15,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import crm.entities.prospecting.Post;
+import crm.entities.prospecting.Topic;
+import crm.entities.prospecting.Views;
 
 @Entity
 @Table(name="User")
@@ -49,6 +55,17 @@ public class User implements Serializable {
     private Date dateBirth;
 	@ManyToMany(cascade = CascadeType.ALL)
 	public Set<Coupon> coupon;
+	
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private List<Post> posts; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private List<Topic> topics; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private List<Views> view ; 
+	
 	
 	
 	public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
@@ -153,7 +170,26 @@ public class User implements Serializable {
 	}
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
-	} 
+	}
+	public List<Post> getPosts() {
+		return posts;
+	}
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
+	public List<Topic> getTopics() {
+		return topics;
+	}
+	public void setTopics(List<Topic> topics) {
+		this.topics = topics;
+	}
+	public List<Views> getView() {
+		return view;
+	}
+	public void setView(List<Views> view) {
+		this.view = view;
+	}
+	
 	
 	
     
