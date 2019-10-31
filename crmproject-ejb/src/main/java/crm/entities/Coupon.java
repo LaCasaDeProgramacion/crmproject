@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "coupon")
@@ -40,6 +41,7 @@ public class Coupon implements Serializable {
 	@OneToOne
 	public Product product;
 
+	@Transient
 	@ManyToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
 	public Set<User> users;
 

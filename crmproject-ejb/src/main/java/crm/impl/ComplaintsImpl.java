@@ -4,8 +4,11 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
+import javax.management.timer.Timer;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -13,12 +16,14 @@ import javax.persistence.TypedQuery;
 
 import crm.entities.ComplaintState;
 import crm.entities.Complaints;
-import crm.entities.Product;
+import crm.entities.NotificationComplaint;
+import crm.entities.Roles;
 import crm.entities.Technician;
 import crm.entities.TypeComplaint;
 import crm.entities.User;
 import crm.interfaces.IComplaintLocal;
 import crm.interfaces.IComplaintRemote;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -27,9 +32,13 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
 
+	Mail_API mail;
+	@EJB
+	UserImpl userimpl;
+
 	@Override
-	public void AddComplaint(Complaints complaint, int iduser, int idtypeComplaint) {
-		User user = em.find(User.class, iduser);
+	public void AddComplaint(Complaints complaint, int idtypeComplaint) {
+		User user = em.find(User.class, UserSession.getInstance().getId());
 		TypeComplaint typeComplaint = em.find(TypeComplaint.class, idtypeComplaint);
 		Calendar currenttime = Calendar.getInstance();
 		Date dateComplaint = new Date((currenttime.getTime()).getTime());
@@ -37,7 +46,19 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		complaint.setComplaintState(ComplaintState.Opened);
 		complaint.setUser(user);
 		complaint.setTypeComplaint(typeComplaint);
+
 		em.persist(complaint);
+		try {
+		List<User> Userlist =userimpl.getAdmin();
+		for(User u : Userlist)
+		{
+		
+			mail.sendMail(u.getEmail(), "Nouveau Réclamation Ajoutée", complaint.getComplaintObject()+"est ajoutée"+complaint.getComplaintDate());
+		}
+		} catch (MessagingException e) {
+			System.out.println("error");
+			e.printStackTrace();
+		}
 
 	}
 
@@ -66,8 +87,10 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public List<Complaints> GetAllComplaints() {
+
 		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c", Complaints.class);
 		return (List<Complaints>) q.getResultList();
+		
 	}
 
 	@Override
@@ -77,7 +100,32 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		 * em.createQuery("SELECT c FROM complaints c WHERE c.complaintId = :id");
 		 * q.setParameter("id", id); return (Complaints) q.getSingleResult();
 		 */
-		return em.find(Complaints.class, id);
+
+		Complaints cm = em.find(Complaints.class, id);
+		if(cm.getAdmin()==null)
+		{
+		User admin = em.find(User.class, 1); //Session
+		if(admin.getRole()==Roles.ADMIN)
+		{
+		cm.setAdmin(admin);
+		cm.setComplaintState(ComplaintState.In_progress);
+		Calendar currenttime = Calendar.getInstance();
+		Date assignmentDate = new Date((currenttime.getTime()).getTime());
+		cm.setAssignmentDate(assignmentDate);
+		em.merge(cm);
+		}
+		}
+		
+		try {
+			
+			
+				mail.sendMail(cm.getUser().getEmail(), "ADMIN affecté a votre rec", cm.getComplaintObject()+"est traitée par"+cm.getAdmin().getLastName()+cm.getAdmin().getFirstName());
+			
+			} catch (MessagingException e) {
+				System.out.println("error");
+				e.printStackTrace();
+			}
+		return cm;
 	}
 
 	@Override
@@ -89,8 +137,16 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	}
 
 	@Override
+	public List<Complaints> GetMyComplaints() {
+		User user = em.find(User.class, UserSession.getInstance().getId());
+		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c WHERE c.user = :User", Complaints.class);
+		q.setParameter("User", user);
+		return (List<Complaints>) q.getResultList();
+	}
+
+	@Override
 	public List<Complaints> GetComplaintsByState(String State) {
-		ComplaintState cm=ComplaintState.valueOf(State);
+		ComplaintState cm = ComplaintState.valueOf(State);
 		TypedQuery<Complaints> q = em.createQuery("SELECT c FROM Complaints c WHERE c.complaintState = :state",
 				Complaints.class);
 		q.setParameter("state", cm);
@@ -135,11 +191,41 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		 * q.setParameter("id", complaint.getId()); q.setParameter("complaintState",
 		 * complaint.getComplaintState()); q.executeUpdate();
 		 */
-		ComplaintState cm=ComplaintState.valueOf(State);
+		Calendar currenttime = Calendar.getInstance();
+		Date now = new Date((currenttime.getTime()).getTime());
+		ComplaintState cm = ComplaintState.valueOf(State);
 		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
-		complaintBD.setComplaintState(cm);
 
-		em.merge(complaintBD);
+		if (cm == ComplaintState.In_progress) {
+			complaintBD.setAssignmentDate(now);
+			complaintBD.setComplaintState(cm);
+			em.merge(complaintBD);
+			try {
+				
+				
+				mail.sendMail(complaintBD.getUser().getEmail(), "votre rec est en cours de traitement", complaintBD.getComplaintObject()+"est en cours de traitement"+complaintBD.getAssignmentDate());
+			
+			} catch (MessagingException e) {
+				System.out.println("error");
+				e.printStackTrace();
+			}
+		} else if (cm == ComplaintState.treated || cm == ComplaintState.Closed_without_Solution) {
+
+			complaintBD.setClosingDate(now);
+			complaintBD.setComplaintState(cm);
+			em.merge(complaintBD);
+try {
+				
+				
+				mail.sendMail(complaintBD.getUser().getEmail(), "votre rec est traité", complaintBD.getComplaintObject()+"est traitée"+complaintBD.getClosingDate()+complaintBD.getComplaintState());
+			
+			} catch (MessagingException e) {
+				System.out.println("error");
+				e.printStackTrace();
+			}
+		}
+
+		
 	}
 
 	@Override
@@ -161,7 +247,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public int NbComplaintByState(String State) {
-		ComplaintState cm=ComplaintState.valueOf(State);
+		ComplaintState cm = ComplaintState.valueOf(State);
 		Query q = em.createQuery("SELECT Count(c) FROM Complaints c WHERE c.complaintState = :state");
 		q.setParameter("state", cm);
 		return ((Number) q.getSingleResult()).intValue();
@@ -178,13 +264,36 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public void AffectTechnicien(int idcomplaint, int idtechnician) {
-		
+
 		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
 		Technician technician = em.find(Technician.class, idtechnician);
 		complaintBD.setComplaintState(ComplaintState.In_progress);
-		complaintBD.setTechnicien(technician);
+		complaintBD.setTechnician(technician);
+		Calendar currenttime = Calendar.getInstance();
+		Date assignmentDate = new Date((currenttime.getTime()).getTime());
+		complaintBD.setAssignmentDate(assignmentDate);
+		User admin=em.find(User.class, 1);
+		complaintBD.setAdmin(admin);
 		em.merge(complaintBD);
+		try {
+			
+			
+			mail.sendMail(complaintBD.getUser().getEmail(), "Technicien affecté", "le technicien"+technician.getTechnicianFirstName()+technician.getTechnicianSecondName()+"num tel"+technician.getTechnicianPhoneNumber()+"traite votre rec"+complaintBD.getComplaintObject());
 		
+		} catch (MessagingException e) {
+			System.out.println("error");
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public List<Complaints> SearchComplaint(String motclé) {
+		TypedQuery<Complaints> query = em.createQuery(
+				"select c from Complaints c WHERE c.complaintBody LIKE :code or c.complaintObject LIKE :code or c.complaintState LIKE :code ORDER BY c.complaintDate DESC",
+				Complaints.class);
+		query.setParameter("code", "%" + motclé + "%");
+		return query.getResultList();
 	}
 
 }

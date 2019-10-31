@@ -86,7 +86,29 @@ public class UserWs {
 
 		
 	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("profile")
+	public User Profile() {
 
+			return userImpl.getUserById();
+			
+
+		
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("resetPass")
+	public Response ResetPass(@QueryParam("username") String username) {
+
+			 userImpl.ResetingPassword(username);
+			 return Response.status(Status.ACCEPTED).entity("Reseting Password").build();
+			
+
+		
+	}
 	@PUT
 	@Path("confirm")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -95,6 +117,17 @@ public class UserWs {
 
 	) {
 		userImpl.confirmCode(code, idUser);
+
+		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+	}
+	@PUT
+	@Path("updatePass")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	public Response UpdatePassword(@QueryParam("username") String username, @QueryParam("newpass") String newPass
+
+	) {
+		userImpl.UpdatePassword(username, newPass);
 
 		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
 	}

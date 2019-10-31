@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import crm.AuthenticateWS.Secured;
 import crm.entities.Complaints;
+import crm.entities.NotificationComplaint;
 import crm.entities.Product;
 import crm.entities.TypeComplaint;
 import crm.entities.User;
@@ -27,6 +28,7 @@ public class ComplaintsWS {
 
 	@EJB
 	ComplaintsImpl complaintws;
+
 	private final String status = "{\"status\":\"ok\"}";
 
 	@GET
@@ -40,13 +42,13 @@ public class ComplaintsWS {
 	@Path("addComplaint")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addComplaint(@QueryParam("complaintBody") String complaintBody,
-			@QueryParam("complaintObject") String complaintObject, @QueryParam("user") int user,
+			@QueryParam("complaintObject") String complaintObject,
 			@QueryParam("typeComplaint") int typeComplaint
 
 	) {
 		Complaints c = new Complaints(complaintBody, complaintObject);
 
-		complaintws.AddComplaint(c, user, typeComplaint);
+		complaintws.AddComplaint(c, typeComplaint);
 		return Response.status(200).entity(status).build();
 	}
 
@@ -84,6 +86,13 @@ public class ComplaintsWS {
 	@Path("complaintsuser")
 	public List<Complaints> GetComplaintsByUser(@QueryParam("iduser") int id) {
 		return complaintws.GetComplaintsByUser(id);
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("mycomplaints")
+	public List<Complaints> GetMyComplaints() {
+		return complaintws.GetMyComplaints();
 	}
 
 	@GET
@@ -161,6 +170,13 @@ public class ComplaintsWS {
 	public Response AffectTechnician(@QueryParam("idcomplaint") int id, @QueryParam("idtechnician") int idtech) {
 		complaintws.AffectTechnicien(id, idtech);
 		return Response.status(200).entity(status).build();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("searchcomplaint")
+	public List<Complaints> SearchComplaint(@QueryParam("motcle") String motcle) {
+		return complaintws.SearchComplaint(motcle);
 	}
 
 }

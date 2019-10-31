@@ -10,9 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "telephone_lines")
+@Table(name = "telephone_lines",uniqueConstraints=
+@UniqueConstraint(columnNames = {"lineNumber"}))
 public class TelephoneLines implements Serializable {
 
 	/**

@@ -4,8 +4,10 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -27,9 +29,12 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
 
+	Mail_API mail;
+	@EJB
+	UserImpl userimpl;
 	@Override
-	public void AddTelephoneLines(TelephoneLines telephoneline, int idservice) {
-		User user = em.find(User.class, UserSession.id);
+	public void AddTelephoneLines(TelephoneLines telephoneline,int idUser, int idservice) {
+		User user = em.find(User.class, idUser);
 		Services service = em.find(Services.class, idservice);
 		Calendar currenttime = Calendar.getInstance();
 		Date dateCreation = new Date((currenttime.getTime()).getTime());
@@ -40,6 +45,15 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		telephoneline.setUser(user);
 		telephoneline.setServices(service);
 		em.persist(telephoneline);
+		try {
+			
+			
+			mail.sendMail(telephoneline.getUser().getEmail(), "ligne ajouté", telephoneline.getLineNumber()+"est votre nouvelle ligne");
+		
+		} catch (MessagingException e) {
+			System.out.println("error");
+			e.printStackTrace();
+		}
 
 	}
 
@@ -78,8 +92,8 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 	}
 
 	@Override
-	public List<TelephoneLines> GetMyTelephoneLines(int iduser) {
-		User user = em.find(User.class, iduser);
+	public List<TelephoneLines> GetMyTelephoneLines() {
+		User user = em.find(User.class, UserSession.getInstance().getId());
 		TypedQuery<TelephoneLines> q = em.createQuery("SELECT t FROM TelephoneLines t WHERE t.user = :iduser",
 				TelephoneLines.class);
 		q.setParameter("iduser", user);
@@ -101,6 +115,15 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		telephonelineBD.setServices(service);
 
 		em.merge(telephonelineBD);
+try {
+			
+			
+			mail.sendMail(telephonelineBD.getUser().getEmail(), "Service affecté", service.getServiceName()+"est affecté a votre ligne"+telephonelineBD.getLineNumber());
+		
+		} catch (MessagingException e) {
+			System.out.println("error");
+			e.printStackTrace();
+		}
 
 	}
 
@@ -118,6 +141,30 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		tellineBD.setLineState(lineState);
 
 		em.merge(tellineBD);
+		if(tellineBD.getLineState()==0)
+		{
+			try {
+				
+				
+				mail.sendMail(tellineBD.getUser().getEmail(), "ligne désactivée", tellineBD.getLineNumber()+"est désactivée");
+			
+			} catch (MessagingException e) {
+				System.out.println("error");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			try {
+				
+				
+				mail.sendMail(tellineBD.getUser().getEmail(), "ligne Activée", tellineBD.getLineNumber()+"est activée");
+			
+			} catch (MessagingException e) {
+				System.out.println("error");
+				e.printStackTrace();
+			}
+		}
 
 	}
 
@@ -128,6 +175,7 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		q.setParameter("id", idtelline);
 		q.setParameter("lineState", 0);
 		q.executeUpdate();
+		
 
 	}
 
@@ -138,6 +186,14 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		q.setParameter("d1", d1);
 		q.setParameter("d2", d2);
 		return ((Number) q.getSingleResult()).intValue();
+	}
+
+	@Override
+	public List<TelephoneLines> SearchTelline(String motcle) {
+		TypedQuery<TelephoneLines> query = em.createQuery(
+			      "select t from TelephoneLines t WHERE t.lineNumber LIKE :code or t.user.username LIKE :code or t.user.firstName LIKE :code or t.user.lastName LIKE :code or t.service.serviceName LIKE :code ORDER BY t.dateCreation DESC", TelephoneLines.class);
+		query.setParameter("code", "%" + motcle + "%");
+			 return query.getResultList();
 	}
 
 }

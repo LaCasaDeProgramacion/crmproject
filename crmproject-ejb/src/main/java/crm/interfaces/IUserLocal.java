@@ -1,5 +1,7 @@
 package crm.interfaces;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import crm.entities.User;
@@ -12,5 +14,9 @@ public interface IUserLocal {
 
 	public void confirmCode(String code,int idUser);
 	public void logout();
+	public List<User> getAdmin();
+	public User getUserById();
+	public void ResetingPassword(String userName);
+	public void UpdatePassword(String userName,String NewPassword);
 
 }

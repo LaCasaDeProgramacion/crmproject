@@ -12,7 +12,7 @@ import crm.entities.User;
 @Local
 public interface ITelephoneLinesLocal {
 
-	void AddTelephoneLines(TelephoneLines telephoneline,  int idservice);
+	void AddTelephoneLines(TelephoneLines telephoneline,int idUser,  int idservice);
 
 	void DeleteTelephoneLines(int id);
 
@@ -20,7 +20,7 @@ public interface ITelephoneLinesLocal {
 
 	List<TelephoneLines> GetAll();
 
-	List<TelephoneLines> GetMyTelephoneLines(int iduser);
+	List<TelephoneLines> GetMyTelephoneLines();
 
 	void AffectService(int idtelephoneline, int idservice);
 
@@ -31,6 +31,8 @@ public interface ITelephoneLinesLocal {
 	void ChangeLineState(int idtelline);
 	
 	int NbLineByperiod(Date d1,Date d2);
+	
+	List<TelephoneLines> SearchTelline(String motcle);
 	
 	
 

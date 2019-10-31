@@ -14,6 +14,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.sun.mail.imap.protocol.Status;
+
 import crm.entities.Complaints;
 import crm.entities.TelephoneLines;
 import crm.impl.TelphoneLinesImpl;
@@ -36,13 +38,19 @@ public class TelephoneLineWS {
 	@Path("addtellines")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addtelline(@QueryParam("lineNumber") String lineNumber, @QueryParam("codePIN") int codePIN,
-			@QueryParam("codePUK") int codePUK, @QueryParam("service") int idservice
+			@QueryParam("codePUK") int codePUK, @QueryParam("service") int idservice, @QueryParam("user") int idUser
 
 	) {
 		TelephoneLines t = new TelephoneLines(lineNumber, codePIN, codePUK);
 
-		tellinews.AddTelephoneLines(t, idservice);
+		try {
+			tellinews.AddTelephoneLines(t,idUser, idservice);
+			
+		} catch (Exception e) {
+			return Response.status(javax.ws.rs.core.Response.Status.FOUND).entity("tel line existe").build();
+		}
 		return Response.status(200).entity(status).build();
+		
 	}
 
 	@PUT
@@ -72,8 +80,8 @@ public class TelephoneLineWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("myTellines")
-	public List<TelephoneLines> getMytelLine(@QueryParam("iduser") int id) {
-		return tellinews.GetMyTelephoneLines(id);
+	public List<TelephoneLines> getMytelLine() {
+		return tellinews.GetMyTelephoneLines();
 	}
 
 	@GET
@@ -124,5 +132,11 @@ public class TelephoneLineWS {
 	@Path("nblinebyperiod")
 	public int NbLineByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Dfin") Date d2) {
 		return tellinews.NbLineByperiod(d1, d2);
+	}
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("searchteline")
+	public List<TelephoneLines> SearchTelline(@QueryParam("motcle") String motcle) {
+		return tellinews.SearchTelline(motcle);
 	}
 }

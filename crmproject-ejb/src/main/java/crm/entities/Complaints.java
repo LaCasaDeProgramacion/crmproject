@@ -34,6 +34,11 @@ public class Complaints implements Serializable {
 	private ComplaintState complaintState;
 	@Column(name = "complaintDate")
 	private Date complaintDate;
+	@Column(name = "assignmentDate")
+	private Date assignmentDate;
+	@Column(name = "closingDate")
+	private Date closingDate;
+	
 	@ManyToOne
 	User user;
 	@ManyToOne
@@ -114,28 +119,36 @@ public class Complaints implements Serializable {
 		this.complaintState = complaintState;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public TypeComplaint getTypeComplaint() {
-		return TypeComplaint;
-	}
-
-	public void setTypeComplaint(TypeComplaint typeComplaint) {
-		TypeComplaint = typeComplaint;
-	}
-
 	public Date getComplaintDate() {
 		return complaintDate;
 	}
 
 	public void setComplaintDate(Date complaintDate) {
 		this.complaintDate = complaintDate;
+	}
+
+	public Date getAssignmentDate() {
+		return assignmentDate;
+	}
+
+	public void setAssignmentDate(Date assignmentDate) {
+		this.assignmentDate = assignmentDate;
+	}
+
+	public Date getClosingDate() {
+		return closingDate;
+	}
+
+	public void setClosingDate(Date closingDate) {
+		this.closingDate = closingDate;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public User getAdmin() {
@@ -146,12 +159,22 @@ public class Complaints implements Serializable {
 		this.admin = admin;
 	}
 
-	public Technician getTechnicien() {
+	public Technician getTechnician() {
 		return technician;
 	}
 
-	public void setTechnicien(Technician technician) {
+	public void setTechnician(Technician technician) {
 		this.technician = technician;
 	}
+
+	public TypeComplaint getTypeComplaint() {
+		return TypeComplaint;
+	}
+
+	public void setTypeComplaint(TypeComplaint typeComplaint) {
+		TypeComplaint = typeComplaint;
+	}
+
+	
 
 }

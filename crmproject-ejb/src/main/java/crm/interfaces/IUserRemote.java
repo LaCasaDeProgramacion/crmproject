@@ -1,5 +1,7 @@
 package crm.interfaces;
 
+import java.util.List;
+
 import javax.ejb.Remote;
 
 import crm.entities.User;
@@ -12,4 +14,10 @@ public void updateToken(String username,String token);
 
 public void confirmCode(String code,int idUser);
 public void logout();
+public List<User> getAdmin();
+public User getUserById();
+public void ResetingPassword(String userName);
+public void UpdatePassword(String userName,String NewPassword);
+
+
 }
