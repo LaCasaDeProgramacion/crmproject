@@ -19,7 +19,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.gson.JsonArray;
+import com.google.gson.annotations.JsonAdapter;
 
 
 
@@ -57,8 +65,9 @@ public class Product implements Serializable{
 	String productStatus;
 
 
-	@ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
-	public Set<Pack> pack;
+	@OneToMany(mappedBy="product",fetch=FetchType.EAGER)
+	@JsonManagedReference
+	public List<ProductsPack> productsPack;
 	@Column(name="productDate")
 	Date productDate;
 	@ManyToOne
@@ -135,12 +144,13 @@ public class Product implements Serializable{
 	public void setProductStatus(String productStatus) {
 		this.productStatus = productStatus;
 	}
-	public Set<Pack> getPack() {
-		return pack;
+	public List<ProductsPack> getProductsPack() {
+		return productsPack;
 	}
-	public void setPack(Set<Pack> pack) {
-		this.pack = pack;
+	public void setProductsPack(List<ProductsPack> productsPack) {
+		this.productsPack = productsPack;
 	}
+	
 
 	
 	

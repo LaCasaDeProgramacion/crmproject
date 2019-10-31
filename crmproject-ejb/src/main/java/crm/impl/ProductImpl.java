@@ -60,7 +60,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	@Override
 	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
 			String productStatus, int category_id,int store_id)   {
-		 Product emp = new Product();
+		    Product emp = new Product();
 		
 		
 		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  

@@ -103,7 +103,10 @@
            </exclusions>
        </dependency>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c3bb360402b57d59b3c7864eb92ae2734a6571a0
        <dependency>
 
 		    <groupId>io.jsonwebtoken</groupId>
