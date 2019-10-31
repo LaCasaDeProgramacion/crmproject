@@ -2,6 +2,7 @@ package crm.entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,28 +41,29 @@ public class Store implements Serializable {
 	    private String store_city;
 
 		@Column(name="start")
-	    private Date start;
+	    private Timestamp start;
 		@Column(name="end")
-	    private Date end;
+	    private Timestamp end;
 		
 		
-		
+		@OneToMany(cascade = CascadeType.ALL,mappedBy = "store",  orphanRemoval = true)
+	    private Set<Product> product;
 
 
 
-		public Date getStart() {
+		public Timestamp getStart() {
 			return start;
 		}
 
-		public void setStart(Date start) {
+		public void setStart(Timestamp start) {
 			this.start = start;
 		}
 
-		public Date getEnd() {
+		public Timestamp getEnd() {
 			return end;
 		}
 
-		public void setEnd(Date end) {
+		public void setEnd(Timestamp end) {
 			this.end = end;
 		}
 

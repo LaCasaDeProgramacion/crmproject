@@ -14,16 +14,21 @@ public interface IPromotionServiceRemote {
 	public int addPromotion(Promotion promotion);
 	public void assignProductTopromotion(int productId, int promotionId);
 	public void removePromotion(int id);
-	public Promotion updatePromotion(Promotion promotion);
+	public Promotion updatePromotion(Promotion promotion,int idpromot,int idproduct);
 	public Promotion findPromotionById(int promotion);
-	public List<Promotion> findAllPromotion();
 	public List<Promotion> searchPromotion(String Promotiontext);//Complicated Search 
+	
+	
 	public Promotion getPromotionbyproductid(int productid);
     public Promotion disablepromotion(Promotion promotion);
+    public Promotion enabledpromotion(Promotion promotion);
     public Product displayProductbypromotion(Promotion promotion);
-	public List<Promotion> disablepromotionshowed(List<Promotion> promotion); 
-	public List<Promotion> promotionenbaledtouse();
-                            
+	
+	
+	public List<Promotion> findAllPromotionusabled();
+	public List<Promotion> promotionNotUsedYet();
+	//give product id return promotion price : 
+	public double productPromotionValue(int productid);                        
 	
 	
 }

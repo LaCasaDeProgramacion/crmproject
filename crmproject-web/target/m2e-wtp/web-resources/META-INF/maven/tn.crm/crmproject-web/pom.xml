@@ -103,6 +103,13 @@
            </exclusions>
        </dependency>
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> c3bb360402b57d59b3c7864eb92ae2734a6571a0
+>>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
        <dependency>
 
 		    <groupId>io.jsonwebtoken</groupId>
