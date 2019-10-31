@@ -1,15 +1,5 @@
 Manifest-Version: 1.0
-<<<<<<< HEAD
 Built-By: Wael
 Build-Jdk: 1.8.0_60
-=======
-<<<<<<< HEAD
-Built-By: Lenovo
-Build-Jdk: 1.8.0_201
-=======
-Built-By: nader
-Build-Jdk: 1.8.0_60
->>>>>>> 0a566c2bf2793976b865d34611ecf3fdd22f7be5
->>>>>>> 925c37d7ce4dcc2e304d685bfc886a92a456e214
 Created-By: Maven Integration for Eclipse
 
