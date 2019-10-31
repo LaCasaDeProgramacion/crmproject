@@ -37,27 +37,21 @@ public class PromotionWs {
 	 public Response addPromotion(//http://localhost:9080/crmproject-web/rest/promotions/addpromotion?ptitle=Promotion&ptype=Black Friday&pvalue=35&punit=10%&maximumorderproducts=40&enabledpromotion=1
 			 @QueryParam("ptitle") String promotiontitle,
 	         @QueryParam("ptype") String promotiontype,
-	         @QueryParam("pvalue") double promotionvalue,
-	         @QueryParam("punit") String promotionunit,
+             @QueryParam("punit") String promotionunit,
 	         @QueryParam("validfrom")Timestamp validfrom ,
-	         @QueryParam("validuntil")Timestamp validuntil,
-	         @QueryParam("maximumorderproducts") int maximumorderproducts,
-	         
-	         @QueryParam("enabledpromotion") int enabledpromotion
+	         @QueryParam("validuntil")Timestamp validuntil
 	         ) {
 		 Promotion p = new Promotion(); 
 		p.setTitle(promotiontitle);
 		p.setPromotiontype(promotiontype);
-		p.setPromotionvalue(promotionvalue);
 		p.setPromotionunit(promotionunit);
 	    Date d = new Date();
 		Timestamp createdate = new Timestamp(d.getTime());
 		p.setCreatedate(createdate);
-		
-	    p.setValidfrom(validfrom);
+		p.setValidfrom(validfrom);
         p.setValiduntil(validuntil);
-		p.setMaximumorderproducts(maximumorderproducts);
-		p.setEnabledpromotion(enabledpromotion);
+
+		
 	    promotionserviceimpl.addPromotion(p);  
 		return Response.status(Status.OK).entity(p).build();
 		 
@@ -84,6 +78,15 @@ public class PromotionWs {
 		 promotionserviceimpl.disablepromotion(promotionserviceimpl.findPromotionById(promotionid));
 		 return Response.status(Status.OK).entity(promotionserviceimpl.findPromotionById(promotionid)).build();
 	 }
+	 @PUT
+     @Path("enablepromotion")
+     @Produces(MediaType.APPLICATION_JSON)
+	 public Response enablepromotion(
+			 @QueryParam("promotionid") int promotionid
+			 ) {
+		 promotionserviceimpl.enabledpromotion(promotionserviceimpl.findPromotionById(promotionid));
+		 return Response.status(Status.OK).entity(promotionserviceimpl.findPromotionById(promotionid)).build();
+	 }
 	 
 	 @DELETE
 	 @Path("deletepromotion")
@@ -99,28 +102,27 @@ public class PromotionWs {
 	 @PUT
      @Path("updatepromotion/{id}")
      @Produces(MediaType.APPLICATION_JSON)
-	 public Response updatepromotion(
+	 public Promotion updatepromotion(
 			 @PathParam(value="id")int id ,
+			 @QueryParam("productid") int idproduct,
 			 @QueryParam("title")String title,
 			 @QueryParam("promotiontype")String promotiontype,
-			 @QueryParam("promotionvalue")double promotionvalue,
 			 @QueryParam("promotionunit")String promotionunit,
 	         @QueryParam("validfrom")Timestamp validfrom ,
-	         @QueryParam("validuntil")Timestamp validuntil,
-			 @QueryParam("maximumorderproducts")int maximumorderproducts
+	         @QueryParam("validuntil")Timestamp validuntil
+	         
+	         
 			 )
 	 {
-		Promotion p = promotionserviceimpl.findPromotionById(id);
+		Promotion p = new Promotion();
 		p.setTitle(title);
 		p.setPromotiontype(promotiontype);
-		p.setPromotionvalue(promotionvalue);
 		p.setPromotionunit(promotionunit);
-		p.setMaximumorderproducts(maximumorderproducts);
 		p.setValidfrom(validfrom);
 		p.setValiduntil(validuntil);
-		 promotionserviceimpl.updatePromotion(p);
-	
-		 return Response.status(200).entity(promotionserviceimpl.findPromotionById(id)).build();
+
+		return promotionserviceimpl.updatePromotion(p,id,idproduct);
+
 	 }
 	
 	 @GET
@@ -152,18 +154,18 @@ public class PromotionWs {
 		
 		 return promotionserviceimpl.getPromotionbyproductid(id);
 	 }
-	 @PUT
-	 @Path("disablepromotionshowed")
+	 @GET
+	 @Path("findAllPromotionusabled")
 	 @Produces(MediaType.APPLICATION_JSON)
-	 public List<Promotion> disablepromotionshowed() {
-				return promotionserviceimpl.disablepromotionshowed(promotionserviceimpl.findAllPromotion());
+	 public List<Promotion> findAllPromotionusabled() {
+				return promotionserviceimpl.findAllPromotionusabled();
 		 
 	 }
 	 @GET
-	 @Path("promotionenbaledlist")
+	 @Path("findpromotionNotUsedYet")
 	 @Produces(MediaType.APPLICATION_JSON)
-	 public List<Promotion> promotionlistenabled() {
-		 return promotionserviceimpl.promotionenbaledtouse();
+	 public List<Promotion> promotionNotUsedYet() {
+		 return promotionserviceimpl.promotionNotUsedYet();
 	 }
 	 
 

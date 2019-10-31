@@ -1,3 +1,4 @@
+
 package crm.entities;
 
 import java.io.Serializable;
@@ -7,6 +8,7 @@ import java.sql.Timestamp;
 import javax.ejb.LocalBean;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,9 +28,11 @@ public int id ;
 @Column(name="title", length=255)
 public String title ; //titre promotion
 @Column(name="promotiontype", length=255)
-public String promotiontype; // le type promotion : promotion par client(coupon) / promotion par produit (expl black friday) 
+public String promotiontype; 
 @Column(name="promotionvalue")
-public double promotionvalue; // la valeur exacte de promotion sur produit
+public double promotionvalue; // la valeur exacte de promotion 
+@Column(name="productnewvalue")
+public double productnewvalue;//la valuer de prod aprés l'affectation
 @Column(name="promotionunit", length=255)
 public String promotionunit; // pourcentage de promotion
 @Column(name="createdate")
@@ -41,7 +45,7 @@ public Timestamp validuntil; // date de fin de promotion
 public int maximumorderproducts; // max d'achat produit par promotion
 @Column(name="enabledpromotion")
 public int enabledpromotion; //enabled promotion
-@OneToOne
+@OneToOne(fetch = FetchType.EAGER)
 public Product product;
 
 
@@ -113,6 +117,13 @@ public Product getProduct() {
 }
 public void setProduct(Product product) {
 	this.product = product;
+}
+
+public double getProductnewvalue() {
+	return productnewvalue;
+}
+public void setProductnewvalue(double productnewvalue) {
+	this.productnewvalue = productnewvalue;
 }
 public Promotion(){
 	}
