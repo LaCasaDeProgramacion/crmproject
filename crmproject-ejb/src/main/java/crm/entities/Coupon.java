@@ -53,16 +53,11 @@ public class Coupon implements Serializable {
 	@OneToOne()
 	public Product product;
 
-<<<<<<< HEAD
-	@Transient
-	@ManyToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
-	public Set<User> users;
-=======
+
 	@OneToMany(mappedBy="coupon",fetch=FetchType.EAGER)
 	@JsonManagedReference
 	@JsonIgnore
 	public Set<UsersCoupon> usersCoupon;
->>>>>>> ff368580f984d063e26241c59f61412ce2f50609
 
 	public int getId() {
 		return id;

@@ -1,6 +1,5 @@
 package crm.impl;
 
-<<<<<<< HEAD
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -74,8 +73,6 @@ public class NotificationImpl implements INotificationLocal, INotificationRemote
 		return (List<NotificationComplaint>) q.getResultList();
 
 	}
-=======
-public class NotificationImpl {
->>>>>>> ff368580f984d063e26241c59f61412ce2f50609
+
 
 }

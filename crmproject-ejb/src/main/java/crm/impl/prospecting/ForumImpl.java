@@ -89,7 +89,7 @@ public class ForumImpl implements IForumServiceRemote {
 	@Override
 	public int addTopic(String title , int idForum) {
 		Forum forum = em.find(Forum.class, idForum); 
-		User user = em.find(User.class,UserSession.id); 
+		User user = em.find(User.class,UserSession.getInstance().getId()); 
 		if (forum != null )
 		{
 			if (user!=null)
@@ -114,7 +114,7 @@ public class ForumImpl implements IForumServiceRemote {
 		if (a!=null)
 		{
 			if ( (a.getUser().getRole()== Roles.ADMIN) ||
-				 (a.getUser().getId()== UserSession.id) )
+				 (a.getUser().getId()== UserSession.getInstance().getId()) )
 			{
 				em.remove(a);
 				
@@ -134,7 +134,7 @@ public class ForumImpl implements IForumServiceRemote {
 	public int updateTopic(int id, String title , int idForum) {
 		Topic topic = em.find(Topic.class, id); 
 		Forum forum = em.find(Forum.class, idForum); 
-		User user = em.find(User.class,UserSession.id); 
+		User user = em.find(User.class,UserSession.getInstance().getId()); 
 		if (topic!=null && forum != null )
 		{
 			
@@ -173,7 +173,7 @@ public class ForumImpl implements IForumServiceRemote {
 	@Override
 	public int addPost(String text,int idTopic ) {
 		Topic topic= em.find(Topic.class, idTopic); 
-		User user = em.find(User.class,UserSession.id); 
+		User user = em.find(User.class,UserSession.getInstance().getId()); 
 		if (topic != null )
 		{
 			if (user!=null)
@@ -195,7 +195,7 @@ public class ForumImpl implements IForumServiceRemote {
 		if (a!=null)
 		{
 			if ( (a.getUser().getRole()== Roles.ADMIN) ||
-				 (a.getUser().getId()== UserSession.id) )
+				 (a.getUser().getId()== UserSession.getInstance().getId()) )
 			{
 			 em.remove(a);
 				//Query q = em.createQuery("DELETE FROM Post a WHERE a.id = :id");
@@ -216,7 +216,7 @@ public class ForumImpl implements IForumServiceRemote {
 	public int updatePost(int id, String text, int idTopic) {
 		Topic topic = em.find(Topic.class, idTopic); 
 		Post post= em.find(Post.class, id); 
-		User user = em.find(User.class,UserSession.id); 
+		User user = em.find(User.class,UserSession.getInstance().getId()); 
 		if (topic!=null && post != null )
 		{
 			
@@ -298,14 +298,14 @@ public class ForumImpl implements IForumServiceRemote {
 		
 		if (topic != null )
 		{
-			if (checkView(UserSession.id, idTopic) == 1)
+			if (checkView(UserSession.getInstance().getId(), idTopic) == 1)
 			{
 				int nb = topic.getNb_seen(); 
 					nb++; 
 					topic.setNb_seen(nb);
 					em.merge(topic); 
 					
-			   Views view = new Views(em.find(User.class, UserSession.id), topic); 
+			   Views view = new Views(em.find(User.class, UserSession.getInstance().getId()), topic); 
 			   em.persist(view);
 			}
 			Query q = em.createQuery("select t.topic.title, t.text, t.user.firstName, t.user.lastName, t.topic.nb_seen from Post t where t.topic.id =:idTopic"); 

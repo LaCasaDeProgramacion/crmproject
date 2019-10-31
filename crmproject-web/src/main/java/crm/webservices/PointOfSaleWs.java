@@ -55,12 +55,11 @@ public class PointOfSaleWs {
 	    		@QueryParam("latitude")float latitude, 
 	    		@QueryParam("longitude")float longitude){
 		 
-		 if (UserSession.roles.equals(Roles.ADMIN))
-		 {
+		 
 			 pointOfSaleImpl.addPointOfSale(name, latitude, longitude);
 			 return Response.status(Status.CREATED).entity("ADDED").build();
-		 }
-		 else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
+		 
+		 //else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
 		 
 				 
 	    }

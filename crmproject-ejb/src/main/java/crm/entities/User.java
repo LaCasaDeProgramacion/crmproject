@@ -20,16 +20,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-<<<<<<< HEAD
 import crm.entities.prospecting.Post;
 import crm.entities.prospecting.Topic;
 import crm.entities.prospecting.Views;
-=======
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
 
 @Entity
 @Table(name="User")
@@ -64,25 +61,23 @@ public class User implements Serializable {
     private Roles role ; 
 	@Column(name="dateBirth")
     private Date dateBirth;
-<<<<<<< HEAD
-	@Transient
-	@ManyToMany(cascade = CascadeType.ALL)
-	public Set<Coupon> coupon;
-=======
+
 	@OneToMany(mappedBy="user",fetch = FetchType.EAGER)
 	@JsonManagedReference
 	public Set<UsersCoupon> usersCoupon;
 	
-	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
-	private List<Post> posts; 
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<Post> posts; 
 	
-	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
-	private List<Topic> topics; 
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<Topic> topics; 
 	
-	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
-	private List<Views> view ; 
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<Views> view ; 
 	
->>>>>>> ff368580f984d063e26241c59f61412ce2f50609
 	
 	
 	public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
@@ -186,24 +181,25 @@ public class User implements Serializable {
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
 	}
-	public List<Post> getPosts() {
+	public Set<Post> getPosts() {
 		return posts;
 	}
-	public void setPosts(List<Post> posts) {
+	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
 	}
-	public List<Topic> getTopics() {
+	public Set<Topic> getTopics() {
 		return topics;
 	}
-	public void setTopics(List<Topic> topics) {
+	public void setTopics(Set<Topic> topics) {
 		this.topics = topics;
 	}
-	public List<Views> getView() {
+	public Set<Views> getView() {
 		return view;
 	}
-	public void setView(List<Views> view) {
+	public void setView(Set<Views> view) {
 		this.view = view;
 	}
+	
 	
 	
 	

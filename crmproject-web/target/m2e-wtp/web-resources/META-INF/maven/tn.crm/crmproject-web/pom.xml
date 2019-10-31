@@ -103,19 +103,9 @@
            </exclusions>
        </dependency>
 
-<<<<<<< HEAD
-       <dependency>
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 
-=======
->>>>>>> c3bb360402b57d59b3c7864eb92ae2734a6571a0
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
        <dependency>
 
->>>>>>> ff368580f984d063e26241c59f61412ce2f50609
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
 		    <version>0.9.0</version>

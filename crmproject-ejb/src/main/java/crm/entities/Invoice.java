@@ -3,10 +3,8 @@ package crm.entities;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
-<<<<<<< HEAD
-=======
+
 import java.util.Set;
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
 
 import javax.persistence.*;
 
@@ -16,10 +14,7 @@ import crm.entities.prospecting.PointOfSale;
 @Table(name="Invoice")
 
 public class Invoice implements Serializable {
-<<<<<<< HEAD
-	
-=======
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
+
 	@Id
 	@GeneratedValue( strategy = GenerationType.IDENTITY )
 	@Column(name="id")
@@ -28,29 +23,23 @@ public class Invoice implements Serializable {
 	@Column(name="Date")
 	private Date date; 
 
-<<<<<<< HEAD
 	@OneToOne
 	private User user ; 
-=======
-	
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
+
 	@OneToOne
 	private PointOfSale pos ;
 	@OneToOne
 	private Store store ; 
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Product> listProducts ; 
-<<<<<<< HEAD
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Services> listServices ;
-=======
 	
 	@ManyToMany(cascade = CascadeType.ALL) 
 	private Set<Pack> pack;
 	
 	@OneToOne
 	private Command cmd; 
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
 	
 	public Invoice() {
 		super();
@@ -72,7 +61,6 @@ public class Invoice implements Serializable {
 		this.date = date;
 	}
 
-<<<<<<< HEAD
 	public User getUser() {
 		return user;
 	}
@@ -80,9 +68,7 @@ public class Invoice implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-=======
-	
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
+
 
 	public PointOfSale getPos() {
 		return pos;
@@ -108,7 +94,6 @@ public class Invoice implements Serializable {
 		this.listProducts = listProducts;
 	}
 
-<<<<<<< HEAD
 	public List<Services> getListServices() {
 		return listServices;
 	}
@@ -116,7 +101,6 @@ public class Invoice implements Serializable {
 	public void setListServices(List<Services> listServices) {
 		this.listServices = listServices;
 	}
-=======
 	public Set<Pack> getPack() {
 		return pack;
 	}
@@ -133,6 +117,5 @@ public class Invoice implements Serializable {
 		this.cmd = cmd;
 	}
 
->>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
 	
 }
