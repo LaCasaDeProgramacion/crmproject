@@ -3,6 +3,7 @@ package crm.entities;
 import java.io.Serializable;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,15 +11,30 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+<<<<<<< HEAD
+import crm.entities.prospecting.Post;
+import crm.entities.prospecting.Topic;
+import crm.entities.prospecting.Views;
+=======
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+>>>>>>> 340a333b14f9c6f9705ec560ca51cfbf2c403a2b
+
 @Entity
 @Table(name="User")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, 
+property = "id")
 public class User implements Serializable {
 	@Id
 	@GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -48,9 +64,25 @@ public class User implements Serializable {
     private Roles role ; 
 	@Column(name="dateBirth")
     private Date dateBirth;
+<<<<<<< HEAD
 	@Transient
 	@ManyToMany(cascade = CascadeType.ALL)
 	public Set<Coupon> coupon;
+=======
+	@OneToMany(mappedBy="user",fetch = FetchType.EAGER)
+	@JsonManagedReference
+	public Set<UsersCoupon> usersCoupon;
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private List<Post> posts; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private List<Topic> topics; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private List<Views> view ; 
+	
+>>>>>>> ff368580f984d063e26241c59f61412ce2f50609
 	
 	
 	public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
@@ -122,16 +154,14 @@ public class User implements Serializable {
 
 	
 
-	public Set<Coupon> getCoupon() {
-		return coupon;
-	}
-
-	public void setCoupon(Set<Coupon> coupon) {
-		this.coupon = coupon;
-	}
-	
 	
 
+	public Set<UsersCoupon> getUsersCoupon() {
+		return usersCoupon;
+	}
+	public void setUsersCoupon(Set<UsersCoupon> usersCoupon) {
+		this.usersCoupon = usersCoupon;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -155,7 +185,26 @@ public class User implements Serializable {
 	}
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
-	} 
+	}
+	public List<Post> getPosts() {
+		return posts;
+	}
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
+	public List<Topic> getTopics() {
+		return topics;
+	}
+	public void setTopics(List<Topic> topics) {
+		this.topics = topics;
+	}
+	public List<Views> getView() {
+		return view;
+	}
+	public void setView(List<Views> view) {
+		this.view = view;
+	}
+	
 	
 	
     

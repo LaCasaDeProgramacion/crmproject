@@ -3,19 +3,34 @@ package crm.entities;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+
+
+
 
 @Entity
 @Table(name = "pack")
+
+
 public class Pack implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -29,6 +44,8 @@ public class Pack implements Serializable {
 	public String description;
 	@Column(name = "integratedprice")
 	public double integratedprice;
+	@Column(name = "integratedquantity")
+	public int integratedquantity=0;
 	@Column(name = "createdate")
 	public Timestamp createdate; // date de creation pack
 	@Column(name = "validfrom")
@@ -39,8 +56,11 @@ public class Pack implements Serializable {
 	public String picture;
 	@Column(name="archivestatus")
 	public boolean archivestatus=false;
-	@ManyToMany(mappedBy = "pack", cascade = CascadeType.ALL)
-	public Set<Product> products;
+	
+	@OneToMany(mappedBy="pack",fetch=FetchType.EAGER,cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	@JsonManagedReference
+	public List<ProductsPack> productsPack;
 
 	public int getId() {
 		return id;
@@ -106,12 +126,15 @@ public class Pack implements Serializable {
 		this.picture = picture;
 	}
 
-	public Set<Product> getProducts() {
-		return products;
+	
+	
+
+	public List<ProductsPack> getProductsPack() {
+		return productsPack;
 	}
 
-	public void setProducts(Set<Product> products) {
-		this.products = products;
+	public void setProductsPack(List<ProductsPack> productsPack) {
+		this.productsPack = productsPack;
 	}
 
 	public boolean isArchivestatus() {
@@ -120,6 +143,14 @@ public class Pack implements Serializable {
 
 	public void setArchivestatus(boolean archivestatus) {
 		this.archivestatus = archivestatus;
+	}
+
+	public int getIntegratedquantity() {
+		return integratedquantity;
+	}
+
+	public void setIntegratedquantity(int integratedquantity) {
+		this.integratedquantity = integratedquantity;
 	}
 
 	public Pack() {

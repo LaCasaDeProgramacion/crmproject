@@ -1,5 +1,8 @@
 package crm.impl;
 
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,37 +16,57 @@ import javax.persistence.TypedQuery;
 import crm.entities.Product;
 import crm.entities.Promotion;
 import crm.interfaces.IPromotionServiceRemote;
+
+
 @Stateless
 @LocalBean
 public class PromotionserviceImpl implements IPromotionServiceRemote {
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
+
 	@Override
 	public int addPromotion(Promotion promotion) {
 		System.out.println("IN : addpromotion");
-	em.persist(promotion);	
-	System.out.println("OUT : addpromotion (persist) ");
-	return promotion.getId();
+		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZonedDateTime now = ZonedDateTime.now(z);
+		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		if (timestamp.compareTo(promotion.validuntil) > 0
+				|| timestamp.compareTo(promotion.validfrom) < 0) {
+
+			promotion.setEnabledpromotion(0);
+
+		} else {
+			promotion.setEnabledpromotion(1);
+		}
+
+		em.persist(promotion);
+
+		System.out.println("OUT : addpromotion (persist) ");
+		return promotion.getId();
 	}
 
 	@Override
 	public void assignProductTopromotion(int productId, int promotionId) {
 		System.out.println("IN : Assign product to promotion");
 		Product product = em.find(Product.class, productId);
-		 Promotion promotion = em.find(Promotion.class, promotionId);
+		Promotion promotion = em.find(Promotion.class, promotionId);
 		promotion.setProduct(product);
+		int i = Integer.parseInt(promotion.getPromotionunit().trim());
+		double promvalue = (product.getProductPrice() * i) / 100;
+		double productnewprice = product.getProductPrice() - promvalue;
+		promotion.setProductnewvalue(productnewprice);
+		promotion.setPromotionvalue(promvalue);
+		promotion.setMaximumorderproducts(product.getProductQuantity());
 		System.out.println("OUT : Assign product to promotion");
 	}
 
 	@Override
 	public void removePromotion(int id) {
 		Query q = em.createQuery("DELETE FROM Promotion p WHERE p.id = :id");
-        q.setParameter("id", id);
-        q.executeUpdate();
-		
-	}
+		q.setParameter("id", id);
+		q.executeUpdate();
 
-	
+	}
 
 	@Override
 	public Promotion findPromotionById(int promotionId) {
@@ -52,104 +75,163 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 	}
 
 	@Override
-	public List<Promotion> findAllPromotion() {
-		TypedQuery<Promotion> query = em.createQuery(
-			      "select e from Promotion e ORDER BY e.createdate DESC", Promotion.class);
-			  List<Promotion> results = query.getResultList();
+	public List<Promotion> findAllPromotionusabled() {
+		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZonedDateTime now = ZonedDateTime.now(z);
+		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Promotion> query = em.createQuery("select e from Promotion e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil OR e.enabledpromotion='1' ORDER BY e.createdate DESC",
+				Promotion.class);
+		query.setParameter("timestamp", timestamp);
+		List<Promotion> results = query.getResultList();
 		return results;
 	}
 
 	@Override
 	public List<Promotion> searchPromotion(String Promotiontext) {
 		TypedQuery<Promotion> query = em.createQuery(
-			      "select e from Promotion e WHERE e.title LIKE :code or e.promotiontype LIKE :code or e.promotionunit LIKE :code ORDER BY e.createdate DESC", Promotion.class);
+				"select e from Promotion e WHERE e.title LIKE :code or e.promotiontype LIKE :code or e.promotionunit LIKE :code ORDER BY e.createdate DESC",
+				Promotion.class);
 		query.setParameter("code", "%" + Promotiontext + "%");
-			  List<Promotion> results = query.getResultList();
+		List<Promotion> results = query.getResultList();
 		return results;
 	}
 
 	@Override
 	public Promotion getPromotionbyproductid(int productid) {
-		TypedQuery<Promotion> query = em.createQuery(
-			      "select p from Promotion p  WHERE  p.product =:prod", Promotion.class);
+		TypedQuery<Promotion> query = em.createQuery("select p from Promotion p  WHERE  p.product =:prod",
+				Promotion.class);
 		Product p = em.find(Product.class, productid);
 		query.setParameter("prod", p);
-			  Promotion results = query.getSingleResult();
-		return  results;
+		Promotion results = query.getSingleResult();
+		return results;
 	}
 
 	@Override
 	public Promotion disablepromotion(Promotion promotion) {
-  		System.out.println("IN : Disable promotion");
+		System.out.println("IN : Disable promotion");
 		Promotion p = em.find(Promotion.class, promotion.getId());
 		p.setEnabledpromotion(0);
 		System.out.println("OUT : Disable promotion");
-        return  p;
+		return p;
+	}
+
+	@Override
+	public Promotion enabledpromotion(Promotion promotion) {
+		System.out.println("IN : Disable promotion");
+		Promotion p = em.find(Promotion.class, promotion.getId());
+		p.setEnabledpromotion(1);
+		System.out.println("OUT : Disable promotion");
+		return p;
 	}
 
 	@Override
 	public Product displayProductbypromotion(Promotion promotion) {
-		TypedQuery<Product> query = em.createQuery(
-			      "select p.product from Promotion p WHERE  p.id =:id", Product.class);
-		 query.setParameter("id", promotion.getId());
-			  Product results = query.getSingleResult();
-		return  results;
+		TypedQuery<Product> query = em.createQuery("select p.product from Promotion p   WHERE  p.id =:id",
+				Product.class);
+		query.setParameter("id", promotion.getId());
+		Product results = query.getSingleResult();
+		return results;
 	}
 
 	@Override
-	public Promotion updatePromotion(Promotion promotion) {
+	public Promotion updatePromotion(Promotion promotion, int idpromot, int idproduct) {
 		System.out.println("IN : Update promotion");
-		
-		Promotion p = em.find(Promotion.class, promotion.getId());
-		p.setTitle(promotion.getTitle());
-		p.setPromotiontype(promotion.getPromotiontype());
-		p.setPromotionvalue(promotion.getPromotionvalue());
-		p.setPromotionunit(promotion.getPromotionunit());
-		p.setValidfrom(promotion.getValidfrom());
-		p.setValiduntil(promotion.getValiduntil());
-	    p.setMaximumorderproducts(promotion.getMaximumorderproducts());
-	    
-					System.out.println("OUUUT : Update promotion");
-					return p;
+
+		Promotion p = em.find(Promotion.class, idpromot);
+        
+		System.err.println("id of product egale :" + idproduct);
+		if (idproduct != 0) {
+			Product prod = em.find(Product.class, idproduct);
+			System.err.println("product name " + prod.getProductName());
+			p.setTitle(promotion.getPromotiontype());
+			p.setPromotiontype(promotion.getPromotiontype());
+			p.setPromotionunit(promotion.getPromotionunit());
+			p.setValidfrom(promotion.getValidfrom());
+			p.setValiduntil(promotion.getValiduntil());
+			p.setProduct(prod);
+			// after product is set
+			int i = Integer.parseInt(p.getPromotionunit().trim());
+			double promvalue = (prod.getProductPrice() * i) / 100;
+			double productnewprice = prod.getProductPrice() - promvalue;
+			p.setProductnewvalue(productnewprice);
+			p.setPromotionvalue(promvalue);
+			p.setMaximumorderproducts(prod.getProductQuantity());
+			ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+			ZonedDateTime now = ZonedDateTime.now(z);
+			 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+			if (timestamp.compareTo(p.validuntil) > 0 || timestamp.compareTo(p.validfrom) < 0) {
+
+				p.setEnabledpromotion(0);
+
+			} else {
+				p.setEnabledpromotion(1);
+			}
+			em.merge(p);
+
+			return p;
+		} else {
+			System.err.println("im heeeeeeeeeeeeeeeere");
+			p.setTitle(promotion.getTitle());
+			p.setPromotiontype(promotion.getPromotiontype());
+			p.setPromotionunit(promotion.getPromotionunit());
+			p.setValidfrom(promotion.getValidfrom());
+			p.setValiduntil(promotion.getValiduntil());
+			p.setProduct(null);
+			p.setProductnewvalue(0);
+			p.setPromotionvalue(0);
+			p.setMaximumorderproducts(0);
+			ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+			ZonedDateTime now = ZonedDateTime.now(z);
+			 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+			if (timestamp.compareTo(p.validuntil) > 0 || timestamp.compareTo(p.validfrom) < 0) {
+
+				p.setEnabledpromotion(0);
+
+			} else {
+				p.setEnabledpromotion(1);
+			}
+			em.merge(p);
+
+			return p;
+
+		}
 
 	}
+
+
 
 	@Override
-	public List<Promotion> disablepromotionshowed(List<Promotion> listepromotion) {
-      System.out.println("IN : disable promotion showed ");
-      List<Promotion> disabledpromotionshowed = new ArrayList<Promotion>();
-      for(Promotion promotion:listepromotion) {
-    	  System.out.println("\"compare date actuel to date validuntil : \"");
-    	  System.out.println(promotion.createdate.compareTo(promotion.validuntil)>0);
-    	  System.out.println("\"compare date actuel to date valid from : \"");
-    	  System.out.println(promotion.createdate.compareTo(promotion.validfrom)<0);
-    	  Promotion prom = em.find(Promotion.class, promotion.getId());
-      if(promotion.createdate.compareTo(promotion.validuntil)>0 || promotion.createdate.compareTo(promotion.validfrom)<0 ) {
-    	
-		
-    	  prom.setEnabledpromotion(0);
-    	  disabledpromotionshowed.add(prom);
-      }else {
-    	  prom.setEnabledpromotion(1);
-      }
-      
-      }
-      System.out.println("OUT : disable promotion showed ");
-      
-	return disabledpromotionshowed;
+	public List<Promotion> promotionNotUsedYet() {
+		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZonedDateTime now = ZonedDateTime.now(z);
+		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Promotion> query = em.createQuery("select e from Promotion e WHERE DATE(:timestamp) NOT BETWEEN e.validfrom AND e.validuntil OR e.enabledpromotion='0' ORDER BY e.createdate DESC",
+				Promotion.class);
+		query.setParameter("timestamp", timestamp);
+		List<Promotion> results = query.getResultList();
+		return results;
 	}
-
 	@Override
-	public List<Promotion> promotionenbaledtouse() {
-	System.out.println("IN : Display promotion :");
-	TypedQuery<Promotion> query = em.createQuery(
-		      "select p from Promotion p WHERE p.enabledpromotion=1 ORDER BY p.createdate DESC ", Promotion.class);
-	          
-		  List<Promotion> listresults = query.getResultList();
-	return  listresults;
+	public double productPromotionValue(int productid) {
+		double productnewvalue;
+
+		TypedQuery<Double> query = em.createQuery("select p.productnewvalue from Promotion p WHERE p.product =:product",
+				Double.class);
+		Product prod = em.find(Product.class, productid);
+		query.setParameter("product", prod);
+		List<Double> result = query.getResultList();
+
+		if (!result.isEmpty()) {
+			return productnewvalue = result.get(0);
+		} else {
+			TypedQuery<Double> querysecond = em.createQuery("select p.productPrice from Product p WHERE p.id =:idprod",
+					Double.class);
+
+			querysecond.setParameter("idprod", productid);
+			return productnewvalue = querysecond.getSingleResult();
+		}
+
 	}
 
-   
-	
 
 }

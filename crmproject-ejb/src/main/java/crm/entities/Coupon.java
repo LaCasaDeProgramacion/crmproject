@@ -2,21 +2,33 @@ package crm.entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
 @Table(name = "coupon")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, 
+property = "id")
 public class Coupon implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -38,12 +50,19 @@ public class Coupon implements Serializable {
 	public int maximumorderproducts; // max d'achat produit par promotion
 	@Column(name = "enabledcoupon")
 	public int enabledcoupon;
-	@OneToOne
+	@OneToOne()
 	public Product product;
 
+<<<<<<< HEAD
 	@Transient
 	@ManyToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
 	public Set<User> users;
+=======
+	@OneToMany(mappedBy="coupon",fetch=FetchType.EAGER)
+	@JsonManagedReference
+	@JsonIgnore
+	public Set<UsersCoupon> usersCoupon;
+>>>>>>> ff368580f984d063e26241c59f61412ce2f50609
 
 	public int getId() {
 		return id;
@@ -117,12 +136,16 @@ public class Coupon implements Serializable {
 		this.product = product;
 	}
 
-	public Set<User> getUsers() {
-		return users;
+	
+
+	
+
+	public Set<UsersCoupon> getUsersCoupon() {
+		return usersCoupon;
 	}
 
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setUsersCoupon(Set<UsersCoupon> usersCoupon) {
+		this.usersCoupon = usersCoupon;
 	}
 
 	Coupon() {

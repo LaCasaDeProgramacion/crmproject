@@ -1,6 +1,9 @@
 package crm.interfaces.prospecting;
 
-import java.util.*;
+
+import java.sql.Date;
+import java.util.List;
+
 import javax.ejb.Remote;
 import crm.entities.prospecting.Contract;
 

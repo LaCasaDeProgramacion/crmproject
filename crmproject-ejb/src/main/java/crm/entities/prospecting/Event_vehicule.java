@@ -2,6 +2,7 @@ package crm.entities.prospecting;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -14,7 +15,8 @@ public class Event_vehicule implements Serializable{
 	
 	@EmbeddedId
 	private Event_vehiculePK event_vehiculePK ; 
-	
+	@Column(name="launched")
+	private boolean launched; 
 	@ManyToOne
     @JoinColumn(name = "idVehicule", referencedColumnName = "id", insertable=false, updatable=false)
 	private Vehicule vehicule;
@@ -66,7 +68,23 @@ public class Event_vehicule implements Serializable{
 		this.eventV = event;
 	}
 
+	public boolean isLaunched() {
+		return launched;
+	}
 
+	public void setLaunched(boolean launched) {
+		this.launched = launched;
+	}
+
+	public Event getEventV() {
+		return eventV;
+	}
+
+	public void setEventV(Event eventV) {
+		this.eventV = eventV;
+	}
+
+	
 	
 	
 

@@ -1,7 +1,7 @@
 package crm.entities.prospecting;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -16,23 +16,36 @@ public class Event implements Serializable {
 	@Column(name="name")
 	private String name ; 
 	@Column(name="startDate")
-	@Temporal(TemporalType.DATE)
 	private Date startDate ;
 	@Column(name="endDate")
-	@Temporal(TemporalType.DATE)
 	private Date endDate ; 
+	@Column(name="location")
+	private Location location ;
+	@Column(name="launched")
+	private boolean launched; 
 	
-	@OneToMany (mappedBy="event")
+	@OneToMany (mappedBy="event", cascade=CascadeType.ALL)
 	private List<Event_agent> event_agent ; 
 	
-	@OneToMany (mappedBy="eventV")
+	@OneToMany (mappedBy="eventV" , cascade=CascadeType.ALL)
 	private List<Event_vehicule> event_vehicule ; 
 
 	public Event() {
 		super();
 	}
+	
 
 	
+
+	public Event(String name, Date startDate, Date endDate) {
+		super();
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+
+
 
 	public int getId() {
 		return id;
@@ -95,6 +108,33 @@ public class Event implements Serializable {
 		this.event_agent = event_agent;
 	}
 
+
+
+	public Location getLocation() {
+		return location;
+	}
+
+
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+
+
+
+	public boolean isLaunched() {
+		return launched;
+	}
+
+
+
+
+	public void setLaunched(boolean launched) {
+		this.launched = launched;
+	}
+
+	
 
 
 

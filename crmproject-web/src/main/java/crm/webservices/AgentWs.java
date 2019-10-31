@@ -1,7 +1,9 @@
 package crm.webservices;
 
 import java.lang.Thread.State;
-import java.util.*;
+import java.sql.Date;
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -53,7 +55,7 @@ public class AgentWs {
 			    @QueryParam("lastName") String lastName, 
 			    @QueryParam("email") String email, 
 			    @QueryParam("datebirth") Date datebirth, 
-			    @QueryParam("role") Role role, 
+			    @QueryParam("role") RoleAgent role, 
 			    @QueryParam("accessPerm") boolean accessPerm, 
 			    @QueryParam("drivenLicence") boolean drivenLicence )
 	 	{
@@ -74,7 +76,7 @@ public class AgentWs {
 			    @QueryParam("lastName") String lastName, 
 			    @QueryParam("email") String email, 
 			    @QueryParam("datebirth") Date datebirth, 
-			    @QueryParam("role") Role role, 
+			    @QueryParam("role") RoleAgent role, 
 			    @QueryParam("accessPerm") boolean accessPerm, 
 			    @QueryParam("drivenLicence") boolean drivenLicence 
     

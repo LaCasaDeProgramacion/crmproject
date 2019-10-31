@@ -1,9 +1,11 @@
 package crm.impl;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -36,7 +38,8 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
 	Mail_API mail;
-
+	Product product ;
+	
 	@Override
 	public List<Product> allProducts() 
 	{
@@ -47,21 +50,21 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	
 	}
 	@Override
-	public Product searchForProduct(String productName) {
+	public List<Product>searchForProduct(String productName) {
 		Query q = em.createQuery("SELECT p FROM Product p where p.productName = :productName");
 		q.setParameter("productName", productName);
-	return (Product) q.getSingleResult();
+		return (List<Product>) q.getResultList();
 	}
 	
 	
 	@Override
 	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
 			String productStatus, int category_id,int store_id)   {
-		 Product emp = new Product();
+		    Product emp = new Product();
 		
 		
-		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-		   LocalDateTime now = LocalDateTime.now();  
+		    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		    LocalDateTime now = LocalDateTime.now();  
 	        Query q = em.createQuery("SELECT d FROM Category d WHERE d.category_id = :category_id");
 	        q.setParameter("category_id",category_id);
 
@@ -80,12 +83,12 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 
 	        em.persist(emp);
 	      
-	try {
-		mail.sendMail("firas.jerbi@esprit.tn", "Nouveau Produit Ajoutée", "le produit"+" " +productName+" "+"est ajoutée"+" "+"le"+" "+now);
-	} catch (MessagingException e) {
-		System.out.println("error");
-		e.printStackTrace();
-	}
+	//try {
+	//	mail.sendMail("firas.jerbi@esprit.tn", "Nouveau Produit Ajoutée", "le produit"+" " +productName+" "+"est ajoutée"+" "+"le"+" "+now);
+//	} catch (MessagingException e) {
+		//System.out.println("error");
+	//	e.printStackTrace();
+	//}
 	}
 	@Override
 	public void deleteProduct(int id) {
@@ -165,6 +168,20 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 	        return 1;
 	}
 	return 0;
+		
+	}
+	@Override
+	public String checkProductAvailability(int id) {
+	
+		
+		Date availability=product.getProductDate();
+		
+		if(availability.getHours()>160) {
+			return " You need to check this products availability, please update It";
+		}else {
+			return "Product is updated";
+		}
+	
 		
 	}
 

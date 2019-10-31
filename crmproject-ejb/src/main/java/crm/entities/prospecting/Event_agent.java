@@ -10,6 +10,8 @@ public class Event_agent implements Serializable{
 	
 	@EmbeddedId
 	private Event_agentPK event_agentPK;
+	@Column(name="launched")
+	private boolean launched; 
 	
 	@ManyToOne
     @JoinColumn(name = "idAgent", referencedColumnName = "id", insertable=false, updatable=false)
@@ -62,6 +64,16 @@ public class Event_agent implements Serializable{
 
 	public void setEvent(Event event) {
 		this.event = event;
+	}
+
+
+	public boolean isLaunched() {
+		return launched;
+	}
+
+
+	public void setLaunched(boolean launched) {
+		this.launched = launched;
 	} 
 	
 	

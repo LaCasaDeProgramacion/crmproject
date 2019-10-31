@@ -18,17 +18,18 @@ public class PointOfSaleImpl implements IPointOfSaleLocal, IPointOfSaleRemote {
 
 	@Override
 	public List<PointOfSale> allPointOfSale() {
-		Query q = em.createQuery("SELECT p.namePS, pp.latitude , pp.longitude FROM PointOfSale p JOIN p.location pp");
+		Query q = em.createQuery("SELECT p.id, p.namePS, pp.latitude , pp.longitude FROM PointOfSale p JOIN p.location pp");
 		return (List<PointOfSale>) q.getResultList();
 	}
 
 	@Override
 	public List<PointOfSale> searchForPointOfSale(String POSName) {
-		Query q = em.createQuery("SELECT p.namePS, pp.latitude , pp.longitude FROM PointOfSale p JOIN p.location pp where p.namePS = :POSName");
+		Query q = em.createQuery("SELECT p.id, p.namePS, pp.latitude , pp.longitude FROM PointOfSale p JOIN p.location pp where p.namePS = :POSName");
 		q.setParameter("POSName", POSName);
 		return (List<PointOfSale> ) q.getResultList(); 
 	}
 
+	
 	@Override
 	public void addPointOfSale(String name, float latitude, float longitude) {
 		Location location = new Location(latitude, longitude); 
@@ -42,9 +43,10 @@ public class PointOfSaleImpl implements IPointOfSaleLocal, IPointOfSaleRemote {
 		PointOfSale pos = em.find(PointOfSale.class, id); 
 		if (pos != null )
 		{
-			Query q = em.createQuery("DELETE FROM PointOfSale p WHERE p.id = :id");
-	        q.setParameter("id", id);
-	        q.executeUpdate();
+			em.remove(pos);
+			//Query q = em.createQuery("DELETE FROM PointOfSale p WHERE p.id = :id");
+	       // q.setParameter("id", id);
+	       // q.executeUpdate();
 	        return true ; 
 			
 		}

@@ -19,13 +19,13 @@ public class CarBrandImpl implements ICarBrandLocal, ICarBrandRemote  {
 	
 	@Override
 	public List<CarBrand> allBrands() {
-		Query q = em.createQuery("SELECT c.brand FROM CarBrand c");
+		Query q = em.createQuery("SELECT c.id,  c.brand FROM CarBrand c");
 		return (List<CarBrand>) q.getResultList();
 	}
 
 	@Override
 	public List<CarBrand> searchForBrand(String name) {
-		Query q = em.createQuery("SELECT c.brand FROM CarBrand c where c.brand like :name");
+		Query q = em.createQuery("SELECT c.id,  c.brand FROM CarBrand c where c.brand like :name");
 		q.setParameter("name", name);
 		return (List<CarBrand>) q.getResultList();
 	}
@@ -40,9 +40,10 @@ public class CarBrandImpl implements ICarBrandLocal, ICarBrandRemote  {
 		CarBrand c = em.find(CarBrand.class, id); 
 		if (c!=null)
 		{
-			Query q = em.createQuery("DELETE FROM CarBrand a WHERE a.id = :id");
-	        q.setParameter("id", id);
-	        q.executeUpdate();
+			em.remove(c);
+		//	Query q = em.createQuery("DELETE FROM CarBrand a WHERE a.id = :id");
+	      //  q.setParameter("id", id);
+	      //  q.executeUpdate();
 	        return true ; 
 		}
 		

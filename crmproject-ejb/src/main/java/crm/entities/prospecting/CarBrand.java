@@ -16,7 +16,7 @@ public class CarBrand implements Serializable {
 	@Column(name ="brand")
 	private String brand ;
 	
-	@OneToMany (mappedBy="carbrand")
+	@OneToMany (mappedBy="carbrand", cascade = CascadeType.ALL)
 	private List<CarModel> carModels ; 
 
 	

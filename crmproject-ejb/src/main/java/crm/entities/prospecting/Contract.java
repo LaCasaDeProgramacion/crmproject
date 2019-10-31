@@ -1,7 +1,8 @@
 package crm.entities.prospecting;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
+
 import javax.persistence.*;
 
 @Entity 
@@ -12,10 +13,8 @@ public class Contract implements Serializable{
 	private int id ;
 	@Column(name="title")
 	private String title; 
-	@Temporal(TemporalType.DATE)
 	@Column(name="startDate")
 	private Date startDate ; 
-	@Temporal(TemporalType.DATE)
 	@Column(name="endDate")
 	private Date endDate ; 
 	@Column(name="salary")
@@ -25,7 +24,7 @@ public class Contract implements Serializable{
 	@Column(name="status")
 	private String status ;
 	
-	@OneToOne 
+	@OneToOne
 	private Agent agent ; 
 	
 	public Contract() {

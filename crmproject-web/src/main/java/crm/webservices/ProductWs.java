@@ -32,6 +32,7 @@ import crm.impl.ProductImpl;
 
 public class ProductWs   {
 	EntityManager em;
+	
 	@EJB
 	ProductImpl productImpl;
 	  private final String status = "{\"status\":\"ok\"}";
@@ -65,11 +66,11 @@ public class ProductWs   {
 	 @GET
      @Path("search")
      @Produces(MediaType.APPLICATION_JSON)
-     public Object searchProduct(
+     public List<Product> searchProduct(
              @QueryParam("productName")String productName
      ){
-         Object e = productImpl.searchForProduct(productName);
-         return e;
+  
+      return productImpl.searchForProduct(productName);
      }
 
 
@@ -156,6 +157,17 @@ public class ProductWs   {
 		    {
 		        return productImpl.getProductbypricedasc();
 		    }
+		 
+		 
+		 @GET
+			@Produces(MediaType.APPLICATION_JSON)
+			@Path("getproductavailability" )
+		    public String getproductavailability( @QueryParam("id")int id)
+		    {
+		        
+			  return productImpl.checkProductAvailability(id);
+		    }	
+		 
 }
 
 	  

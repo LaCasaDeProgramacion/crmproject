@@ -1,6 +1,7 @@
 package crm.webservices;
 
-import java.util.Date;
+
+import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -37,12 +38,16 @@ public class EventWs {
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Object searchEvent(@QueryParam("name") String name){
 		 
-		 List<Event> e = eventImpl.searchForEvent(name); 
-		 if (!e.isEmpty())
+		 List e = eventImpl.searchForEvent(name); 
+		 if (e.isEmpty())
 		 {
-			 return Response.status(Status.OK).entity(e).build();
+			 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+			
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 else  {
+			 return Response.status(Status.FOUND).entity(e).build();
+		 }
+		 
          
          
 		}
@@ -52,10 +57,12 @@ public class EventWs {
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addEvent(@QueryParam("name")String name,
 						    	 @QueryParam("startDate") Date startDate, 
-						    	 @QueryParam("endDate")Date endDate)
+						    	 @QueryParam("endDate")Date endDate, 
+						    	 @QueryParam("longitude")float longitude,
+						    	 @QueryParam("latitude")float latitude)
 	 	{
 		 		 
-	 		eventImpl.addEvent(name, startDate, endDate); 
+	 		eventImpl.addEvent(name, startDate, endDate, longitude, latitude);
 		 	return Response.status(Status.CREATED).entity("ADDED").build();
 				 
 	    }
@@ -67,9 +74,10 @@ public class EventWs {
 	    		 @QueryParam("name")String name,
 	    	 @QueryParam("startDate") Date startDate, 
 	    	 @QueryParam("endDate")Date endDate, 
+	    	 @QueryParam("launched")Boolean launched, 
 	    	 @QueryParam("id") int id){
 		
-		 boolean res = eventImpl.updateEvent(id, name, startDate, endDate); 
+		 boolean res = eventImpl.updateEvent(id, name, startDate, endDate, launched); 
 		 if (res)
 		 {
 			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
@@ -95,7 +103,7 @@ public class EventWs {
 	  	@POST
 	  	@Path("reserve")
 	  	@Produces(MediaType.APPLICATION_JSON)
-	  	public Response reserverVehicule (@QueryParam("idVehicule") int idVehicule , @QueryParam("idEvent") int idEvent)
+	  	public Response reserverVehicule (@QueryParam("idVehicule") int idVehicule , @QueryParam("idEvent") int idEvent, @QueryParam("launched") boolean launched)
 	  	{
 	  		int res = eventImpl.reserveVehicule(idVehicule, idEvent); 
 	  		if (res==1)
@@ -130,12 +138,18 @@ public class EventWs {
 		@Path("disponibility")
 		public Response verifDispo(@QueryParam("idVehicule")int idVehicule, @QueryParam("idEvent")int idEvent)
 		{
-			boolean rep = eventImpl.disponibilityVehicule(idVehicule, idEvent); 
-			if (rep)
+			int rep = eventImpl.disponibilityVehicule(idVehicule, idEvent); 
+			if (rep==1)
 			{
 				return Response.status(Status.OK).entity("DISPO").build();
 			}
-			else return Response.status(Status.NOT_FOUND).entity("INDISPO").build();
+			else if (rep==0)
+			{
+				return Response.status(Status.NOT_FOUND).entity("INDISPO").build();
+			}
+			else {
+				return Response.status(Status.NOT_FOUND).entity("VEHICLE OR EVENT NOT FOUND ").build();
+			}
 				
 		}
 		
@@ -179,7 +193,7 @@ public class EventWs {
 	  	@POST
 	  	@Path("reserveAgent")
 	  	@Produces(MediaType.APPLICATION_JSON)
-	  	public Response reserveAgent(@QueryParam("idAgent") int idAgent , @QueryParam("idEvent") int idEvent)
+	  	public Response reserveAgent(@QueryParam("idAgent") int idAgent , @QueryParam("idEvent") int idEvent,  @QueryParam("launched") boolean launched)
 	  	{
 	  		int res = eventImpl.reserveAgent(idAgent, idEvent); 
 	  		if (res==1)
@@ -216,14 +230,83 @@ public class EventWs {
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Object vehiculeDispo(@QueryParam("idEvent") int idEvent){
 		 
-		 List<Vehicule> e = eventImpl.VehiculeDispoForEvent(idEvent); 
+		 List<Object> e = eventImpl.VehiculeDispoForEvent(idEvent); 
 		 if (!e.isEmpty())
 		 {
 			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE CARS").build();
+		 return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE CARS OR EVENT NOT FOUND").build();
          
          
 		}
+	  	@GET
+	    @Path("agentDisponibility")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Object agentDispo(@QueryParam("idEvent") int idEvent){
+		 List<Object> e = eventImpl.AgentDispoForEvent(idEvent); 
+		 if (!e.isEmpty())
+		 {
+			 return Response.status(Status.OK).entity(e).build();
+		 }
+		 return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE AGENT OR EVENT NOT FOUND").build();
+         
+         
+		}
+	  	
+	  	/* ---------------------- Stat  ----------------------  */
+	  	
+	  	@GET
+	    @Path("VenteParPos")
+	    @Produces(MediaType.APPLICATION_JSON)
+	  	public Object VenteParPos(@QueryParam(value = "pro")String pro){
+	  		
+	  		List<Object> list = eventImpl.VenteParPos(); 
+	  		if (!list.isEmpty())
+	  		{
+	  			return Response.status(Status.OK).entity(list).build();
+	  		}
+	  		 return Response.status(Status.NOT_FOUND).entity("NO INVOICE/POS").build();
+	  	
+	  	}
+	  	
+	  	
+	  	@GET
+	    @Path("proposition")
+	    @Produces(MediaType.APPLICATION_JSON)
+	  	public Object PropositionEvent(@QueryParam(value = "pro")String pro){
+	  		if (eventImpl.propositionEvent() == 1)
+	  		{
+	  			return Response.status(Status.OK).entity("ADDED PROPOSITION").build();
+	  		}
+	  		return Response.status(Status.CONFLICT).entity("Please answer the previous request of event")
+	  				.build();
+	  			
+	  		
+	  	
+	  	}
+	  	
+		@PUT
+	    @Path("replyRequestEvent")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Response replyRequestEvent(@QueryParam("resp") Boolean resp, @QueryParam("idEvent")int idEvent){
+		
+		 int res = eventImpl.replyRequestEvent(resp, idEvent); 
+		 if (res==1)
+		 {
+			 return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+		 }
+		 if (res==2)
+		 {
+			 return Response.status(Status.GONE).entity("REFUSED").build();
+		 }
+		 if (res==3)
+		 {
+			 return Response.status(Status.GONE).entity("ALREADY ACCEPTED").build(); 
+		 }
+		 else return Response.status(Status.NOT_FOUND).entity("EVENT NOT FOUND").build();
+         
+     }
+	  	
+	  	
 	
 }

@@ -1,6 +1,7 @@
 package crm.impl.prospecting;
 
-import java.util.Date;
+
+import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.*;
@@ -21,13 +22,13 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 	@Override
 	public List<Contract> allContracts() {
 		Query q = em.createQuery(
-				"SELECT c.title, c.startDate, c.endDate,c.status, c.salary, c.comment, a.firstName , a.lastName FROM Contract c JOIN c.agent a");
+				"SELECT c.id,  c.title, c.startDate, c.endDate,c.status, c.salary, c.comment, a.firstName , a.lastName FROM Contract c JOIN c.agent a");
 		return (List<Contract>) q.getResultList();
 	}
 
 	@Override
 	public List<Contract> searchForContract(String title) {
-		Query q = em.createQuery("SELECT c.title, c.startDate, c.endDate,c.status, c.salary, c.comment, a.firstName , a.lastName FROM Contract c JOIN c.agent a"
+		Query q = em.createQuery("SELECT c.id, c.title, c.startDate, c.endDate,c.status, c.salary, c.comment, a.firstName , a.lastName FROM Contract c JOIN c.agent a"
 				+ " where c.title = :title");
 		q.setParameter("title", title);
 		return (List<Contract>) q.getResultList(); 
@@ -36,8 +37,6 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 	@Override
 	public boolean addContract(String title , Date startDate, Date endDate, float salary, String comment,String status, int idAgent ) {
 		Contract contract = new Contract(); 
-		
-		
 		Agent agent = em.find(Agent.class,idAgent); 
 		if ((agent != null)&& (agent.getContract()==null) )
 		{
@@ -62,7 +61,8 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 	@Override
 	public boolean updateContract(int id,String title, Date startDate, Date endDate, float salary, String comment,String status, int idAgent) {
 		Contract contract = em.find(Contract.class, id);
-		if (contract!= null)
+		Agent agent = em.find(Agent.class, idAgent); 
+		if (contract!= null && agent!=null)
 		{
 			contract.setComment(comment);
 			contract.setEndDate(endDate);
@@ -71,31 +71,25 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 			contract.setTitle(title);
 			contract.setStatus(status);
 			
-			//chercher si quelqu'un a ce contrat 
-			Query q = em.createQuery("Select a.id, c.id from Agent a join a.contract c"); 
-			Object o = (Object) q.getSingleResult(); 
-			if (o==null)
+			if (contract.getAgent().getId() == idAgent)
 			{
-				Agent agent = em.find(Agent.class,idAgent); 
-				if (agent != null)
-				{
-					contract.setAgent(agent);
-					agent.setContract(contract);
-					em.merge(agent); 
-				}
-				
+				contract.setAgent(em.find(Agent.class, idAgent));
+				System.out.println("le meme agent");
 			}
-			/*
-			Agent agent = em.find(Agent.class,idAgent); 
-			if ((agent != null) && (agent.getContract()==null))
-			{
-				contract.setAgent(agent);
+			else {
+				
+				Agent agent2 = contract.getAgent(); 
+				agent2.setContract(null);
+				em.merge(agent2); 
+				
 				agent.setContract(contract);
 				em.merge(agent); 
-			}*/
+		
+				contract.setAgent(agent);
+			}
 			em.merge(contract); 
 			return true ; 
-		
+
 		}
 		 return false ; 
 	}
@@ -105,9 +99,13 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 		Contract c = em.find(Contract.class, id); 
 		if (c!=null)
 		{
-			Query q = em.createQuery("DELETE FROM Contract a WHERE a.id = :id");
-	        q.setParameter("id", id);
-	        q.executeUpdate();
+			Agent a = c.getAgent(); 
+			a.setContract(null);
+			em.merge(a); 
+			
+			c.setAgent(null);
+			em.merge(c); 
+			em.remove(c);
 	        return true ; 
 		}
 		
