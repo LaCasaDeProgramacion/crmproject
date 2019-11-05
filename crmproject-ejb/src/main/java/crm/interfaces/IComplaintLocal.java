@@ -11,7 +11,7 @@ import crm.entities.User;
 
 @Local
 public interface IComplaintLocal {
-	void AddComplaint(Complaints complaint,int idObject);
+	boolean AddComplaint(Complaints complaint,int idObject);
 
 	void DeleteComplaint(int id);
 
@@ -29,7 +29,7 @@ public interface IComplaintLocal {
 
 	List<Complaints> GetComplaintsByType(int idtypecomplaint);
 
-	void TreatComplaint(int idcomplaint, String State);
+	boolean TreatComplaint(int idcomplaint, String State);
 
 	List<Complaints> GetComplaintsOrderByDateASC();
 
@@ -45,7 +45,7 @@ public interface IComplaintLocal {
 	
 	int NbComplaintByperiod(Date d1 ,Date d2);
 	
-	void AffectTechnicien(int idcomplaint);
+	boolean AffectTechnicien(int idcomplaint);
 	
 	List<Complaints> SearchComplaint(String motclé);
 

@@ -61,9 +61,15 @@ public class ComplaintCommentWs {
 		ComplaintComments c = new ComplaintComments();
 		c.setComment(comment);
 		c.setId(id);
-		commentWS.updateComment(c);
+		boolean test=commentWS.updateComment(c);
 
-		return Response.status(200).entity(status).build();
+		if(test)
+		{
+			return Response.status(200).entity(status).build();
+
+		}
+		return Response.status(200).entity("it s not your comment").build();
+
 	}
 
 	@DELETE
@@ -71,8 +77,15 @@ public class ComplaintCommentWs {
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteComment(@QueryParam("id") int id) {
-		commentWS.DeleteComment(id);
-		return Response.status(200).entity(status).build();
+		boolean test=commentWS.DeleteComment(id);
+		if(test)
+		{
+			return Response.status(200).entity(status).build();
+
+		}
+		return Response.status(200).entity("it s not your comment").build();
+
+			
 	}
 	
 	@PUT

@@ -27,8 +27,7 @@ public class ComplaintCommentsImpl implements IComplaintCommentsLocal, IComplain
 
 	@Override
 	public void addComment(ComplaintComments c, int idComplaint) {
-		if(UserSession.getInstance().getId() != 0)
-		{
+		
 		User user = em.find(User.class, UserSession.getInstance().getId());
 		Complaints complaint = em.find(Complaints.class, idComplaint);
 		Calendar currenttime = Calendar.getInstance();
@@ -39,15 +38,12 @@ public class ComplaintCommentsImpl implements IComplaintCommentsLocal, IComplain
 		c.setLikes(0);
 		em.persist(c);
 		}
-		else
-		{
-			System.out.println("**********");
-		}
+		
 
-	}
+	
 
 	@Override
-	public void updateComment(ComplaintComments c) {
+	public boolean updateComment(ComplaintComments c) {
 		if(c.getUser().getId()==UserSession.getInstance().getId())
 		{
 		Query q = em.createQuery("UPDATE ComplaintComments c SET c.Comment = :Comment WHERE c.id = :id");
@@ -56,17 +52,25 @@ public class ComplaintCommentsImpl implements IComplaintCommentsLocal, IComplain
 		q.setParameter("Comment", c.getComment());
 
 		q.executeUpdate();
+		return true;
 		}
+		return false;
 
 	}
 
 	@Override
-	public void DeleteComment(int idComment) {
+	public boolean DeleteComment(int idComment) {
+		
 		ComplaintComments cc=em.find(ComplaintComments.class, idComment);
+		if(cc.getUser().getId()==UserSession.getInstance().getId())
+		{
 		if(cc.getUser().getId()==UserSession.getInstance().getId())
 		{
 		em.remove(cc);
 		}
+		return true;
+		}
+		return false;
 
 	}
 

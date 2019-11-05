@@ -40,7 +40,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	TechnicianImpl technicianimpl;
 
 	@Override
-	public void AddComplaint(Complaints complaint,int idObject) {
+	public boolean AddComplaint(Complaints complaint,int idObject) {
 		if(UserSession.getInstance().getRole().equals(Roles.CLIENT))
 		{
 		User user = em.find(User.class, UserSession.getInstance().getId());
@@ -55,6 +55,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		complaint.setComplaintObject(complaintobject);
 
 		em.persist(complaint);
+		
 		try {
 			List<User> Userlist = userimpl.getAdmin();
 			for (User u : Userlist) {
@@ -66,7 +67,13 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 			System.out.println("error");
 			e.printStackTrace();
 		}
+		return true;
 		}
+		else
+		{
+			return false;
+		}
+		
 
 	}
 
@@ -196,9 +203,11 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	}
 
 	@Override
-	public void TreatComplaint(int idcomplaint, String State) {
+	public boolean TreatComplaint(int idcomplaint, String State) {
 
-		
+
+		if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
+		{
 		Calendar currenttime = Calendar.getInstance();
 		Date now = new Date((currenttime.getTime()).getTime());
 		ComplaintState cm = ComplaintState.valueOf(State);
@@ -232,7 +241,11 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 				System.out.println("error");
 				e.printStackTrace();
 			}
+			
 		}
+		return true;
+		}
+		return false;
 
 	}
 
@@ -271,8 +284,11 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	}
 
 	@Override
-	public void AffectTechnicien(int idcomplaint) {
+	public boolean AffectTechnicien(int idcomplaint) {
 
+
+		if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
+		{
 		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
 		Technician technician = technicianimpl.getrandomtechnician();
 		complaintBD.setComplaintState(ComplaintState.In_progress);
@@ -298,6 +314,9 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 			System.out.println("error");
 			e.printStackTrace();
 		}
+		return true;
+		}
+		return false;
 
 	}
 

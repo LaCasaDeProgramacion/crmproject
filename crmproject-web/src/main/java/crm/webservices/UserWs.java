@@ -92,21 +92,12 @@ public class UserWs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("profile")
 	public Response Profile() {
-<<<<<<< HEAD
 
-=======
 		System.out.println("++++++++++++++++++++++++" + UserSession.getInstance().getFirstName());
->>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 		if ( userImpl.getUserById() != null )
 			return Response.status(Status.ACCEPTED).entity(userImpl.getUserById()).build(); 
 		else return Response.status(Status.NOT_FOUND).entity("NOT CONNECTED").build();
 	}
-<<<<<<< HEAD
-
-		
-	
-=======
->>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)

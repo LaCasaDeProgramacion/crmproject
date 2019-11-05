@@ -53,8 +53,13 @@ public class ComplaintsWS {
 		Complaints c = new Complaints();
 		c.setComplaintBody(complaintBody);
 
-		complaintws.AddComplaint(c,idcomplaintObject);
-		return Response.status(200).entity(status).build();
+		Boolean test=complaintws.AddComplaint(c,idcomplaintObject);
+		if(test)
+		{
+			return Response.status(200).entity(status).build();
+
+		}
+		return Response.status(200).entity("You are not Client").build();
 	}
 
 	@PUT
@@ -146,9 +151,15 @@ public class ComplaintsWS {
 	public Response TreatComplaint(@QueryParam("idcomplaint") int id, @QueryParam("state") String State
 
 	) {
-		complaintws.TreatComplaint(id, State);
+		boolean test=complaintws.TreatComplaint(id, State);
 
-		return Response.status(200).entity(status).build();
+		if(test)
+		{
+			return Response.status(200).entity(status).build();
+
+		}
+		return Response.status(200).entity("You are not admin").build();
+
 	}
 
 	@GET
@@ -196,8 +207,13 @@ public class ComplaintsWS {
 	@Path("affectTechnician")
 	@Secured
 	public Response AffectTechnician(@QueryParam("idcomplaint") int id) {
-		complaintws.AffectTechnicien(id);
+		boolean test=complaintws.AffectTechnicien(id);
+		if(test)
+		{
 		return Response.status(200).entity(status).build();
+		}
+		return Response.status(200).entity("You are not admin").build();
+
 	}
 	
 	@GET
