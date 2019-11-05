@@ -62,7 +62,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	@Override
 	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
 			String productStatus, int category_id,int store_id)   {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+		if(UserSession.getInstance().getRole()==Roles.VENDOR || UserSession.getInstance().getRole()==Roles.ADMIN) {
 		    Product emp = new Product();
 	Stock stock = new Stock();
 		
@@ -83,15 +83,15 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	        emp.setProductStatus(productStatus);
 	        emp.setCategory(categ);
 	        emp.setStore(store);
-<<<<<<< HEAD
+
 	       
 	        stock.setStockQuantity(emp.getProductQuantity()-stock.StockQuantity);
 //nupdati stock donc lezm stock howali yon9es mel productquantity
 	        
-=======
+
 	        emp.setNumberOfViews(0);
 
->>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
+
 	        em.persist(emp);
 	      
 		}
@@ -175,12 +175,10 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 	      System.out.println(p);
 	        p.setCategory(em.find(Category.class, category_id));
 	        p.setStore(em.find(Store.class, store_id));
-<<<<<<< HEAD
-	        em.merge(p).getId();
-=======
+
 	        p.setNumberOfViews(p.getNumberOfViews());
 	        em.merge(p);
->>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
+
 	        return 1;
 	}
 		}

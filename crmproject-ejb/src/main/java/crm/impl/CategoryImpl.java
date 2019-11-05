@@ -35,7 +35,7 @@ public class CategoryImpl implements ICategoryServiceRemote,ICategoryServiceLoca
 
 	@Override
 	public void addCategory(String categoryName) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+		if(UserSession.getInstance().getRole()==Roles.VENDOR || UserSession.getInstance().getRole()==Roles.ADMIN) {
 		Category cat = new Category();
 		cat.setCategory_name(categoryName);
 		em.persist(cat);

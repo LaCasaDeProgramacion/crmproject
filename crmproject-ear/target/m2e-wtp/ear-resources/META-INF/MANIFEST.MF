@@ -1,10 +1,5 @@
 Manifest-Version: 1.0
-<<<<<<< HEAD
 Built-By: Wael
 Build-Jdk: 1.8.0_60
-=======
-Built-By: fjerbi
-Build-Jdk: 1.8.0_181
->>>>>>> 0c182b7441f06308ac12d7915f7e51527753840e
 Created-By: Maven Integration for Eclipse
 

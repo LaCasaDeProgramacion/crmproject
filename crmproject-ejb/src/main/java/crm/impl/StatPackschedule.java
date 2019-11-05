@@ -18,26 +18,9 @@ import crm.entities.StatPack;
 public class StatPackschedule {
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
-<<<<<<< HEAD
 
-//@EJB
-//StatPackserviceImpl statpackserviceimpl;
-//@Schedule(second="*/5",minute="*" ,hour="*")
-	/*
-public void everyHourCreateStattest() { //if new pack created we create stat
-=======
-@EJB
+@EJB 
 StatPackserviceImpl statpackserviceimpl;
-<<<<<<< HEAD
-=======
-//@Schedule(second="*",minute="*" ,hour="*/1")
-//@EJB
-//StatPackserviceImpl statpackserviceimpl;
-//@Schedule(second="*/5",minute="*" ,hour="*")
-/*public void everyHourCreateStattest() { //if new pack created we create stat
->>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
->>>>>>> 0c182b7441f06308ac12d7915f7e51527753840e
-
 @Schedule(second="*/10",minute="*",hour="*" ,persistent=false)
 public void ScheduleMethods() {
 	System.out.println("*************************Add New Packs Stats**************************************");
@@ -62,7 +45,7 @@ public void ScheduleMethods() {
 	statpackserviceimpl.addstatpack(p);
 	System.out.println("Stat created For Pack"+p.getTitle());
 	}
-<<<<<<< HEAD
+
 	System.out.println("*************************Update Packs Stats*******************************************************");
 	TypedQuery<Pack> packidss = em.createQuery("SELECT p FROM Pack p",Pack.class);
 	List<Pack> packss = packidss.getResultList();
@@ -84,41 +67,4 @@ public void ScheduleMethods() {
 }
 	
 	
-
-=======
-	
-<<<<<<< HEAD
 }
-*/
-//@Schedule(second="*",minute="*" ,hour="*/1")
-//public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
-=======
-}*/
-//@Schedule(second="*",minute="*" ,hour="*/1")
-
-public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
-
-/*public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
->>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
->>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
-	
-	
-	/*statpackserviceimpl.updatestatpack(packid, gainmoney, quantityselled, changetitle);*/
-	
-	
-	
-//}
-/*@Schedule(second="",minute="" ,hour="")
-public void everyhourtestexistingpackstat() {
-	
-}  */
->>>>>>> 0c182b7441f06308ac12d7915f7e51527753840e
-
-
-<<<<<<< HEAD
-//}
-
-=======
-}
-}
->>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1

@@ -42,7 +42,7 @@ public class StoreImpl implements IStoreServiceRemote, IStoreServiceLocal{
 	
 	@Override
 	public void addStore(String store_name) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+		if(UserSession.getInstance().getRole()==Roles.VENDOR || UserSession.getInstance().getRole()==Roles.ADMIN) {
 		 Store store = new Store();
 		 
 	

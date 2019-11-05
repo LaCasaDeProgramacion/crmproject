@@ -74,14 +74,11 @@ public class ProductWs   {
       return productImpl.searchForProduct(productName);
      }
 
-<<<<<<< HEAD
-@Secured
-	 @POST
-=======
 
-	 	@POST
->>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
-	    @Path("addProduct")
+
+	 @POST
+
+	  @Path("addProduct")
 	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addProduct(
