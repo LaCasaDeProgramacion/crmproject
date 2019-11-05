@@ -11,6 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="ComplaintComments")
 public class ComplaintComments implements Serializable{
@@ -24,14 +29,17 @@ public class ComplaintComments implements Serializable{
 	@Column(name = "ComplaintCommentsId")
 	private int id;
 	@Column(name = "Comment")
+	
 	private String Comment;
 	@Column(name = "CommentDate")
 	private Date CommentDate;
 	@Column(name = "Likes")
 	private int Likes;
 	@ManyToOne
+	@JsonIgnore
 	Complaints complaint;
 	@ManyToOne
+	@JsonIgnore
 	User user;
 	public int getId() {
 		return id;

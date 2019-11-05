@@ -19,6 +19,11 @@ public interface ITelephoneLinesLocal {
 	void UpdateTelephoneLines(TelephoneLines telephoneline, int iduser);
 
 	List<TelephoneLines> GetAll();
+	
+	TelephoneLines GetTellineById(int idTelline);
+	
+	 List<TelephoneLines> GetTelephoneLinesByService(int idService);
+
 
 	List<TelephoneLines> GetMyTelephoneLines();
 

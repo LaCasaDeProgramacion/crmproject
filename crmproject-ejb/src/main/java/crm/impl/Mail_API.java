@@ -10,8 +10,8 @@ public class Mail_API {
     public static void sendMail(String to,String subject,String message) throws MessagingException
     {
         String host="smtp.gmail.com";
-        final String user="nader.abdellaoui@esprit.tn";//change accordingly
-        final String password="183JMT0198";//change accordingly
+        final String user="crm.4twin1@gmail.com";//change accordingly
+        final String password="CASA4twin1";//change accordingly
 
 
         //Get the session object

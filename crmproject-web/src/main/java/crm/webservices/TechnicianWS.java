@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Complaints;
 import crm.entities.Technician;
 import crm.impl.ComplaintsImpl;
@@ -28,6 +29,7 @@ public class TechnicianWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("alltechnician")
+	@Secured
 	public List<Technician> GetALL() {
 		return technicianws.getAllTechnician();
 	}
@@ -35,6 +37,7 @@ public class TechnicianWS {
 	@POST
 	@Path("addtechnician")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response addTechnician(@QueryParam("technicianFirstName") String technicianFirstName,
 			@QueryParam("technicianSecondName") String technicianSecondName,
 			@QueryParam("technicianSpecialty") String technicianSpecialty,
@@ -51,7 +54,7 @@ public class TechnicianWS {
 	@PUT
 	@Path("updatetechnician")
 	@Produces(MediaType.APPLICATION_JSON)
-
+	@Secured
 	public Response updateTechnician(@QueryParam("id") int id, @QueryParam("technicianFirstName") String technicianFirstName,
 			@QueryParam("technicianSecondName") String technicianSecondName,
 			@QueryParam("technicianSpecialty") String technicianSpecialty,
@@ -67,6 +70,7 @@ public class TechnicianWS {
 	@DELETE
 	@Path("deletetechnician")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response deleteTechnician(@QueryParam("id") int id) {
 		technicianws.DeleteTechnician(id);
 		return Response.status(200).entity(status).build();
@@ -75,7 +79,8 @@ public class TechnicianWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("isavailble")
-	public boolean IsAvailble(@QueryParam("idtech") int idtechnician) {
+	@Secured
+	public Boolean IsAvailble(@QueryParam("idtech") int idtechnician) {
 		return technicianws.IsAvailable(idtechnician);
 	}
 }

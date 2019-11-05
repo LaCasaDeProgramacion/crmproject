@@ -10,6 +10,8 @@ import java.util.spi.CalendarDataProvider;
 import javax.ejb.*;
 import javax.mail.MessagingException;
 import javax.persistence.*;
+
+import crm.entities.Complaints;
 import crm.entities.Roles;
 import crm.entities.User;
 import crm.entities.prospecting.*;
@@ -31,49 +33,49 @@ public class ForumImpl implements IForumServiceRemote {
 	
 	@Override
 	public List<Forum> allForums() {
-		Query q = em.createQuery("SELECT f.id, f.name , f.description , f.category_Forum from Forum f " );
+		TypedQuery<Forum> q = em.createQuery("SELECT c FROM Forum c", Forum.class);
 		return (List<Forum>) q.getResultList();
 	}
 	
 	@Override
-	public void addForum(String name , String description, Roles auth_view , Roles auth_post , Category_Forum category_Forum) {
-			Forum forum = new Forum(name, description, auth_view, auth_post, category_Forum);
+	public boolean addForum(String name , String description,  Category_Forum category_Forum) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		{
+			Forum forum = new Forum(name, description,   category_Forum);
 			em.persist(forum);
+			return true ; 
+		}
+		else return false ; 
 		 
 	}
 	
 	@Override
-	public boolean deleteForum(int id) {
+	public int deleteForum(int id) {
 		Forum a = em.find(Forum.class, id); 
-		if (a!=null)
+		if (a!=null && UserSession.getInstance().getRole()== Roles.ADMIN)
 		{
 			em.remove(a);
-			//Query q = em.createQuery("DELETE FROM Forum a WHERE a.id = :id");
-	       // q.setParameter("id", id);
-	       // q.executeUpdate();
-	        return true ; 
+	        return 1 ; 
 		}
-		return false ; 
+		if (a==null ) return 0; //forum not found
+		else return -1; // you are not an admin
 	}
 	
 	@Override
-	public boolean updateForum(int id, String name , String description, Roles auth_view , Roles auth_post , Category_Forum category_Forum) {
+	public int updateForum(int id, String name , String description,   Category_Forum category_Forum) {
 		Forum forum= em.find(Forum.class,id );
 		
-		if (forum != null)
+		if (forum != null && UserSession.getInstance().getRole()== Roles.ADMIN )
 		{
-		
 		forum.setName(name);
 		forum.setDescription(description);
-		forum.setAuth_post(auth_post);
-		forum.setAuth_view(auth_view);
 		forum.setCategory_Forum(category_Forum);
+		
 			em.merge(forum);
-			 return true ; 
-			 
-			
+			 return 1 ; 
 		}
-		return false ; 
+		if (forum==null ) return 0; //forum not found
+		else return -1; // you are not an admin
 		 
 	}
 
@@ -81,9 +83,9 @@ public class ForumImpl implements IForumServiceRemote {
 	
 	@Override
 	public List<Topic> allTopics() {
-		Query q = em.createQuery("SELECT t.id, t.title , t.forum.name ,  t.nb_seen , "
-				+ " t.user.firstName, t.user.lastName , t.creation_date from Topic t" );
+		TypedQuery<Topic> q = em.createQuery("SELECT c FROM Topic c", Topic.class);
 		return (List<Topic>) q.getResultList();
+		
 	}
 	
 	@Override
@@ -105,7 +107,6 @@ public class ForumImpl implements IForumServiceRemote {
 			
 		}
 		else return -1; //forum introuvable
-		
 	}
 	
 	@Override
@@ -121,13 +122,11 @@ public class ForumImpl implements IForumServiceRemote {
 		       return 1; 
 			}
 			else return -1; //ur not an admin or topic's user 
-			
 		}
 		else 
 		{
 			return 0; // Topic introuvable
 		}
-		
 	}
 	
 	@Override
@@ -137,7 +136,6 @@ public class ForumImpl implements IForumServiceRemote {
 		User user = em.find(User.class,UserSession.getInstance().getId()); 
 		if (topic!=null && forum != null )
 		{
-			
 				if (user!=null)
 				{
 					Calendar aujourdhui = Calendar.getInstance();
@@ -150,24 +148,21 @@ public class ForumImpl implements IForumServiceRemote {
 					return 1; 
 					
 				}
-				
 				else {
 					return 0; //user introuvable ur not connected
 				}
-				
-		
-			
 		}
-		else return -1; // topic introuvable
-		
-		 
+		else return -1; // topic ou introuvable
 	}
 	
 	/* ----------------------- CRUD Posts ----------------------- */
 	@Override
 	public List<Post> allPosts() {
-		Query q = em.createQuery("SELECT p.id , p.text , p.date_post , p.user.firstName, p.user.lastName from Post p" );
-		return (List<Post>) q.getResultList();
+		
+			TypedQuery<Post> q = em.createQuery("SELECT c FROM Post c", Post.class);
+			return (List<Post>) q.getResultList();
+			
+		
 	}
 	
 	@Override
@@ -198,9 +193,6 @@ public class ForumImpl implements IForumServiceRemote {
 				 (a.getUser().getId()== UserSession.getInstance().getId()) )
 			{
 			 em.remove(a);
-				//Query q = em.createQuery("DELETE FROM Post a WHERE a.id = :id");
-		       // q.setParameter("id", id);
-		       // q.executeUpdate();
 		       return 1; 
 			}
 			else return -1; 
@@ -311,62 +303,69 @@ public class ForumImpl implements IForumServiceRemote {
 			Query q = em.createQuery("select t.topic.title, t.text, t.user.firstName, t.user.lastName, t.topic.nb_seen from Post t where t.topic.id =:idTopic"); 
 			q.setParameter("idTopic", idTopic); 
 			return q.getResultList();
-			
 		}
 		else return null; 
 		
 	}
 	
 	@Override
-	public void sendEmailProspect() 
+	public boolean sendEmailProspect() 
 	{
-		//recuperation  derniers 2 produits 
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		{
+			//recuperation  derniers 2 produits 
+			
+			int count =0; 
+			String products = " \n "; 
+			String email= ""; 
+			Query q = em.createQuery("Select p.productName from Product p ORDER by p.productDate");
+		    List productNames = q.getResultList();
+		    
+		    Query q2 = em.createQuery("Select p.productDescription from Product p ORDER by p.productDate");
+		    List productDescription = q2.getResultList();
+		    
+		    for (Object name : productNames) 
+		    {
+		    	if (count <2)
+		    	{
+		    		products = products + "  " + (String)name + " : " + (String)productDescription.get(count) + " \n"  ; 
+		    		count ++; 
+		    	}
+		    	
+		    }
+		    System.out.println("le message : " + products);
+		   
+			//recuperation des ids -> emails
+			Query query = em.createQuery("SELECT v.user.id FROM Views v where v.user.role= :role");
+			query.setParameter("role", Roles.PROSPECT); 
+		    List ids = query.getResultList();
+		    
+		    if (!ids.isEmpty())
+		    {
+		    	 for (Object id : ids) {
+		    		 User user = em.find(User.class, (Integer)id); 
+		    		  email = user.getEmail(); 
+		    			String message =" Dear Ms/Mm " + user.getFirstName() + " " + user.getLastName() +" \n "
+		    					+ "We would like to inform you that these new products"
+		    					+ " are now available in Orange stores";
+		    		 System.out.println("mail : " + email);
+		    		 try {
+		    			 Mail_API.sendMail(email, "Oranges News", message + products ); 
+		    		 }
+		    		 catch(Exception e)
+		    		 {
+		    			 System.out.println(" !!!! MAIL EXCEPTION");
+		    		 }
+		    		 
+				}
+		    }
+		    
+			
+			return true ; 
+		}
+		else 
+			return false ; 
 		
-		int count =0; 
-		String products = " \n "; 
-		String email= ""; 
-		Query q = em.createQuery("Select p.productName from Product p ORDER by p.productDate");
-	    List productNames = q.getResultList();
-	    
-	    Query q2 = em.createQuery("Select p.productDescription from Product p ORDER by p.productDate");
-	    List productDescription = q2.getResultList();
-	    
-	    for (Object name : productNames) 
-	    {
-	    	if (count <2)
-	    	{
-	    		products = products + "  " + (String)name + " : " + (String)productDescription.get(count) + " \n"  ; 
-	    		count ++; 
-	    	}
-	    	
-	    }
-	    System.out.println("le message : " + products);
-	   
-		//recuperation des ids -> emails
-		Query query = em.createQuery("SELECT v.user.id FROM Views v where v.user.role= :role");
-		query.setParameter("role", Roles.PROSPECT); 
-	    List ids = query.getResultList();
-	    
-	    if (!ids.isEmpty())
-	    {
-	    	 for (Object id : ids) {
-	    		 User user = em.find(User.class, (Integer)id); 
-	    		  email = user.getEmail(); 
-	    			String message =" Dear Ms/Mm " + user.getFirstName() + " " + user.getLastName() +" \n "
-	    					+ "We would like to inform you that these new products"
-	    					+ "are now available in Orange stores";
-	    		 System.out.println("mail : " + email);
-	    		 try {
-	    			 Mail_API.sendMail(email, "Oranges News", message + products ); 
-	    		 }
-	    		 catch(Exception e)
-	    		 {
-	    			 System.out.println(" !!!! MAIL EXCEPTION");
-	    		 }
-	    		 
-			}
-	    }
-	    
 	    
 	}
 	

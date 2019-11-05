@@ -8,6 +8,8 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
+
+import crm.AuthenticateWS.Secured;
 import crm.entities.prospecting.*;
 import crm.impl.prospecting.EventImpl;
 
@@ -54,6 +56,7 @@ public class EventWs {
 	 
 	 	@POST
 	    @Path("add")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addEvent(@QueryParam("name")String name,
 						    	 @QueryParam("startDate") Date startDate, 
@@ -62,13 +65,16 @@ public class EventWs {
 						    	 @QueryParam("latitude")float latitude)
 	 	{
 		 		 
-	 		eventImpl.addEvent(name, startDate, endDate, longitude, latitude);
+	 		if (eventImpl.addEvent(name, startDate, endDate, longitude, latitude))
 		 	return Response.status(Status.CREATED).entity("ADDED").build();
+			else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+ 
 				 
 	    }
 	 
 		@PUT
 	    @Path("update")
+		@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response updateEvent(
 	    		 @QueryParam("name")String name,
@@ -77,31 +83,34 @@ public class EventWs {
 	    	 @QueryParam("launched")Boolean launched, 
 	    	 @QueryParam("id") int id){
 		
-		 boolean res = eventImpl.updateEvent(id, name, startDate, endDate, launched); 
-		 if (res)
-		 {
-			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
-		 }
-		 else return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-         
+		 int res = eventImpl.updateEvent(id, name, startDate, endDate, launched); 
+	 		if (res==1)
+			return Response.status(Status.CREATED).entity("UPDATED").build();
+			if(res==-1)
+			return Response.status(Status.NOT_FOUND).entity("EVENT NOT FOUND").build();
+			else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+		 
      }
  	 
 	  	@DELETE
 	    @Path("delete")
+	  	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response deleteEvent( @QueryParam("id")int id){
-	  		
-	  		if (eventImpl.deleteEvent(id))
-	  		{
-	  			return Response.status(Status.GONE).entity("DELETED").build();
-	  		}
-	  		return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();  
+	  		 int res = eventImpl.deleteEvent(id); 
+	  		if (res==1)
+				return Response.status(Status.CREATED).entity("DELETED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("EVENT NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+			 
 	    }
 	  	
 	  	/* ---------------------- Event-Vehicules  ----------------------  */
 	  	
 	  	@POST
 	  	@Path("reserve")
+	  	@Secured
 	  	@Produces(MediaType.APPLICATION_JSON)
 	  	public Response reserverVehicule (@QueryParam("idVehicule") int idVehicule , @QueryParam("idEvent") int idEvent, @QueryParam("launched") boolean launched)
 	  	{
@@ -109,6 +118,11 @@ public class EventWs {
 	  		if (res==1)
 	  		{
 	  			return Response.status(Status.OK).entity("AFFECTED").build();
+			}
+	  		if (res==-1)
+	  		{
+			 return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+
 			}
 	  		else if (res==0)
 	  		{
@@ -192,6 +206,7 @@ public class EventWs {
 		
 	  	@POST
 	  	@Path("reserveAgent")
+	  	@Secured
 	  	@Produces(MediaType.APPLICATION_JSON)
 	  	public Response reserveAgent(@QueryParam("idAgent") int idAgent , @QueryParam("idEvent") int idEvent,  @QueryParam("launched") boolean launched)
 	  	{
@@ -200,6 +215,10 @@ public class EventWs {
 	  		{
 	  			return Response.status(Status.OK).entity("AFFECTED").build();
 			}
+	  		if (res== -1)
+	  		{
+	  			return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+	  		}
 	  		else if (res==0)
 	  		{
 	  			 return Response.status(Status.NOT_FOUND).entity("VEHICULE OR EVENT NOT FOUND").build();
@@ -272,6 +291,7 @@ public class EventWs {
 	  	
 	  	@GET
 	    @Path("proposition")
+	  	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	  	public Object PropositionEvent(@QueryParam(value = "pro")String pro){
 	  		if (eventImpl.propositionEvent() == 1)
@@ -287,6 +307,7 @@ public class EventWs {
 	  	
 		@PUT
 	    @Path("replyRequestEvent")
+		@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response replyRequestEvent(@QueryParam("resp") Boolean resp, @QueryParam("idEvent")int idEvent){
 		

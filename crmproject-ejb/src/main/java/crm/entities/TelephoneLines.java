@@ -3,6 +3,7 @@ package crm.entities;
 import java.io.Serializable;
 import java.sql.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "telephone_lines",uniqueConstraints=
@@ -37,6 +42,8 @@ public class TelephoneLines implements Serializable {
 	private Date validityDate;
 	@Column(name = "lineState")
 	private int lineState;
+	@Column(name = "Solde")
+	private int solde;
 	@ManyToOne
 	Services service;
 	@ManyToOne
@@ -170,5 +177,15 @@ public class TelephoneLines implements Serializable {
 	public void setLineState(int lineState) {
 		this.lineState = lineState;
 	}
+
+	public int getSolde() {
+		return solde;
+	}
+
+	public void setSolde(int solde) {
+		this.solde = solde;
+	}
+	
+	
 
 }

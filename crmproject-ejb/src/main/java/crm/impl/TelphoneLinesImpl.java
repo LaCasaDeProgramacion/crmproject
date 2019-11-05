@@ -32,8 +32,9 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 	Mail_API mail;
 	@EJB
 	UserImpl userimpl;
+
 	@Override
-	public void AddTelephoneLines(TelephoneLines telephoneline,int idUser, int idservice) {
+	public void AddTelephoneLines(TelephoneLines telephoneline, int idUser, int idservice) {
 		User user = em.find(User.class, idUser);
 		Services service = em.find(Services.class, idservice);
 		Calendar currenttime = Calendar.getInstance();
@@ -43,13 +44,21 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		Date dateValidty = new java.sql.Date(dateCreation.getTime() + 31l * 24l * 60l * 60l * 1000l);
 		telephoneline.setValidityDate(dateValidty);
 		telephoneline.setUser(user);
+		if(service.isEnabled())
+		{
 		telephoneline.setServices(service);
 		em.persist(telephoneline);
+		}
+		else
+		{
+		telephoneline.setServices(null);
+		em.persist(telephoneline);
+		}
 		try {
-			
-			
-			mail.sendMail(telephoneline.getUser().getEmail(), "ligne ajouté", telephoneline.getLineNumber()+"est votre nouvelle ligne");
-		
+
+			mail.sendMail(telephoneline.getUser().getEmail(), "Line Added ",
+					telephoneline.getLineNumber() + " is your new Line.");
+
 		} catch (MessagingException e) {
 			System.out.println("error");
 			e.printStackTrace();
@@ -99,6 +108,15 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		q.setParameter("iduser", user);
 		return (List<TelephoneLines>) q.getResultList();
 	}
+	
+	@Override
+	public List<TelephoneLines> GetTelephoneLinesByService(int idService) {
+		Services service=em.find(Services.class, idService);
+		TypedQuery<TelephoneLines> q = em.createQuery("SELECT t FROM TelephoneLines t WHERE t.service = :idservice",
+				TelephoneLines.class);
+		q.setParameter("idservice", service);
+		return (List<TelephoneLines>) q.getResultList();
+	}
 
 	@Override
 	public void AffectService(int idtelephoneline, int idservice) {
@@ -112,14 +130,17 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		 */
 		Services service = em.find(Services.class, idservice);
 		TelephoneLines telephonelineBD = em.find(TelephoneLines.class, idtelephoneline);
+		if(service.isEnabled())
+		{
 		telephonelineBD.setServices(service);
 
 		em.merge(telephonelineBD);
-try {
-			
-			
-			mail.sendMail(telephonelineBD.getUser().getEmail(), "Service affecté", service.getServiceName()+"est affecté a votre ligne"+telephonelineBD.getLineNumber());
-		
+		}
+		try {
+
+			mail.sendMail(telephonelineBD.getUser().getEmail(), "Service affected",
+					service.getServiceName() + " affected to your line " + telephonelineBD.getLineNumber());
+
 		} catch (MessagingException e) {
 			System.out.println("error");
 			e.printStackTrace();
@@ -141,25 +162,22 @@ try {
 		tellineBD.setLineState(lineState);
 
 		em.merge(tellineBD);
-		if(tellineBD.getLineState()==0)
-		{
+		if (tellineBD.getLineState() == 0) {
 			try {
-				
-				
-				mail.sendMail(tellineBD.getUser().getEmail(), "ligne désactivée", tellineBD.getLineNumber()+"est désactivée");
-			
+
+				mail.sendMail(tellineBD.getUser().getEmail(), "Deactivated line",
+						tellineBD.getLineNumber() + " is disabled");
+
 			} catch (MessagingException e) {
 				System.out.println("error");
 				e.printStackTrace();
 			}
-		}
-		else
-		{
+		} else {
 			try {
-				
-				
-				mail.sendMail(tellineBD.getUser().getEmail(), "ligne Activée", tellineBD.getLineNumber()+"est activée");
-			
+
+				mail.sendMail(tellineBD.getUser().getEmail(), "Activated line",
+						tellineBD.getLineNumber() + "is enabled");
+
 			} catch (MessagingException e) {
 				System.out.println("error");
 				e.printStackTrace();
@@ -175,7 +193,6 @@ try {
 		q.setParameter("id", idtelline);
 		q.setParameter("lineState", 0);
 		q.executeUpdate();
-		
 
 	}
 
@@ -191,9 +208,18 @@ try {
 	@Override
 	public List<TelephoneLines> SearchTelline(String motcle) {
 		TypedQuery<TelephoneLines> query = em.createQuery(
-			      "select t from TelephoneLines t WHERE t.lineNumber LIKE :code or t.user.username LIKE :code or t.user.firstName LIKE :code or t.user.lastName LIKE :code or t.service.serviceName LIKE :code ORDER BY t.dateCreation DESC", TelephoneLines.class);
+				"select t from TelephoneLines t WHERE t.lineNumber LIKE :code or t.user.username LIKE :code or t.user.firstName LIKE :code or t.user.lastName LIKE :code or t.service.serviceName LIKE :code ORDER BY t.dateCreation DESC",
+				TelephoneLines.class);
 		query.setParameter("code", "%" + motcle + "%");
-			 return query.getResultList();
+		return query.getResultList();
+	}
+
+	@Override
+	public TelephoneLines GetTellineById(int idTelline) {
+		TypedQuery<TelephoneLines> q = em.createQuery("SELECT t FROM TelephoneLines t WHERE t.id = :id",
+				TelephoneLines.class);
+		q.setParameter("id", idTelline);
+		return (TelephoneLines) q.getSingleResult();
 	}
 
 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity 
 @Table(name="Event_agent")
 public class Event_agent implements Serializable{
@@ -13,7 +15,7 @@ public class Event_agent implements Serializable{
 	@Column(name="launched")
 	private boolean launched; 
 	
-	@ManyToOne
+	@ManyToOne (fetch= FetchType.EAGER)
     @JoinColumn(name = "idAgent", referencedColumnName = "id", insertable=false, updatable=false)
 	private Agent agent;
 	
@@ -58,6 +60,7 @@ public class Event_agent implements Serializable{
 		this.agent = agent;
 	}
 
+	@JsonIgnore
 	public Event getEvent() {
 		return event;
 	}

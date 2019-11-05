@@ -24,7 +24,7 @@ public class Contract implements Serializable{
 	@Column(name="status")
 	private String status ;
 	
-	@OneToOne
+	@OneToOne(fetch= FetchType.EAGER)
 	private Agent agent ; 
 	
 	public Contract() {

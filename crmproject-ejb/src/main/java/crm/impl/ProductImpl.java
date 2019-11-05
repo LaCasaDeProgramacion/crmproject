@@ -22,10 +22,12 @@ import org.xml.sax.SAXException;
 import javax.mail.MessagingException;
 import crm.entities.Category;
 import crm.entities.Product;
-
+import crm.entities.Roles;
+import crm.entities.Stock;
 import crm.entities.Store;
 import crm.interfaces.IProductServiceLocal;
 import crm.interfaces.IProductServiceRemote;
+import crm.utils.UserSession;
 
 
 
@@ -39,7 +41,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	EntityManager em;
 	Mail_API mail;
 	Product product ;
-	
+	Stock stock;
 	@Override
 	public List<Product> allProducts() 
 	{
@@ -60,8 +62,9 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	@Override
 	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
 			String productStatus, int category_id,int store_id)   {
+		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 		    Product emp = new Product();
-		
+	Stock stock = new Stock();
 		
 		    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 		    LocalDateTime now = LocalDateTime.now();  
@@ -80,21 +83,27 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	        emp.setProductStatus(productStatus);
 	        emp.setCategory(categ);
 	        emp.setStore(store);
+<<<<<<< HEAD
+	       
+	        stock.setStockQuantity(emp.getProductQuantity()-stock.StockQuantity);
+//nupdati stock donc lezm stock howali yon9es mel productquantity
+	        
+=======
+	        emp.setNumberOfViews(0);
 
+>>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
 	        em.persist(emp);
 	      
-	//try {
-	//	mail.sendMail("firas.jerbi@esprit.tn", "Nouveau Produit Ajoutée", "le produit"+" " +productName+" "+"est ajoutée"+" "+"le"+" "+now);
-//	} catch (MessagingException e) {
-		//System.out.println("error");
-	//	e.printStackTrace();
-	//}
+		}
+	
 	}
 	@Override
 	public void deleteProduct(int id) {
+		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 		Query q = em.createQuery("DELETE FROM Product p WHERE p.id = :id");
         q.setParameter("id", id);
         q.executeUpdate();
+		}
 		
 	}
 	
@@ -102,16 +111,18 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	
 	@Override
 	public Product getrandompro() {
+	
 		Random r = new Random();
 		
 		Query q = em.createQuery("SELECT p FROM Product p where p.productStatus = :productStatus");
 		q.setParameter("productStatus", "active");
 		return (Product) q.getResultList().get(r.nextInt(10));
 
+		}
+		
+	
+	
 
-	
-	
-}
 	@Override
 	public void activateproduct(Product product) {
 	
@@ -152,21 +163,27 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 	@Override
 	public int updateProduct(int id, String productName, String productDescription, int productQuantity,
 			double productPrice, String productStatus, int category_id, int store_id) {
-		
+		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 	Product p = em.find(Product.class, id);
 	if(p!=null)
 	{
-		 p.setProductName(productName);
+		 	p.setProductName(productName);
 	        p.setProductDescription(productDescription);
 	        p.setProductPrice(productPrice);
 	        p.setProductQuantity(productQuantity);
 	        p.setProductStatus(productStatus);
-	       
+	      System.out.println(p);
 	        p.setCategory(em.find(Category.class, category_id));
 	        p.setStore(em.find(Store.class, store_id));
+<<<<<<< HEAD
+	        em.merge(p).getId();
+=======
+	        p.setNumberOfViews(p.getNumberOfViews());
 	        em.merge(p);
+>>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
 	        return 1;
 	}
+		}
 	return 0;
 		
 	}
@@ -184,9 +201,167 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 	
 		
 	}
+	@Override
+	public List<Product> findCourseByPriceRange(double minprice, double maxprice) {
+		String jpql = "SELECT c FROM Product c WHERE c.productPrice > :param And c.productPrice < :param2";
+		Query query = em.createQuery(jpql);
+		query.setParameter("param", minprice);
+		query.setParameter("param2", maxprice);
+		return query.getResultList();
+	}
 
-
-
+	public List<Product>searchForProductbyDate(Date productDate) {
+		Query q = em.createQuery("SELECT p FROM Product p where p.productDate = :productDate");
+		q.setParameter("productDate", productDate);
+		return (List<Product>) q.getResultList();
+	}
+	public List<Product>searchForProductbyCategory(int category_id) {
+		Query q = em.createQuery("SELECT p FROM Product p where p.category.category_id = :category_id");
+		q.setParameter("category_id", category_id);
+		return (List<Product>) q.getResultList();
+	}
+	
+	public List<Product>searchForProductbyStatus(String productStatus) {
+		Query q = em.createQuery("SELECT p FROM Product p where p.productStatus = :productStatus");
+		q.setParameter("productStatus", productStatus);
+		return (List<Product>) q.getResultList();
+	}
+	
+	
+	public List<Product> MultiSearchProduct(Date productDate , String productName, String productStatus,int category_id ) {
+		List<Product> lf = new ArrayList();
+		List<Product> lff = new ArrayList();
+		List<Product> lfff = new ArrayList();
+		List<Product> lByCat = new ArrayList();
+		List<Product> rs = new ArrayList();
+		boolean tata = true ;
+		
+		if(productDate == null) {
+			if(category_id==0) {
+				lf.addAll(searchForProduct(productName));
+				for (int i = 0; i < lf.size (); i++) {
+					if(lf.get(i).getProductStatus()==productStatus)
+						rs.add(lf.get(i));
+				}
+			}
+			else if(productStatus==null) {
+				lf.addAll(searchForProduct(productName));
+				lByCat = searchForProductbyCategory(category_id);
+				for ( int i =0 ; i< lf.size(); i++) {
+					for (int j =0 ; j< lByCat.size(); j++) {
+						if(lf.get(i)==lByCat.get(j))
+							rs.add(lf.get(i));
+					}
+				}
+			}
+			else if (productName == null) {
+				lByCat = searchForProductbyCategory(category_id);
+				for (int j =0 ; j< lByCat.size(); j++) {
+					if(lByCat.get(j).getProductStatus()==productStatus)
+						rs.add(lByCat.get(j));
+				}
+				
+			}
+			else {
+			lf.addAll(searchForProduct(productName));
+			for (int i = 0; i < lf.size (); i++) {
+				if(lf.get(i).getProductStatus()==productStatus)
+					lfff.add(lf.get(i));
+			}
+			lByCat = searchForProductbyCategory(category_id);
+			for ( int i =0 ; i< lfff.size(); i++) {
+				for (int j =0 ; j< lByCat.size(); j++) {
+					if(lfff.get(i)==lByCat.get(j))
+						rs.add(lfff.get(i));
+				}
+			}
+			}
+			
+		}
+		/*******************************************************/
+		else if(productName==null){
+				if(category_id == 0) {
+					lf.addAll(searchForProductbyDate(productDate));
+					for (int i = 0; i < lf.size (); i++) {
+						if(lf.get(i).getProductStatus()==productStatus)
+							rs.add(lf.get(i));
+					}
+				}
+				else if (productStatus==null) {
+					lf.addAll(searchForProductbyDate(productDate));
+					lByCat = searchForProductbyCategory(category_id);
+					for (int j =0 ; j< lf.size(); j++) {
+						for(int i = 0 ; i< lByCat.size();i++ )
+						if(lf.get(j)== lByCat.get(i))
+							rs.add(lf.get(i));
+					}
+				}
+				
+				else {
+			lf.addAll(searchForProductbyDate(productDate));
+			for (int i = 0; i < lf.size (); i++) {
+				if(lf.get(i).getProductStatus()==productStatus)
+					lfff.add(lf.get(i));
+			}
+			lByCat =searchForProductbyCategory(category_id);
+			for ( int i =0 ; i< lfff.size(); i++) {
+				for (int j =0 ; j< lByCat.size(); j++) {
+					if(lfff.get(i)==lByCat.get(j))
+						rs.add(lfff.get(i));
+				}
+			}
+		}
+		}
+		/*******************************************************/
+		else if(productStatus==null){
+			if(category_id==0) {
+				lf.addAll(searchForProduct(productName));
+				lff = searchForProductbyDate(productDate);
+				for(int i=0 ; i<lff.size(); i++)
+				{
+					for(int j=0 ; j<lf.size(); j++) {
+						if(lff.get(i).equals(lf.get(j)))
+							rs.add(lff.get(i));
+					}
+				}
+			}
+			else {
+			lf.addAll(searchForProduct(productName));
+			lff = searchForProductbyDate(productDate);
+			for(int i=0 ; i<lff.size(); i++)
+			{
+				for(int j=0 ; j<lf.size(); j++) {
+					if(lff.get(i).equals(lf.get(j)))
+						lfff.add(lff.get(i));
+				}
+			}
+			lByCat = searchForProductbyCategory(category_id);
+			for ( int i =0 ; i< lfff.size(); i++) {
+				for (int j =0 ; j< lByCat.size(); j++) {
+					if(lfff.get(i)==lByCat.get(j))
+						rs.add(lfff.get(i));
+				}
+			}
+			
+		}
+		}
+		/*******************************************************/
+		else if(category_id==0){
+			lf.addAll(searchForProduct(productName));
+			lff = searchForProductbyDate(productDate);
+			for(int i=0 ; i<lff.size(); i++)
+			{
+				for(int j=0 ; j<lf.size(); j++) {
+					if(lff.get(i).equals(lf.get(j)))
+						lfff.add(lff.get(i));
+				}
+			}
+			for ( int i =0 ; i< lfff.size(); i++) {
+				if(lfff.get(i).getProductStatus()==productStatus)
+					rs.add(lfff.get(i));
+			}
+		}	return rs;
+	}
 	
 	
 }
