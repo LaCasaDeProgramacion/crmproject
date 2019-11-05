@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="CarModel")
 
@@ -19,11 +21,10 @@ public class CarModel implements Serializable
 	
 	
 	
-	@ManyToOne 
+	@ManyToOne (fetch=FetchType.EAGER)
 	private CarBrand carbrand ; 
 	
-	@Transient 
-	private int carbrand_id ; 
+	
 	
 	@OneToMany (mappedBy="carmodel",cascade = CascadeType.ALL)
 	private List<Vehicule> vehicules ; 
@@ -67,6 +68,7 @@ public class CarModel implements Serializable
 		this.carbrand = carbrand;
 	}
 
+	@JsonIgnore
 	public List<Vehicule> getVehicules() {
 		return vehicules;
 	}
@@ -76,16 +78,6 @@ public class CarModel implements Serializable
 	}
 
 
-
-	public int getCarbrand_id() {
-		return carbrand_id;
-	}
-
-
-
-	public void setCarbrand_id(int carbrand_id) {
-		this.carbrand_id = carbrand_id;
-	}
 
 	
 }

@@ -65,6 +65,7 @@ public class Pack implements Serializable {
 	@JsonIgnore
 	@JsonManagedReference
 	public Set<InvoicesPacks> invoicespack;
+
 	public int getId() {
 		return id;
 	}

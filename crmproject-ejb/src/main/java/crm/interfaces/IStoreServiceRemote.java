@@ -29,4 +29,5 @@ public interface IStoreServiceRemote {
 	public int updateStore(int store_id, Timestamp end, Timestamp start,String store_city, String store_name);;
 	
 	public List<Store> allStores();
+	public List<Store> getNearestStore();
 }

@@ -65,6 +65,18 @@ public class Product implements Serializable{
 	String productStatus;
 
 
+	public Product() {
+		super();
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", productName=" + productName + ", productDescription=" + productDescription
+				+ ", productPrice=" + productPrice + ", productImage=" + productImage + ", numberOfViews="
+				+ numberOfViews + ", productQuantity=" + productQuantity + ", productStatus=" + productStatus
+				+ ", productsPack=" + productsPack + ", productDate=" + productDate + "]";
+	}
 	@OneToMany(mappedBy="product",fetch=FetchType.EAGER)
 	@JsonManagedReference
 	public List<ProductsPack> productsPack;
@@ -79,7 +91,9 @@ public class Product implements Serializable{
     @JoinColumn(name="store_id")
     private Store store;
 
-	
+	@ManyToOne
+	private Stock stock;
+
 
 	
 	

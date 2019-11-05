@@ -5,8 +5,11 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.*;
+
+import crm.entities.Roles;
 import crm.entities.prospecting.*;
 import crm.interfaces.prospecting.*;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -19,20 +22,21 @@ public class CarModelImpl implements ICarModelLocal, ICarModelRemote {
 	
 	@Override
 	public List<CarModel> allModels() {
-		Query q = em.createQuery(
-				"SELECT m.id,  b.brand,  m.model  FROM CarModel m JOIN m.carbrand b");
+		Query q = em.createQuery("SELECT m FROM CarModel m");
 		return (List<CarModel>) q.getResultList();
 	}
 
 	@Override
 	public List<CarModel> searchForModel(String model) {
-		Query q = em.createQuery("SELECT c.id,  c.model FROM CarModel c where c.model = :name");
+		Query q = em.createQuery("SELECT c FROM CarModel c where c.model = :name");
 		q.setParameter("name", model);
 		return (List<CarModel>) q.getResultList(); 
 	}
 
 	@Override
-	public boolean addCarModel(String model, int idBrand) {
+	public int addCarModel(String model, int idBrand) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		{
 		CarBrand brand = em.find(CarBrand.class, idBrand); 
 		if (brand != null)
 		{
@@ -40,34 +44,41 @@ public class CarModelImpl implements ICarModelLocal, ICarModelRemote {
 			carModel.setCarbrand(brand);
 			carModel.setModel(model);
 			em.persist(carModel);
-			return true ; 
+			return 1 ; 
 		}
-		return false ; 
+		return -1 ; //brand not found 
+		}return 0; 
 	}
 
 	@Override
-	public boolean deleteCarModel(int id) {
+	public int deleteCarModel(int id) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		{
 		CarModel c = em.find(CarModel.class, id); 
 		if (c!=null)
 		{
 			em.remove(c);
-			//Query q = em.createQuery("DELETE FROM CarModel a WHERE a.id = :id");
-	       // q.setParameter("id", id);
-	       // q.executeUpdate();
-	        return true ; 
+	        return 1 ; 
 		}
 		
-		return false ; 
+		return -1 ; 
+		}return 0; 
 	}
 
 	@Override
 	public int updateCarModel(String model, int id) 
 	{
-		CarModel a = em.find(CarModel.class, id);
-		if (a!= null)
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
 		{
-			a.setModel(model);
-			return em.merge(a).getId(); 
+			CarModel a = em.find(CarModel.class, id);
+			if (a!= null)
+			{
+				a.setModel(model);
+				em.merge(a); 
+				return 1;  
+			
+			}
+			else return -1; 
 		
 		}
 		 return 0; 

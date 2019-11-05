@@ -8,12 +8,12 @@ import javax.ejb.Remote;
 @Remote
 public interface IClientProspectRemote {
 
-	public void add();
+	public boolean add();
 
 	public List<Object> ViewProspectEvolution();
 
 	public List<Object> ViewClientEvolution();
 
-	public void DeletePerDate(Date date);
+	public boolean  DeletePerDate(Date date);
 
 }

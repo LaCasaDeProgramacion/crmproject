@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import crm.entities.Roles;
 import crm.entities.prospecting.ClientProspect;
 import crm.interfaces.prospecting.IClientProspectRemote;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -23,23 +24,29 @@ public class ClientProspectImpl implements IClientProspectRemote {
 	EntityManager em;
 	
 	@Override 
-	public void add()
+	public boolean add()
 	{
-		Long nb_Prospect ;
-		Long nb_Client ;  
-		Query q1 = em.createQuery("select count(*)  from User u where u.role =:role1"); 
-		q1.setParameter("role1", Roles.PROSPECT); 
-		nb_Prospect = (Long)  q1.getSingleResult(); 
-		
-		Query q2 = em.createQuery("select count(*)  from User u where u.role =:role2"); 
-		q2.setParameter("role2", Roles.CLIENT); 
-		nb_Client =  (Long)  q2.getSingleResult(); 
-		
-		Calendar currenttime = Calendar.getInstance();
-		ClientProspect cp = new ClientProspect(nb_Client, nb_Prospect, new Date((currenttime.getTime()).getTime()) ); 
-		em.persist(cp);
-		System.out.println("nb_Prospect " + nb_Prospect + "nb_Client" + nb_Client + "date "+ currenttime);
-		
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		{
+			Long nb_Prospect ;
+			Long nb_Client ;  
+			Query q1 = em.createQuery("select count(*)  from User u where u.role =:role1"); 
+			q1.setParameter("role1", Roles.PROSPECT); 
+			nb_Prospect = (Long)  q1.getSingleResult(); 
+			
+			Query q2 = em.createQuery("select count(*)  from User u where u.role =:role2"); 
+			q2.setParameter("role2", Roles.CLIENT); 
+			nb_Client =  (Long)  q2.getSingleResult(); 
+			
+			Calendar currenttime = Calendar.getInstance();
+			ClientProspect cp = new ClientProspect(nb_Client, nb_Prospect, new Date((currenttime.getTime()).getTime()) ); 
+			em.persist(cp);
+			System.out.println("nb_Prospect " + nb_Prospect + "nb_Client" + nb_Client + "date "+ currenttime);
+			return true ; 
+			
+		}
+		return false ; 
+	
 		
 	}
 	@Override 
@@ -56,12 +63,17 @@ public class ClientProspectImpl implements IClientProspectRemote {
 		return q.getResultList();
 	}
 	@Override 
-	public void DeletePerDate(Date date)
+	public boolean DeletePerDate(Date date)
 	{
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		{
 		Query q = em.createQuery("DELETE FROM ClientProspect a WHERE a.date = :date");
         q.setParameter("date", date);
         q.executeUpdate();
-       
+        	return true ; 
+        	
+		}
+		else return false ; 
 	}
 	
 	

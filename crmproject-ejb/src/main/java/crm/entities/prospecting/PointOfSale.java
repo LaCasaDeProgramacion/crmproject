@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.sound.sampled.LineListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -52,6 +55,7 @@ public class PointOfSale implements Serializable {
 		this.location = location;
 	}
 
+	@JsonIgnore
 	public List<Agent> getAgents() {
 		return agents;
 	}

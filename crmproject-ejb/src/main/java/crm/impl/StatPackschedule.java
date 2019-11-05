@@ -18,11 +18,12 @@ import crm.entities.StatPack;
 public class StatPackschedule {
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
-@EJB
-StatPackserviceImpl statpackserviceimpl;
-@Schedule(second="*/5",minute="*" ,hour="*")
-public void everyHourCreateStattest() { //if new pack created we create stat
 
+@EJB 
+StatPackserviceImpl statpackserviceimpl;
+@Schedule(second="*/10",minute="*",hour="*" ,persistent=false)
+public void ScheduleMethods() {
+	System.out.println("*************************Add New Packs Stats**************************************");
 	TypedQuery<Pack> packids = em.createQuery("SELECT p FROM Pack p",Pack.class);
 	List<Pack> packs = packids.getResultList();
 	for(Pack pack : packs) {
@@ -44,21 +45,26 @@ public void everyHourCreateStattest() { //if new pack created we create stat
 	statpackserviceimpl.addstatpack(p);
 	System.out.println("Stat created For Pack"+p.getTitle());
 	}
-	
-}
-@Schedule(second="*",minute="*" ,hour="*/1")
-public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
-	
-	
-	/*statpackserviceimpl.updatestatpack(packid, gainmoney, quantityselled, changetitle);*/
-	
-	
-	
-}
-/*@Schedule(second="",minute="" ,hour="")
-public void everyhourtestexistingpackstat() {
-	
-}  */
 
-
+	System.out.println("*************************Update Packs Stats*******************************************************");
+	TypedQuery<Pack> packidss = em.createQuery("SELECT p FROM Pack p",Pack.class);
+	List<Pack> packss = packidss.getResultList();
+	for (Pack pk : packss) {
+		statpackserviceimpl.updatestatpack(pk);
+	}
+	System.out.println("*************************Update mostgainMoneyPackToday*******************************************");
+	statpackserviceimpl.mostgainMoneyPackToday();
+	System.out.println("*************************Update mostSelledQuantitypacktoday**************************************");
+	statpackserviceimpl.mostSelledQuantitypacktoday();
+	System.out.println("*************************Update BestpackforToday*************************************************");
+	statpackserviceimpl.BestpackforToday();
+	System.out.println("*************************Update updatestatpacktitle*************************************************");
+	statpackserviceimpl.updatestatpacktitle();
+	System.out.println("*************************Archiver Count Days *************************************************");
+	statpackserviceimpl.ArchiverCountDays();
+	System.out.println("*************************Archive pack Action if Stat 30 time in NegativelistHalfNegative *************************************************");
+	statpackserviceimpl.ArchivePackbyTitle();
+}
+	
+	
 }

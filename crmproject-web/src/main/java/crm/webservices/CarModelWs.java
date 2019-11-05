@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.prospecting.CarBrand;
 import crm.entities.prospecting.CarModel;
 import crm.impl.prospecting.CarModelImpl;
@@ -68,42 +69,47 @@ public class CarModelWs {
 	 
 	 	@POST
 	    @Path("add")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addCarModel(@QueryParam("model")String model,@QueryParam("idBrand") int idBrand)
 	 	{
-		 		 if (carModelImpl.addCarModel(model, idBrand))
-		 		 {
-		 			return Response.status(Status.CREATED).entity("ADDED").build();
-		 		 }
-		 		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-				 
+	 		int res = carModelImpl.addCarModel(model, idBrand); 
+	 		if (res==1)
+	 			return Response.status(Status.CREATED).entity("ADDED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("BRAND NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+			 
 	    }
 	 
 	 @PUT
      @Path("update")
+	 @Secured
      @Produces(MediaType.APPLICATION_JSON)
      public Response updateCarModel(
     		 @QueryParam("model") String model, @QueryParam("id") int id){
 		
 		 int res = carModelImpl.updateCarModel(model, id);
-		 if (res!= 0)
-		 {
-			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
-		 }
-		 else return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-         
+		 if (res==1)
+	 			return Response.status(Status.CREATED).entity("UPDATED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("MODEL NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+			 
      }
  	 
 	  	@DELETE
 	    @Path("delete")
+	  	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response delete( @QueryParam("id")int id){
-	  		
-	  		if (carModelImpl.deleteCarModel(id))
-	  		{
-	  			return Response.status(Status.GONE).entity("DELETED").build();
-	  		}
-			    return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	  		int res= carModelImpl.deleteCarModel(id);
+	  	if (res==1)
+		 			return Response.status(Status.CREATED).entity("DELETED").build();
+					if(res==-1)
+					return Response.status(Status.NOT_FOUND).entity("MODEL NOT FOUND").build();
+					else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				 
 	    }
 	
 }

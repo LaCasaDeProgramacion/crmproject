@@ -24,6 +24,7 @@ public interface IProductServiceLocal {
 	public int updateProduct(int id ,String productName, String productDescription, int productQuantity, double productPrice,
 	String productStatus, int category_id,int store_id);
 	public String checkProductAvailability(int id);
+	public List<Product> findCourseByPriceRange(double minprice, double maxprice);
 	
 	
 	

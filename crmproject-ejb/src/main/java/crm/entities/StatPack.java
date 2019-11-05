@@ -1,6 +1,7 @@
 package crm.entities;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="statpack")
-public class StatPack implements Serializable{
+public class StatPack implements Serializable ,Comparable<StatPack>,Comparator<StatPack>{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,20 @@ public class StatPack implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private TitleStat TitleStat;
 	@OneToOne
-	private Pack pack ; 
+	private Pack pack;
+	@Column
+	private Boolean mostSelledQuantityPackToday;
+	@Column 
+	private Boolean mostGainMoneyPackToday;
+	@Column
+	private Boolean BestPackforToday;
+	@Column 
+	private int NbrewinDaysinMonth = 0;
+	@Column 
+	private String CodeTitleAction;
+	@Column
+	private int numberoflosedays=0;
+	
 	
 	public int getId() {
 		return id;
@@ -86,6 +100,54 @@ public class StatPack implements Serializable{
 	}
 	public void setYear(String year) {
 		Year = year;
+	}
+	public Boolean getMostSelledQuantityPackToday() {
+		return mostSelledQuantityPackToday;
+	}
+	public void setMostSelledQuantityPackToday(Boolean mostSelledQuantityPackToday) {
+		this.mostSelledQuantityPackToday = mostSelledQuantityPackToday;
+	}
+	public Boolean getMostGainMoneyPackToday() {
+		return mostGainMoneyPackToday;
+	}
+	public void setMostGainMoneyPackToday(Boolean mostGainMoneyPackToday) {
+		this.mostGainMoneyPackToday = mostGainMoneyPackToday;
+	}
+	public Boolean getBestPackforToday() {
+		return BestPackforToday;
+	}
+	public void setBestPackforToday(Boolean bestPackforToday) {
+		BestPackforToday = bestPackforToday;
+	}
+	public int getNbrewinDaysinMonth() {
+		return NbrewinDaysinMonth;
+	}
+	public void setNbrewinDaysinMonth(int nbrewinDaysinMonth) {
+		NbrewinDaysinMonth = nbrewinDaysinMonth;
+	}
+	
+	
+	
+	public int getNumberoflosedays() {
+		return numberoflosedays;
+	}
+	public void setNumberoflosedays(int numberoflosedays) {
+		this.numberoflosedays = numberoflosedays;
+	}
+	public String getCodeTitleAction() {
+		return CodeTitleAction;
+	}
+	public void setCodeTitleAction(String codeTitleAction) {
+		CodeTitleAction = codeTitleAction;
+	}
+	@Override
+	public int compareTo(StatPack o) {
+		return this.quantityselled - o.quantityselled;
+	}
+	@Override
+	public int compare(StatPack o1, StatPack o2) {
+		
+		return o1.NbrewinDaysinMonth - o2.NbrewinDaysinMonth;
 	}
 	
 	

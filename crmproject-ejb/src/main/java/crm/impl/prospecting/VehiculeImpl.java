@@ -8,8 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import crm.entities.Roles;
 import crm.entities.prospecting.*;
 import crm.interfaces.prospecting.*;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -20,77 +22,82 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 	
 	@Override
 	public List<Vehicule> allVehicules() {
-		Query q = em.createQuery("SELECT v.id,  v.registration, v.color, v.inUse, v.picture,  m.model , b.brand "
-				+ " FROM Vehicule v JOIN v.carmodel m JOIN m.carbrand b " );
+		Query q = em.createQuery("SELECT v FROM Vehicule v" );
 		return (List<Vehicule>) q.getResultList();
 	}
 
 	@Override
 	public List<Vehicule> searchForVehicule(String registration) {
-		Query q = em.createQuery("SELECT v.id, v.registration, v.color, v.inUse, v.picture,  m.model , b.brand "
-				+ " FROM Vehicule v JOIN v.carmodel m JOIN m.carbrand b where "
-				+ "  v.registration = :registration " );
+		
+		Query q = em.createQuery("SELECT v FROM Vehicule v where v.registration = :registration " );
 		q.setParameter("registration", registration); 
 		return (List<Vehicule>) q.getResultList();
 	}
 
 	@Override
-	public boolean addVehicule(String registration , String color , boolean inUse , String picture , int idModel) {
-		
-		CarModel model = em.find(CarModel.class, idModel); 
-		if (model!= null )
+	public int addVehicule(String registration , String color , boolean inUse , String picture , int idModel) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
 		{
-			Vehicule vehicule = new Vehicule(); 
-			vehicule.setRegistration(registration);
-			vehicule.setColor(color);
-			vehicule.setCarmodel(model);
-			vehicule.setInUse(inUse);
-			vehicule.setPicture(picture);
+			CarModel model = em.find(CarModel.class, idModel); 
+			if (model!= null )
+			{
+				Vehicule vehicule = new Vehicule(); 
+				vehicule.setRegistration(registration);
+				vehicule.setColor(color);
+				vehicule.setCarmodel(model);
+				vehicule.setInUse(inUse);
+				vehicule.setPicture(picture);
+				
+				em.persist(vehicule);
+				return 1 ; 
+				
+			}
+			return -1 ; 
 			
-			em.persist(vehicule);
-			return true ; 
-			
-		}
-		return false ; 
+		}return 0; 
+		
 	}
 
 	@Override
-	public boolean deleteVehicule(int id) {
-		Vehicule a = em.find(Vehicule.class, id); 
-		if (a!=null)
+	public int deleteVehicule(int id) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
 		{
-			em.remove(a);
-			//Query q = em.createQuery("DELETE FROM Vehicule a WHERE a.id = :id");
-	        //q.setParameter("id", id);
-	       // q.executeUpdate();
-	        return true ; 
-			
-		}
-		
-		return false ; 
+			Vehicule a = em.find(Vehicule.class, id); 
+				if (a!=null)
+				{
+					em.remove(a);
+			        return 1 ; 
+				}
+			return -1 ; 
+		}return 0; 
 	}
 
 	@Override
-	public boolean updateVehicule(int id, String registration , String color , boolean inUse , String picture , int idModel) {
-		Vehicule vehicule = em.find(Vehicule.class,id );
-		CarModel model = em.find(CarModel.class, idModel); 
-		if (vehicule== null || model==null)
+	public int updateVehicule(int id, String registration , String color , boolean inUse , String picture , int idModel) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
 		{
-			return false ; 
-		}
-		else
-		{
-			vehicule.setRegistration(registration);
-			vehicule.setColor(color);
-			vehicule.setCarmodel(model);
-			vehicule.setInUse(inUse);
-			vehicule.setPicture(picture);
+			Vehicule vehicule = em.find(Vehicule.class,id );
+			CarModel model = em.find(CarModel.class, idModel); 
+			if (vehicule== null || model==null)
+			{
+				return -1 ; 
+			}
+			else
+			{
+				vehicule.setRegistration(registration);
+				vehicule.setColor(color);
+				vehicule.setCarmodel(model);
+				vehicule.setInUse(inUse);
+				vehicule.setPicture(picture);
+				
+				 em.merge(vehicule);
+				 return 1 ; 
+				 
+				
+			}
 			
-			 em.merge(vehicule);
-			 return true ; 
-			 
-			
-		}
+		}return 0; 
+		
 		 
 	}
 

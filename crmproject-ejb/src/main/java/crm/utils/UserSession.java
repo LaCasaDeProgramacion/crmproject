@@ -57,10 +57,14 @@ public final class UserSession {
     
 
     public static UserSession getInstance(User user) {
-        if (instance == null) {
+        //if (instance == null) {
             instance = new UserSession(user.getUsername(), user.getEmail(), user.getConfirm(), user.getToken(), user.getFirstName(), 
             		user.getLastName(), user.getPassword(), user.getId(), user.getCin(), user.getRole(), user.getDateBirth(), user.isEnabled());
-        }
+        //}
+       // if (instance == null) {
+            instance = new UserSession(user.getUsername(), user.getEmail(), user.getConfirm(), user.getToken(), user.getFirstName(), 
+            		user.getLastName(), user.getPassword(), user.getId(), user.getCin(), user.getRole(), user.getDateBirth(), user.isEnabled());
+       // }
         return instance;
     }
 

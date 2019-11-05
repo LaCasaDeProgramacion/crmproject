@@ -45,7 +45,14 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		System.out.print(paass);
 		user.setEnabled(false);
 		user.setConfirm(codeGen.getInstance().randomString(5));
-	    em.persist(user);
+		em.persist(user);
+		try {
+			mail.sendMail(user.getEmail(), "Confirm Account","Confirmation code : " + user.getConfirm());			
+		}catch (Exception e) {
+			
+		}
+		
+
 	}
 	@Override
 	public boolean authenticate(String username, String password) {
@@ -56,6 +63,7 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		if(BCrypt.checkpw(password, user.getPassword()))
 		{
 			UserSession.getInstance(user);
+			System.out.println("get instaaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnce \n " + user);
 			return true;
 		}
 
@@ -74,8 +82,11 @@ public class UserImpl implements IUserLocal, IUserRemote{
 	}
 
 	@Override
-	public void confirmCode(String code, int idUser) {
-		User user=em.find(User.class, idUser);
+	public void confirmCode(String code,String username) {
+		TypedQuery<User> q=  em.createQuery("SELECT u from User u where u.username= :username ",User.class);
+		q.setParameter("username", username);
+		User user=q.getSingleResult();
+		System.out.println(user);
 		if(code.equals(user.getConfirm()))
 		{
 			user.setEnabled(true);
@@ -128,7 +139,7 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		try {
 			
 			
-				mail.sendMail(u.getEmail(), "Password Reset","Your new password"+u.getConfirm());
+				mail.sendMail(u.getEmail(), "Password Reset","Your new password : "+u.getConfirm());
 			
 			} catch (MessagingException e) {
 				System.out.println("error");

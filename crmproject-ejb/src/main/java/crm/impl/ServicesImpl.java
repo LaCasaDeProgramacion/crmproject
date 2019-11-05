@@ -16,6 +16,7 @@ import crm.entities.TelephoneLines;
 import crm.entities.User;
 import crm.interfaces.IServiceLocal;
 import crm.interfaces.IServiceRemote;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -29,8 +30,10 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 		TypedQuery<String> q = em.createQuery("SELECT s.serviceDescription FROM Services s WHERE s.serviceName = :serviceName", String.class);
 		q.setParameter("serviceName", service.getServiceName());
 		List<String> descriptions=q.getResultList();
+		
 		if(descriptions.isEmpty())
 		{
+			service.setEnabled(true);
 			em.persist(service);
 			return "ADDED";
 			
@@ -71,6 +74,13 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s", Services.class);
 		return (List<Services>) q.getResultList();
 	}
+	
+	@Override
+	public List<Services> GetEnabledService() {
+		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s WHERE s.enabled = :enabled", Services.class);
+		q.setParameter("enabled", true);
+		return (List<Services>) q.getResultList();
+	}
 
 	@Override
 	public Services SearchServicesByName(String Name) {
@@ -82,10 +92,37 @@ public class ServicesImpl implements IServiceLocal, IServiceRemote {
 
 	@Override
 	public int NbServiceUsed(int idService) {
-		Services service = em.find(Services.class, idService);
-		Query q = em.createQuery("SELECT Count(t) FROM TelephoneLines t WHERE t.service = :service_serviceId");
+		TypedQuery<Services> qs=em.createQuery("SELECT s FROM Services s where s.id = :id",
+				Services.class);
+		qs.setParameter("id", idService);
+		Services service = qs.getSingleResult();
+		Query q = em.createQuery("SELECT Count(t) FROM TelephoneLines t WHERE t.service = :service_serviceId ");
 		q.setParameter("service_serviceId", service);
 		return ((Number) q.getSingleResult()).intValue();
+	}
+
+	@Override
+	public List<Services> MesServices() {
+		User user=em.find(User.class, UserSession.getInstance().getId());
+		TypedQuery<Services> q = em.createQuery("SELECT t.service FROM TelephoneLines t WHERE t.user = :user",
+				Services.class);
+		q.setParameter("user", user);
+		
+		return (List<Services>) q.getResultList();
+	}
+
+	@Override
+	public Services GetServiceById(int idService) {
+		TypedQuery<Services> q = em.createQuery("SELECT s FROM Services s where s.id = :id",
+				Services.class);
+		q.setParameter("id", idService);
+		return (Services) q.getSingleResult();
+	}
+	@Override
+	public void DisableService(int idService) {
+		Services s=em.find(Services.class, idService);
+		s.setEnabled(false);
+		em.merge(s);
 	}
 
 }

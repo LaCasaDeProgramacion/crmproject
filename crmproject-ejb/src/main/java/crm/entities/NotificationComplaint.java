@@ -24,7 +24,7 @@ public class NotificationComplaint implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "NotificationId")
 	private int id;
-	@Column(name = "Message")
+	@Column(name = "Message",columnDefinition="TEXT")
 	private String Message;
 	@Column(name = "State")
 	private int State;

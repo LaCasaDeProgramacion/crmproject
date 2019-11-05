@@ -10,6 +10,7 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Roles;
 import crm.entities.prospecting.*;
 import crm.impl.prospecting.*;
@@ -40,49 +41,56 @@ public class ForumWs {
 	
 	@POST
     @Path("add")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addForum(@QueryParam("name")	String name , 
+    public Response addForum(
+    		@QueryParam("name")	String name , 
     		@QueryParam("description")	String description, 
-    		@QueryParam("auth_view") Roles auth_view ,
-    		@QueryParam("auth_post") Roles auth_post , 
     		@QueryParam("Category_Forum") Category_Forum category_Forum)
  	{
 	 		 
- 		forumImpl.addForum(name, description, auth_view, auth_post, category_Forum);
+ 		if (forumImpl.addForum(name, description, category_Forum))
 	 	return Response.status(Status.CREATED).entity("ADDED").build();
+ 		 else return Response.status(Status.NOT_FOUND).entity("YOU ARE NOT AN ADMIN ").build();
 			 
     }
 	
 	@PUT
     @Path("update")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateForum(
     		@QueryParam("name")	String name , 
     		@QueryParam("description")	String description, 
-    		@QueryParam("auth_view") Roles auth_view ,
-    		@QueryParam("auth_post") Roles auth_post , 
     		@QueryParam("Category_Forum") Category_Forum category_Forum, 
     		@QueryParam("id") int id){
 	
-	 boolean res = forumImpl.updateForum(id, name, description, auth_view, auth_post, category_Forum); 
-	 if (res)
+	 int res = forumImpl.updateForum(id, name, description,   category_Forum); 
+	 if (res==1)
 	 {
 		 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
 	 }
-	 else return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	 if (res ==0)
+		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		else
+			return Response.status(Status.NOT_FOUND).entity("YOU ARE NOT AN ADMIN").build();
+	 
      
 	}
 	
 	@DELETE
     @Path("delete")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteForum( @QueryParam("id")int id){
   		
-  		if (forumImpl.deleteForum(id))
+  		if (forumImpl.deleteForum(id)==1)
   		{
   			return Response.status(Status.GONE).entity("DELETED").build();
   		}
-  		return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();  
+  		if (forumImpl.deleteForum(id)==0)
+  		return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+  		else return Response.status(Status.NOT_FOUND).entity("YOU ARE NOT AN ADMIN").build();
     }
 	
 	/* ----------------------- CRUD Topic ----------------------- */
@@ -104,6 +112,7 @@ public class ForumWs {
 	
 	@POST
     @Path("addTopic")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response addTopic(@QueryParam("title")String title , @QueryParam("idForum") int idForum)
  	{
@@ -123,6 +132,7 @@ public class ForumWs {
 
 	@PUT
     @Path("updateTopic")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateTopic(
     		@QueryParam("id")	int id , 
@@ -150,6 +160,7 @@ public class ForumWs {
 	
 	@DELETE
     @Path("deleteTopic")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteTopic( @QueryParam("id")int id){
 		
@@ -190,6 +201,7 @@ public class ForumWs {
 	
 	@POST
     @Path("addPost")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response addPost(@QueryParam("text")String text, @QueryParam("idTopic") int idTopic)
  	{
@@ -209,6 +221,7 @@ public class ForumWs {
 
 	@PUT
     @Path("updatePost")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePost(
     		@QueryParam("id")	int id , 
@@ -236,6 +249,7 @@ public class ForumWs {
 	
 	@DELETE
     @Path("deletePost")
+	@Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePost( @QueryParam("id")int id){
 		
@@ -313,8 +327,9 @@ public class ForumWs {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response sendToProspect()
 	{
-		forumImpl.sendEmailProspect();
+		if (forumImpl.sendEmailProspect())
 		return Response.status(Status.OK).entity("sending ..").build();
+		else return Response.status(Status.NOT_FOUND).entity("YOU ARE NOT AN ADMIN").build();
 	}
 	
 	

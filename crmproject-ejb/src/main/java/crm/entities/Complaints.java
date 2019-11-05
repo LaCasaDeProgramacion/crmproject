@@ -2,16 +2,24 @@ package crm.entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "complaints")
@@ -27,8 +35,8 @@ public class Complaints implements Serializable {
 	private int id;
 	@Column(name = "complaintBody")
 	private String complaintBody;
-	@Column(name = "complaintObject")
-	private String complaintObject;
+	@ManyToOne
+	private ComplaintObject complaintObject;
 	@Column(name = "complaintStatee")
 	@Enumerated(EnumType.STRING)
 	private ComplaintState complaintState;
@@ -47,8 +55,17 @@ public class Complaints implements Serializable {
 	Technician technician;
 	@ManyToOne
 	TypeComplaint TypeComplaint;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="complaint",fetch = FetchType.EAGER,orphanRemoval=true) 	
+	private Set<ComplaintComments> comments;
+	public Set<ComplaintComments> getComments() {
+		return comments;
+	}
 
-	public Complaints(String complaintBody, String complaintObject, ComplaintState complaintState, User user,
+	public void setComments(Set<ComplaintComments> comments) {
+		this.comments = comments;
+	}
+
+	public Complaints(String complaintBody, ComplaintObject complaintObject, ComplaintState complaintState, User user,
 			crm.entities.TypeComplaint typeComplaint, Date complaintDate) {
 		super();
 
@@ -60,13 +77,13 @@ public class Complaints implements Serializable {
 		this.complaintDate = complaintDate;
 	}
 
-	public Complaints(String complaintBody, String complaintObject) {
+	public Complaints(String complaintBody, ComplaintObject complaintObject) {
 		super();
 		this.complaintBody = complaintBody;
 		this.complaintObject = complaintObject;
 	}
 
-	public Complaints(String complaintBody, String complaintObject, ComplaintState complaintState, Date complaintDate) {
+	public Complaints(String complaintBody, ComplaintObject complaintObject, ComplaintState complaintState, Date complaintDate) {
 		super();
 
 		this.complaintBody = complaintBody;
@@ -75,7 +92,7 @@ public class Complaints implements Serializable {
 		this.complaintDate = complaintDate;
 	}
 
-	public Complaints(int id, String complaintBody, String complaintObject) {
+	public Complaints(int id, String complaintBody, ComplaintObject complaintObject) {
 		super();
 		this.id = id;
 		this.complaintBody = complaintBody;
@@ -103,11 +120,11 @@ public class Complaints implements Serializable {
 		this.complaintBody = complaintBody;
 	}
 
-	public String getComplaintObject() {
+	public ComplaintObject getComplaintObject() {
 		return complaintObject;
 	}
 
-	public void setComplaintObject(String complaintObject) {
+	public void setComplaintObject(ComplaintObject complaintObject) {
 		this.complaintObject = complaintObject;
 	}
 

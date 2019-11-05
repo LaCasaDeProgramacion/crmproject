@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity 
 @Table(name="Event")
 public class Event implements Serializable {
@@ -34,9 +36,6 @@ public class Event implements Serializable {
 		super();
 	}
 	
-
-	
-
 	public Event(String name, Date startDate, Date endDate) {
 		super();
 		this.name = name;
@@ -44,33 +43,22 @@ public class Event implements Serializable {
 		this.endDate = endDate;
 	}
 
-
-
-
 	public int getId() {
 		return id;
 	}
-
-
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-
-
-
+	@JsonIgnore
 	public List<Event_vehicule> getEvent_vehicule() {
 		return event_vehicule;
 	}
 
-
-
 	public void setEvent_vehicule(List<Event_vehicule> event_vehicule) {
 		this.event_vehicule = event_vehicule;
 	}
-
-
 
 	public String getName() {
 		return name;
@@ -97,49 +85,29 @@ public class Event implements Serializable {
 	}
 
 
-
+	@JsonIgnore
 	public List<Event_agent> getEvent_agent() {
 		return event_agent;
 	}
-
-
 
 	public void setEvent_agent(List<Event_agent> event_agent) {
 		this.event_agent = event_agent;
 	}
 
-
-
 	public Location getLocation() {
 		return location;
 	}
-
-
 
 	public void setLocation(Location location) {
 		this.location = location;
 	}
 
-
-
-
 	public boolean isLaunched() {
 		return launched;
 	}
 
-
-
-
 	public void setLaunched(boolean launched) {
 		this.launched = launched;
 	}
-
-	
-
-
-
-
-	
-	
 
 }

@@ -13,5 +13,12 @@ public interface IStatComplaintLocal {
 	void AddStatComplaint(ComplaintsStatistics Cs);
 	List<ComplaintsStatistics> GetAllStatComplaint();
 	List<ComplaintsStatistics> GetStatComplaintByDate(Date d);
+	int totalTechnical();
+	int totalRelational();
+	int totalFinancial();
+	int totalClosed();
+	int totalInProgress();
+	int totalOpened();
+	int totalTreated();
 	
 }

@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import crm.entities.User;
 
 @Entity 
@@ -15,10 +18,12 @@ public class Views implements Serializable  {
 	private int id ; 
 	
 	
+	@ManyToOne
+	@JsonBackReference
+	private Topic topic ;
 	
 	@ManyToOne
-	private Topic topic ;
-	@ManyToOne
+	@JsonBackReference
 	private User user ; 
 	
 
@@ -42,6 +47,7 @@ public class Views implements Serializable  {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public User getUser() {
 		return user;
 	}
@@ -50,6 +56,7 @@ public class Views implements Serializable  {
 		this.user = user;
 	}
 
+	@JsonIgnore
 	public Topic getTopic() {
 		return topic;
 	}
