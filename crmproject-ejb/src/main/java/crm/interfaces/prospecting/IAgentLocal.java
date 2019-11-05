@@ -10,8 +10,8 @@ public interface IAgentLocal {
 	
 	public List<Agent> allAgents();
 	public List<Agent> searchForAgent(int cin);
-	public void addAgent(Agent agent) ;
-	public boolean deleteAgent(int id);
+	public boolean addAgent(Agent agent) ;
+	public int deleteAgent(int id);
 	public int updateAgent(Agent agent) ;
 
 }

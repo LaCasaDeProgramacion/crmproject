@@ -17,10 +17,14 @@ public interface ITelphoneLinesRemote {
 	void DeleteTelephoneLines(int id);
 
 	void UpdateTelephoneLines(TelephoneLines telephoneline, int iduser);
+	
+	TelephoneLines GetTellineById(int idTelline);
 
 	List<TelephoneLines> GetAll();
 
 	List<TelephoneLines> GetMyTelephoneLines();
+	
+	List<TelephoneLines> GetTelephoneLinesByService(int idService);
 
 	void AffectService(int idtelephoneline, int idservice);
 

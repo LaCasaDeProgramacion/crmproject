@@ -7,6 +7,8 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
+
+import crm.AuthenticateWS.Secured;
 import crm.entities.prospecting.*;
 import crm.impl.prospecting.ContractImpl;
 
@@ -48,6 +50,7 @@ public class ContractWs {
 	 
 	 	@POST
 	    @Path("add")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addContract(
 	    		@QueryParam("title") String title , 
@@ -58,17 +61,18 @@ public class ContractWs {
 	    		@QueryParam("status") String status, 
 	    		@QueryParam("idAgent") int idAgent)
 	 	{
-		 		
-	 				if (contractImpl.addContract(title, startDate, endDate, salary, comment,status, idAgent))
+		 		int res = contractImpl.addContract(title, startDate, endDate, salary, comment,status, idAgent);
+	 				if (res==1)
 		 			return Response.status(Status.CREATED).entity("ADDED").build();
-	 				
-	 				return Response.status(Status.NOT_FOUND).entity("PROBLEM AGENT").build();
-		 		 
+	 				if(res==-1)
+	 				return Response.status(Status.NOT_FOUND).entity("AGENT NOT FOUND OR ALREADY HAS A CONTRACT").build();
+	 				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
 				 
 	    }
 	 
 	 @PUT
      @Path("update")
+	 @Secured
      @Produces(MediaType.APPLICATION_JSON)
      public Response updateContract(
     		 	@QueryParam("id") int id,
@@ -81,25 +85,28 @@ public class ContractWs {
 	    		@QueryParam("idAgent") int idAgent 
 	    		){
 		
-		 boolean res = contractImpl.updateContract(id, title, startDate, endDate, salary, comment,status, idAgent);
-		 if (res)
-		 {
-			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
-		 }
-		 else return Response.status(Status.NOT_FOUND).entity(" CONTRACT/AGENT NOT FOUND").build();
+		 int res = contractImpl.updateContract(id, title, startDate, endDate, salary, comment,status, idAgent);
+		 		if (res==1)
+	 			return Response.status(Status.CREATED).entity("UPDATED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+			 
          
      }
  	 
 	  	@DELETE
 	    @Path("delete")
+	  	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response deleteContract( @QueryParam("id")int id){
-	  		
-	  		if (contractImpl.deleteContract(id))
-	  		{
-	  			return Response.status(Status.GONE).entity("DELETED").build();
-	  		}
-			    return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	  		int res = contractImpl.deleteContract(id); 
+	  			if (res==1)
+	 			return Response.status(Status.CREATED).entity("DELETED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+			 
 	    }
 	
 }

@@ -5,6 +5,9 @@ import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.persistence.criteria.Fetch;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity 
 @Table(name="Agent")
@@ -130,6 +133,7 @@ public class Agent implements Serializable {
 		this.drivenLicence = drivenLicence;
 	}
 
+	@JsonIgnore
 	public PointOfSale getPointofsale() {
 		return pointofsale;
 	}
@@ -138,6 +142,7 @@ public class Agent implements Serializable {
 		this.pointofsale = pointofsale;
 	}
 
+	@JsonIgnore
 	public Contract getContract() {
 		return contract;
 	}
@@ -155,6 +160,7 @@ public class Agent implements Serializable {
 		this.number = number;
 	}
 
+	@JsonIgnore
 	public List<Event_agent> getEvent_agent() {
 		return event_agent;
 	}

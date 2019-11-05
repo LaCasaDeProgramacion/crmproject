@@ -1,5 +1,6 @@
 package crm.interfaces;
 
+import java.security.Provider.Service;
 import java.util.List;
 
 import javax.ejb.Remote;
@@ -20,4 +21,12 @@ public interface IServiceRemote {
 	Services SearchServicesByName(String Name);
 	
 	int NbServiceUsed(int idService);
+	
+	List<Services> MesServices();
+	
+	Services GetServiceById(int idService);
+	
+    void DisableService(int idService);
+    
+    public List<Services> GetEnabledService();
 }

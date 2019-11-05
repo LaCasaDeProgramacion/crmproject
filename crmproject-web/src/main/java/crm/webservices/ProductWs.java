@@ -74,9 +74,15 @@ public class ProductWs   {
       return productImpl.searchForProduct(productName);
      }
 
+<<<<<<< HEAD
 @Secured
 	 @POST
+=======
+
+	 	@POST
+>>>>>>> 1b5f99f8956888a67178bd452ac57beb54bc7be1
 	    @Path("addProduct")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addProduct(
 	            @QueryParam("productName")String productName,
@@ -110,8 +116,9 @@ public class ProductWs   {
 			
 		
 			if(productImpl.updateProduct(id, productName, productDescription, productQuantity, productPrice, productStatus, category_id, store_id)==1)
-			Response.status(200).entity(status).build();
+			//Response.status(200).entity(status).build();
 			return Response.ok("Your product has been Modified!").build();
+			else  return Response.ok("ERRUEU").build();
 		}
 	 
 	 

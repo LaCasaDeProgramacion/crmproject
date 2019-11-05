@@ -11,8 +11,8 @@ public interface IPointOfSaleRemote {
 	
 	public List<PointOfSale> allPointOfSale();
 	public List<PointOfSale>  searchForPointOfSale(String POSName);
-	public void addPointOfSale(String name,  float latitude, float longitude) ;
-	public boolean deletePointOfSale(int id);
+	public boolean addPointOfSale(String name,  float latitude, float longitude) ;
+	public int deletePointOfSale(int id);
 	public int updatePointOfSale(int id ,String name, float latitude, float longitude) ;
 
 	

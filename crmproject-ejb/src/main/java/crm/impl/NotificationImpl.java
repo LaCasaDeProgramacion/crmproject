@@ -65,7 +65,7 @@ public class NotificationImpl implements INotificationLocal, INotificationRemote
 
 	@Override
 	public List<NotificationComplaint> getallnotif() {
-		User userdest = em.find(User.class, UserSession.getInstance().getId());
+		User userdest = em.find(User.class, 1);
 		TypedQuery<NotificationComplaint> q = em.createQuery(
 				"SELECT n FROM NotificationComplaint n WHERE n.UserDestination= :userdest",
 				NotificationComplaint.class);

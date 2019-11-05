@@ -11,8 +11,8 @@ import crm.entities.prospecting.*;
 public interface IContractLocal {
 	public List<Contract> allContracts();
 	public List<Contract> searchForContract(String name);
-	public boolean addContract(String title , Date startDate, Date endDate, float salary, String comment,String status, int idAgent ) ;
-	public boolean updateContract(int id ,String title, Date startDate, Date endDate, float salary, String comment,String status, int idAgent) ;
-	public boolean deleteContract(int id);
+	public int addContract(String title , Date startDate, Date endDate, float salary, String comment,String status, int idAgent ) ;
+	public int updateContract(int id ,String title, Date startDate, Date endDate, float salary, String comment,String status, int idAgent) ;
+	public int deleteContract(int id);
 
 }
