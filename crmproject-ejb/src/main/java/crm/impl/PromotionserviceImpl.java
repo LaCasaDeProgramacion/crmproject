@@ -166,7 +166,7 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 		if (idproduct != 0) {
 			Product prod = em.find(Product.class, idproduct);
 			System.err.println("product name " + prod.getProductName());
-			p.setTitle(promotion.getPromotiontype());
+			p.setTitle(promotion.getTitle());
 			p.setPromotiontype(promotion.getPromotiontype());
 			p.setPromotionunit(promotion.getPromotionunit());
 			p.setValidfrom(promotion.getValidfrom());

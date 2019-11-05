@@ -46,12 +46,12 @@ public class TelephoneLineWS {
 	) {
 		TelephoneLines t = new TelephoneLines(lineNumber, codePIN, codePUK);
 
-		try {
+		//try {
 			tellinews.AddTelephoneLines(t,idUser, idservice);
 			
-		} catch (Exception e) {
+		/*} catch (Exception e) {
 			return Response.status(javax.ws.rs.core.Response.Status.FOUND).entity("tel line existe").build();
-		}
+		}*/
 		return Response.status(200).entity(status).build();
 		
 	}

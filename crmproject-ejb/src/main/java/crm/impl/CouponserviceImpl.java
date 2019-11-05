@@ -151,10 +151,10 @@ public class CouponserviceImpl implements ICouponServiceRemote {
 	@Override
 	public String HourMinuteSecondLeftToUseCoupon() {
 		if(UserSession.getInstance().getRole()==Roles.CLIENT || UserSession.getInstance().getRole()==Roles.PROSPECT) {
-		
+		User use = em.find(User.class, UserSession.getInstance().getId());
 		TypedQuery<UsersCoupon> usercouponquery = em
 				.createQuery("SELECT p FROM UsersCoupon p WHERE p.user=:user", UsersCoupon.class)
-				.setParameter("user", UserSession.getInstance().getRole());
+				.setParameter("user", use);
 		UsersCoupon p = usercouponquery.getSingleResult();
 		Coupon coupon = p.getCoupon();
 		Promotion prom = coupon.getPromotion();

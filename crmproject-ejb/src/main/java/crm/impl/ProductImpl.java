@@ -62,7 +62,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	@Override
 	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
 			String productStatus, int category_id,int store_id)   {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR || UserSession.getInstance().getRole()==Roles.ADMIN) {
+		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 		    Product emp = new Product();
 	Stock stock = new Stock();
 		
