@@ -15,7 +15,9 @@ import javax.persistence.TypedQuery;
 
 import crm.entities.Product;
 import crm.entities.Promotion;
+import crm.entities.Roles;
 import crm.interfaces.IPromotionServiceRemote;
+import crm.utils.UserSession;
 
 
 @Stateless
@@ -26,6 +28,7 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 
 	@Override
 	public int addPromotion(Promotion promotion) {
+		if(UserSession.getInstance().getRole()==Roles.ADMIN || UserSession.getInstance().getRole()==Roles.VENDOR) {
 		System.out.println("IN : addpromotion");
 		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
 		ZonedDateTime now = ZonedDateTime.now(z);
@@ -38,15 +41,19 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 		} else {
 			promotion.setEnabledpromotion(1);
 		}
-
+       promotion.setPromotionbycoupon(false);
 		em.persist(promotion);
 
 		System.out.println("OUT : addpromotion (persist) ");
 		return promotion.getId();
+		}else {
+			return 99999999;
+		}
 	}
 
 	@Override
-	public void assignProductTopromotion(int productId, int promotionId) {
+	public Boolean assignProductTopromotion(int productId, int promotionId) {
+		if(UserSession.getInstance().getRole()==Roles.ADMIN || UserSession.getInstance().getRole()==Roles.VENDOR) {
 		System.out.println("IN : Assign product to promotion");
 		Product product = em.find(Product.class, productId);
 		Promotion promotion = em.find(Promotion.class, promotionId);
@@ -58,19 +65,30 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 		promotion.setPromotionvalue(promvalue);
 		promotion.setMaximumorderproducts(product.getProductQuantity());
 		System.out.println("OUT : Assign product to promotion");
+		return true;
+		}else {
+			return false;
+		}
 	}
 
 	@Override
-	public void removePromotion(int id) {
+	public Boolean removePromotion(int id) {
+		if(UserSession.getInstance().getRole()==Roles.ADMIN || UserSession.getInstance().getRole()==Roles.VENDOR) {
 		Query q = em.createQuery("DELETE FROM Promotion p WHERE p.id = :id");
 		q.setParameter("id", id);
 		q.executeUpdate();
+		return true;
+		}else {
+			return false;
+		}
 
 	}
 
 	@Override
 	public Promotion findPromotionById(int promotionId) {
+	
 		Promotion promotion = em.find(Promotion.class, promotionId);
+		
 		return promotion;
 	}
 
@@ -98,12 +116,17 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 
 	@Override
 	public Promotion getPromotionbyproductid(int productid) {
-		TypedQuery<Promotion> query = em.createQuery("select p from Promotion p  WHERE  p.product =:prod",
-				Promotion.class);
+		
+		if(em.find(Product.class, productid)==null) {
+			return null;
+		}else {
+			TypedQuery<Promotion> query = em.createQuery("select p from Promotion p  WHERE  p.product =:prod",
+					Promotion.class);
 		Product p = em.find(Product.class, productid);
 		query.setParameter("prod", p);
 		Promotion results = query.getSingleResult();
 		return results;
+		}
 	}
 
 	@Override

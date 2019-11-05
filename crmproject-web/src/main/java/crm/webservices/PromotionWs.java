@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Product;
 import crm.entities.Promotion;
 import crm.impl.PromotionserviceImpl;
@@ -31,9 +32,10 @@ public class PromotionWs {
 	
 	
 	 @SuppressWarnings("deprecation")
-	@POST
-	    @Path("addpromotion")
-	    @Produces(MediaType.APPLICATION_JSON)
+	 @POST
+	 @Path("addpromotion")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Response addPromotion(//http://localhost:9080/crmproject-web/rest/promotions/addpromotion?ptitle=Promotion&ptype=Black Friday&pvalue=35&punit=10%&maximumorderproducts=40&enabledpromotion=1
 			 @QueryParam("ptitle") String promotiontitle,
 	         @QueryParam("ptype") String promotiontype,
@@ -52,26 +54,38 @@ public class PromotionWs {
         p.setValiduntil(validuntil);
 
 		
-	    promotionserviceimpl.addPromotion(p);  
-		return Response.status(Status.OK).entity(p).build();
+	   int num = promotionserviceimpl.addPromotion(p);
+	   if(num==99999999) {
+			return Response.status(Status.NOT_ACCEPTABLE).entity("Not admin or Not Vendor").build();
+	   }else {
+			return Response.status(Status.OK).entity(p).build();
+	   }
+	
 		 
 	 }
 	 @PUT
      @Path("assignprodtoprom")
      @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Response assignproducttopromotion(
 			 @QueryParam("promotionid") int promotionid,
 	         @QueryParam("productid") int productid
 			 ) {
-		 promotionserviceimpl.assignProductTopromotion(productid, promotionid);
+		Boolean test = promotionserviceimpl.assignProductTopromotion(productid, promotionid);
+		 if(test==false) {
+			 return Response.status(Status.NOT_ACCEPTABLE).entity("not admin or vendor").build();
+			 
+		 }else {
+			 return Response.status(Status.OK).entity(promotionserviceimpl.findPromotionById(promotionid)).build();
+			 
+		 }
 		 
-		 
-		return Response.status(Status.OK).entity(promotionserviceimpl.findPromotionById(promotionid)).build();
-		 
+		
 	 }
 	 @PUT
      @Path("disablepromotion")
      @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Response disablepromotion(
 			 @QueryParam("promotionid") int promotionid
 			 ) {
@@ -81,6 +95,7 @@ public class PromotionWs {
 	 @PUT
      @Path("enablepromotion")
      @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Response enablepromotion(
 			 @QueryParam("promotionid") int promotionid
 			 ) {
@@ -91,17 +106,24 @@ public class PromotionWs {
 	 @DELETE
 	 @Path("deletepromotion")
 	 @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Response DeletePromotion(
 			 @QueryParam("id")int id
 			 ) {
 		 
-		 promotionserviceimpl.removePromotion(id);
-	     return Response.status(200).entity("Deleted promotion with "+id).build();
+		Boolean test = promotionserviceimpl.removePromotion(id);
+		if(test==false) {
+			return Response.status(200).entity("not admin or not vendor").build();
+		}else {
+			return Response.status(200).entity("Deleted promotion with "+id).build();
+		}
+	     
 	 }
 	 
 	 @PUT
      @Path("updatepromotion/{id}")
      @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Promotion updatepromotion(
 			 @PathParam(value="id")int id ,
 			 @QueryParam("productid") int idproduct,
@@ -137,22 +159,39 @@ public class PromotionWs {
 	 @GET
      @Path("findproductbypromotion")
      @Produces(MediaType.APPLICATION_JSON)
-	 public Product findproductbypromotion(
+	 public Response findproductbypromotion(
 			 
 			 @QueryParam("id")int id
 			 
 			 ){
+		 
 		 Promotion p =promotionserviceimpl.findPromotionById(id);
-		 Product product =  promotionserviceimpl.displayProductbypromotion(p);
-		 return product;
+		 if(p==null) {
+			 return Response.status(Status.NOT_FOUND).entity("Promotion id not found in DATA base").build();
+		 }else {
+			 Product product =  promotionserviceimpl.displayProductbypromotion(p);
+			 if(product==null) {
+				 return Response.status(Status.NOT_FOUND).entity("Promotion Have no Product associated to it").build();
+			 }else {
+				 return Response.status(Status.OK).entity(product).build();
+			 }
+			
+		 }
+		
+		
 	 }
 	 @GET
      @Path("findpromotionbyproduct")
      @Produces(MediaType.APPLICATION_JSON)
-	 public Promotion findpromotionbypromotion(
+	 public Response findpromotionbypromotion(
 			 @QueryParam("id")int id) {
-		
-		 return promotionserviceimpl.getPromotionbyproductid(id);
+		Promotion p =promotionserviceimpl.getPromotionbyproductid(id);
+		if(p==null) {
+			 return Response.status(Status.NOT_FOUND).entity("Promotion id not found in DATA base").build();
+		 }else {
+			
+				 return Response.status(Status.OK).entity(p).build();
+		 }
 	 }
 	 @GET
 	 @Path("findAllPromotionusabled")

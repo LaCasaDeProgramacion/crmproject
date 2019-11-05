@@ -38,27 +38,16 @@ public class Coupon implements Serializable {
 	public int id;
 	@Column(name = "codecoupon", length = 255)
 	public String codecoupon;
-	@Column(name = "coupontitle", length = 255)
-	public String coupontitle;
-	@Column(name = "coupondescription", length = 255)
-	public String coupondescription;
-	@Column()
-	public Timestamp createddate;
-	@Column()
-	public Timestamp enddate;
-	@Column(name = "maximumorderproducts")
-	public int maximumorderproducts; // max d'achat produit par promotion
 	@Column(name = "enabledcoupon")
 	public int enabledcoupon;
 	@OneToOne()
-	public Product product;
-
-
-	@OneToMany(mappedBy="coupon",fetch=FetchType.EAGER)
+	public Promotion promotion;
+	
+    @OneToMany(mappedBy="coupon",fetch=FetchType.EAGER)
 	@JsonManagedReference
 	@JsonIgnore
 	public Set<UsersCoupon> usersCoupon;
-
+    
 	public int getId() {
 		return id;
 	}
@@ -75,45 +64,7 @@ public class Coupon implements Serializable {
 		this.codecoupon = codecoupon;
 	}
 
-	public String getCoupontitle() {
-		return coupontitle;
-	}
-
-	public void setCoupontitle(String coupontitle) {
-		this.coupontitle = coupontitle;
-	}
-
-	public String getCoupondescription() {
-		return coupondescription;
-	}
-
-	public void setCoupondescription(String coupondescription) {
-		this.coupondescription = coupondescription;
-	}
-
-	public Timestamp getCreateddate() {
-		return createddate;
-	}
-
-	public void setCreateddate(Timestamp createddate) {
-		this.createddate = createddate;
-	}
-
-	public Timestamp getEnddate() {
-		return enddate;
-	}
-
-	public void setEnddate(Timestamp enddate) {
-		this.enddate = enddate;
-	}
-
-	public int getMaximumorderproducts() {
-		return maximumorderproducts;
-	}
-
-	public void setMaximumorderproducts(int maximumorderproducts) {
-		this.maximumorderproducts = maximumorderproducts;
-	}
+	
 
 	public int getEnabledcoupon() {
 		return enabledcoupon;
@@ -123,17 +74,17 @@ public class Coupon implements Serializable {
 		this.enabledcoupon = enabledcoupon;
 	}
 
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
 	
 
 	
+
+	public Promotion getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
+	}
 
 	public Set<UsersCoupon> getUsersCoupon() {
 		return usersCoupon;
@@ -143,7 +94,7 @@ public class Coupon implements Serializable {
 		this.usersCoupon = usersCoupon;
 	}
 
-	Coupon() {
+	public Coupon() {
 	}
 
 }

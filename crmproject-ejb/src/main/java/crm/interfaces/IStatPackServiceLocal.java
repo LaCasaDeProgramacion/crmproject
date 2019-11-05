@@ -6,12 +6,33 @@ import javax.ejb.Local;
 
 import crm.entities.Pack;
 import crm.entities.StatPack;
+import crm.entities.TitleStat;
 
 
 @Local
 public interface IStatPackServiceLocal {
-	public void addstatpack(Pack packid);
-	public void updatestatpack(Pack packid, double gainmoney, int quantityselled, boolean changetitle);
-	public StatPack getStatpack(Pack packid);
+	////system schedule method 
+	public void addstatpack(Pack p);
+	public void updatestatpack(Pack p);
+    public void updatestatpacktitle();
+	public void BestpackforToday();
+	public StatPack mostgainMoneyPackToday();
+	public StatPack mostSelledQuantitypacktoday();
+	public void ArchivePackbyTitle();
+	public void ArchiverCountDays();
+	//jsonproducemethod
+	public StatPack getStatpack(Pack p);
 	public List<StatPack> getallStatPack();
+	public StatPack jsonmostgainMoneyPackToday();
+	public StatPack jsonSelledQuantitypacktoday();
+	public StatPack jsonBestpackforToday();
+	public StatPack jsonPackoftheMonth();
+    public List<StatPack> jsonStatPacksByMonth(String Month);
+    public List<StatPack> jsonStatPacksByYear(String Year);
+    public List<StatPack> jsonStatPacksByMonthandYear(String Month ,String Year);
+    public List<StatPack> jsonStatPackByTitle(String ts);
+    public List<StatPack> jsonStatPackByEverething(String Month ,String Year,String ts);
+    
+
+	
 }

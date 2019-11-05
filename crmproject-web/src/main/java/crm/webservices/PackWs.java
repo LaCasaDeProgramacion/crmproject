@@ -21,11 +21,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Pack;
 import crm.entities.Product;
 import crm.entities.ProductsPack;
 import crm.entities.Promotion;
 import crm.entities.StatPack;
+import crm.entities.TitleStat;
 import crm.impl.PackserviceImpl;
 import crm.impl.StatPackserviceImpl;
 
@@ -40,43 +42,53 @@ public class PackWs {
 	@Path("addpack")
 	
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response addPack(@QueryParam("title") String title, @QueryParam("description") String description,
 			@QueryParam("picture") String picture, @QueryParam("validfrom") Timestamp validfrom,
 			@QueryParam("validuntil") Timestamp validuntil
 
 	) {
+		
 		Pack p = new Pack();
 		p.setTitle(title);
 		p.setDescription(description);
 		p.setPicture(picture);
 		p.setValidfrom(validfrom);
 		p.setValiduntil(validuntil);
-		packserviceimpl.addpack(p);
-		return Response.status(Status.OK).entity(p).build();
+		Boolean test =packserviceimpl.addpack(p);
+		if(test==false) {
+			return Response.status(Status.NOT_ACCEPTABLE).entity("Not Admin or Vendor").build();
+		}else {
+			return Response.status(Status.OK).entity(p).build();
+		}
+		
 
 	}
 
 	@PUT
 	@Path("assignproductstopack")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response assignproductstopack(@QueryParam("packid") int packid,
 			@QueryParam("products") List<Integer> productsid) {
 
-		packserviceimpl.assignproducttopack(productsid, packid);
-
-		return Response.status(Status.OK).entity("Products added to pack").build();
+		Boolean test =packserviceimpl.assignproducttopack(productsid, packid);
+		if(test==false) {
+			return Response.status(Status.NOT_ACCEPTABLE).entity("Not Admin or Vendor").build();
+		}else {
+			return Response.status(Status.OK).entity("Products added to pack").build();
+		}
+		
 
 	}
 	@PUT
 	@Path("updatePack")
-	 
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
    public Response updatePack(
 		   @QueryParam("id") int packid,
 		   @QueryParam("title")String title,
 		   @QueryParam("description")String description,
-		   @QueryParam("integratedprice")double integratedprice,
-		   @QueryParam("integratedquantity")int integratedquantity,
 		   @QueryParam("picture")String picture,
 	       @QueryParam("validfrom")Timestamp validfrom,
 	       @QueryParam("validuntil")Timestamp validuntil,
@@ -90,26 +102,15 @@ public class PackWs {
 	    p.setValidfrom(validfrom);
 	    p.setValiduntil(validuntil);
 	    
-	  System.err.println("integratedprice "+integratedprice);
-	  if(integratedprice==0.0) {
-	    p.setIntegratedprice(99999999.99);
-	  }else {
-		  p.setIntegratedprice(integratedprice);
-	  }
-	    System.err.println("integratedquantity "+integratedquantity);
-	    if(integratedquantity==0) {
-	    p.setIntegratedquantity(99999999);
-	    }else {
-	    	p.setIntegratedquantity(integratedquantity);
-	    }
 	  Pack pack = packserviceimpl.updatepack(p, packid, productsid);
-	  Pack packdisplay = packserviceimpl.findpackbyid(packid);
+	  Pack packdisplay = packserviceimpl.findpackbyid(pack.getId());
 		return Response.status(Status.OK).entity(packdisplay).build() ;
 		
 	}
 	@PUT
 	@Path("archivepack")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response archivePack(@QueryParam("packid") int packid) {
 		packserviceimpl.archivepack(packid);
 		return Response.status(Status.OK).entity("archiving pack true ! ").build();
@@ -118,6 +119,7 @@ public class PackWs {
 	@PUT
 	@Path("unarchivingpack")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response unarchivingpack(@QueryParam("packid") int packid) {
 		packserviceimpl.unarchivingpack(packid);
 		return Response.status(Status.OK).entity("archiving pack false ! ").build();
@@ -148,6 +150,7 @@ public class PackWs {
 	 @DELETE
 	 @Path("deletepack")
 	 @Produces(MediaType.APPLICATION_JSON)
+	 @Secured
 	 public Response Deletepack(
 			 @QueryParam("id")int id
 			 ) {
@@ -215,4 +218,65 @@ public class PackWs {
 				return statpackserviceimpl.getallStatPack();
 		 
 	 }
+	 @GET
+	 @Path("mostgainmoneystatpack")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public StatPack mostgainmoneystatpack() {
+				return statpackserviceimpl.jsonmostgainMoneyPackToday();
+		 }
+	 @GET
+	 @Path("SelledQuantitypacktoday")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public StatPack jsonSelledQuantitypacktoday() {
+				return statpackserviceimpl.jsonSelledQuantitypacktoday();
+		 }
+	 @GET
+	 @Path("BestpackforToday")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public StatPack BestpackforToday() {
+				return statpackserviceimpl.jsonBestpackforToday();
+		 }
+	 @GET
+	 @Path("PackoftheMonth")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public StatPack jsonPackoftheMonth() {
+				return statpackserviceimpl.jsonPackoftheMonth();
+		 }
+	 ///////
+	 @GET
+	 @Path("jsonStatPacksByMonth")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public List<StatPack> jsonStatPacksByMonth(@QueryParam("month")String month) {
+		 
+			return statpackserviceimpl.jsonStatPacksByMonth(month);
+		 }
+	 @GET
+	 @Path("jsonStatPacksByYear")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public List<StatPack> jsonStatPacksByYear(@QueryParam("year")String year) {
+				return statpackserviceimpl.jsonStatPacksByYear(year);
+		 }
+	 
+	 @GET
+	 @Path("jsonStatPacksByMonthandYear")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public List<StatPack> jsonStatPacksByMonthandYear(@QueryParam("year")String year,
+			 @QueryParam("month")String month) {
+				return statpackserviceimpl.jsonStatPacksByMonthandYear(month, year);
+		 }
+	 @GET
+	 @Path("jsonStatPackByTitle")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public List<StatPack> jsonStatPackByTitle(@QueryParam("TitleStat")String ts) {
+		System.out.println("ts input : ***********************************************************"+ts);
+				return statpackserviceimpl.jsonStatPackByTitle(ts);   
+		 }
+	 @GET
+	 @Path("jsonStatPackByEverething")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public List<StatPack> jsonStatPackByEverething(@QueryParam("month")String month,@QueryParam("year")String year,@QueryParam("TitleStat")String ts) {
+				return statpackserviceimpl.jsonStatPackByEverething(month, year, ts);
+		 }
+	 
+	 
 }

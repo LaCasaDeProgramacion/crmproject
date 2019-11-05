@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ProductsPack implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
-	@EmbeddedId
-	private ProductsPackPk productspackPK;
+	@Id
+	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@Column(name="id")
+	private int id;
 	
 	@Column(name="productIntegratedPrice")
 	public double productIntegratedPrice;
@@ -35,13 +37,13 @@ public class ProductsPack implements Serializable{
 	public int integratedQuantity;
 
 	@ManyToOne(cascade= CascadeType.MERGE)
-    @JoinColumn(name = "idPack", referencedColumnName = "id", insertable=false, updatable=false)
+    @JoinColumn(name = "idPack", referencedColumnName = "id")
 	@JsonBackReference
 	
 	private Pack pack;
 	@JsonBackReference
 	@ManyToOne(cascade= CascadeType.MERGE)
-	@JoinColumn(name = "idProduct", referencedColumnName = "id", insertable=false, updatable=false)
+	@JoinColumn(name = "idProduct", referencedColumnName = "id")
 	
 	private Product product;
 	
@@ -52,19 +54,25 @@ public class ProductsPack implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public ProductsPack(ProductsPackPk productspackPK, double productIntegratedPrice, Pack pack, Product product) {
+	
+	public ProductsPack(int id, double productIntegratedPrice, int integratedQuantity, Pack pack, Product product) {
 		super();
-		this.productspackPK = productspackPK;
+		this.id = id;
 		this.productIntegratedPrice = productIntegratedPrice;
+		this.integratedQuantity = integratedQuantity;
 		this.pack = pack;
 		this.product = product;
 	}
-	public ProductsPackPk getProductspackPK() {
-		return productspackPK;
+	
+
+	public int getId() {
+		return id;
 	}
-	public void setProductspackPK(ProductsPackPk productspackPK) {
-		this.productspackPK = productspackPK;
+
+	public void setId(int id) {
+		this.id = id;
 	}
+
 	public double getProductIntegratedPrice() {
 		return productIntegratedPrice;
 	}
