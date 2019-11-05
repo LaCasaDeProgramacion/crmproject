@@ -18,6 +18,4 @@ public List<User> getAdmin();
 public User getUserById();
 public void ResetingPassword(String userName);
 public void UpdatePassword(String userName,String NewPassword);
-
-
 }

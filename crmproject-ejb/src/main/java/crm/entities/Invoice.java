@@ -24,7 +24,11 @@ public class Invoice implements Serializable {
 	
 	@Column(name="Date")
 	private Date date; 
+    
+	@Column(name="prix")
+	private double prix; 
 
+	
 	@OneToOne
 	private User user ; 
 
@@ -42,7 +46,7 @@ public class Invoice implements Serializable {
 	public Set<InvoicesPacks> invoicespacks;
 	
 	@OneToOne
-	private Command cmd; 
+	private Commande cmd; 
 	
 	public Invoice() {
 		super();
@@ -114,12 +118,20 @@ public class Invoice implements Serializable {
 		this.invoicespacks = invoicespacks;
 	}
 
-	public Command getCmd() {
+	public Commande getCmd() {
 		return cmd;
 	}
 
-	public void setCmd(Command cmd) {
+	public void setCmd(Commande cmd) {
 		this.cmd = cmd;
+	}
+
+	public double getPrix() {
+		return prix;
+	}
+
+	public void setPrix(double prix) {
+		this.prix = prix;
 	}
 
 	

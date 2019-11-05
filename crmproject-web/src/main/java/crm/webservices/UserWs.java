@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriInfo;
 
 import crm.entities.Roles;
 import crm.entities.User;
+import crm.impl.BasketImpl;
 import crm.impl.UserImpl;
 
 import crm.utils.BCrypt;
@@ -36,7 +37,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class UserWs {
 	
 	@EJB
-	UserImpl userImpl; 
+	UserImpl userImpl;
 	
 	@Context
 	UriInfo uriInfo;
@@ -58,17 +59,14 @@ public class UserWs {
 		Roles rolee=Roles.valueOf(role);
 		User user = new User(cin, username, email, password, firstName, lastName, rolee, dateBirth); 
 		userImpl.addUser(user);
-	 		 
- 		
-	 	return Response.status(Status.CREATED).entity("ADDED").build();
-			 
-    }
+	    return Response.status(Status.CREATED).entity(" added with basket ").build();
+}
 
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("authenticate")
-	public Response authenticateUser(@QueryParam("username") String username, @QueryParam("password") String password) {
+	public Response authenticateUser(@QueryParam("username")String username, @QueryParam("password")String password) {
 
 			Boolean test = userImpl.authenticate(username, password);
 				if (test)

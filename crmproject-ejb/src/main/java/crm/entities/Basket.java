@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -19,8 +21,9 @@ import javax.persistence.Table;
 @Table(name="Basket")
 
 public class Basket implements Serializable{
+	private static final long serialVersionUID = 1L;
 	@Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="basket_id")
     private int basket_id;
 	
@@ -30,18 +33,12 @@ public class Basket implements Serializable{
 	@OneToOne 
 	private User user;
 	
-	@ManyToMany(cascade = CascadeType.ALL) 
-	private Set<Product> product;
+	@ManyToMany(cascade=CascadeType.ALL)
+	Set<Product> products;
 	
-	@ManyToMany(cascade = CascadeType.ALL) 
-	private Set<Pack> pack;
-	
-
 	public Basket() {
 		super();
 	}
-	
-	
 
 	public int getEtat() {
 		return etat;
@@ -53,9 +50,7 @@ public class Basket implements Serializable{
 		this.etat = etat;
 	}
 
-
-
-	public int getBasket_id() {
+    public int getBasket_id() {
 		return basket_id;
 	}
 
@@ -67,27 +62,17 @@ public class Basket implements Serializable{
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(User user) {   
 		this.user = user;
 	}
 
-	public Set<Product> getProduct() {
-		return product;
+	public Set<Product> getProducts() {
+		return products;
 	}
 
-	public void setProduct(Set<Product> product) {
-		this.product = product;
+	public void setProducts(Set<Product> products) {
+		this.products = products;
 	}
 
-	public Set<Pack> getPack() {
-		return pack;
-	}
-
-	public void setPack(Set<Pack> pack) {
-		this.pack = pack;
-	}
-
-	
-	
 	
 }
