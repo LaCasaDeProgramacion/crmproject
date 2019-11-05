@@ -20,4 +20,12 @@ public interface IServiceLocal {
 	Services SearchServicesByName(String Name);
 	
 	int NbServiceUsed(int idService);
+	
+	List<Services> MesServices();
+	
+	Services GetServiceById(int idService);
+	
+	 void DisableService(int idService);
+	 
+	 public List<Services> GetEnabledService();
 }

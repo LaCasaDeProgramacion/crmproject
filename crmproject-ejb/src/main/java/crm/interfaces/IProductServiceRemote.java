@@ -30,6 +30,6 @@ public interface IProductServiceRemote {
 	public List<Product> getProductbypricedesc();
 	public List<Product> getProductbypricedasc();
 	public String checkProductAvailability(int id);
-	
+	public List<Product> findCourseByPriceRange(double minprice, double maxprice);
     
 }

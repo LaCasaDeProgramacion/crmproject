@@ -14,12 +14,11 @@ import crm.entities.ProductsPack;
 
 @Remote
 public interface IPackServiceRemote {
-	public void addpack(Pack pack);
+	public Boolean addpack(Pack pack);
 	public Pack updatepack(Pack pack, int idpack, List<Integer> Products);
 	public Pack findpackbyid(int id);
-	public void assignproducttopack(List<Integer>Products ,int packid);
+	public Boolean assignproducttopack(List<Integer>Products ,int packid);
 	public void removePack(int id);
-	public void removeProductfrompack(Product product);
 	public List<Object> searchPack(String Packtext);
 	public List<Product> findproductsPack(int idpack);
 

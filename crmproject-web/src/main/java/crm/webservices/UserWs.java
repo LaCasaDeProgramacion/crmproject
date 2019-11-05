@@ -92,6 +92,7 @@ public class UserWs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("profile")
 	public Response Profile() {
+
 		System.out.println("++++++++++++++++++++++++" + UserSession.getInstance().getFirstName());
 		if ( userImpl.getUserById() != null )
 			return Response.status(Status.ACCEPTED).entity(userImpl.getUserById()).build(); 

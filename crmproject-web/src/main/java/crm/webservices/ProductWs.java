@@ -75,8 +75,10 @@ public class ProductWs   {
      }
 
 
-	 	@POST
-	    @Path("addProduct")
+
+	 @POST
+
+	  @Path("addProduct")
 	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addProduct(
@@ -94,12 +96,12 @@ public class ProductWs   {
 	        return Response.status(200).entity(status).build();
 	    }
 	 
-	 
+	 @Secured
 		@PUT
 		@Path("updateProduct")
 		public Response updateProduct( 
 				@QueryParam("id")int id,
-				@QueryParam("ProductName")String productName,
+				@QueryParam("productName")String productName,
 				@QueryParam("ProductDescription")String productDescription,
 				@QueryParam("ProductQuantity")int productQuantity,
 				@QueryParam("ProductPrice")double productPrice,
@@ -117,7 +119,7 @@ public class ProductWs   {
 		}
 	 
 	 
-	 
+	 @Secured
 	  @DELETE
 	    @Path("deleteProduct")
 	    @Produces(MediaType.APPLICATION_JSON)
@@ -129,7 +131,7 @@ public class ProductWs   {
 	    }
 
 	  
-	  
+	 @Secured
 		 @PUT
 		    @Path("activateproduct")
 		    @Produces(MediaType.APPLICATION_JSON)
@@ -170,6 +172,33 @@ public class ProductWs   {
 		        
 			  return productImpl.checkProductAvailability(id);
 		    }	
+		 
+		 
+		 @GET
+	     @Path("multisearch")
+	     @Produces(MediaType.APPLICATION_JSON)
+	     public List<Product> multisearch(
+	             @QueryParam("productDate")Date productDate,
+	             @QueryParam("productName")String productName,
+	             @QueryParam("productStatus")String productStatus,
+	             @QueryParam("category_id")int category_id
+	     ){
+	         
+	      return productImpl.MultiSearchProduct(productDate, productName, productStatus, category_id);
+	     }
+		 
+		 @GET
+			@Produces(MediaType.APPLICATION_JSON)
+			@Path("findProductByPriceRange" )
+		    public List<Product> ProductByRange( @QueryParam("minprice")double minprice,@QueryParam("minprice")double maxprice	
+		    		)
+		    {
+		        
+			  return productImpl.findCourseByPriceRange(minprice, maxprice);
+		    }	
+
+		 
+		
 		 
 }
 

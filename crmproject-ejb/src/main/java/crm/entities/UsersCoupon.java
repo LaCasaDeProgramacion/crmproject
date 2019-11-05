@@ -43,7 +43,8 @@ public class UsersCoupon implements Serializable{
 	@JoinColumn(name = "idUser", referencedColumnName = "id", insertable=false, updatable=false)
 	
 	private User user;
-	
+	@Column
+	private String typecoupon;
 	public UsersCouponPK getUserscouponpk() {
 		return userscouponpk;
 	}
@@ -72,6 +73,12 @@ public class UsersCoupon implements Serializable{
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public String getTypecoupon() {
+		return typecoupon;
+	}
+	public void setTypecoupon(String typecoupon) {
+		this.typecoupon = typecoupon;
 	}
 	
 	

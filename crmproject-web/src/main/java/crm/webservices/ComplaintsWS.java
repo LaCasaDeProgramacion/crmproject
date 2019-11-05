@@ -34,33 +34,46 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("allcomplaints")
+	@Secured
 	public List<Complaints> getComplaints() {
 		return complaintws.GetAllComplaints();
 	}
 
+
+	
 	@POST
 	@Path("addComplaint")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response addComplaint(@QueryParam("complaintBody") String complaintBody,
-			@QueryParam("complaintObject") String complaintObject,
-			@QueryParam("typeComplaint") int typeComplaint
+			@QueryParam("complaintObject") int idcomplaintObject
+			
 
 	) {
-		Complaints c = new Complaints(complaintBody, complaintObject);
+		Complaints c = new Complaints();
+		c.setComplaintBody(complaintBody);
 
-		complaintws.AddComplaint(c, typeComplaint);
-		return Response.status(200).entity(status).build();
+		Boolean test=complaintws.AddComplaint(c,idcomplaintObject);
+		if(test)
+		{
+			return Response.status(200).entity(status).build();
+
+		}
+		return Response.status(200).entity("You are not Client").build();
 	}
 
 	@PUT
 	@Path("updateComplaint")
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 
 	public Response updateComplaint(@QueryParam("id") int id, @QueryParam("complaintBody") String complaintBody,
-			@QueryParam("complaintObject") String complaintObject, @QueryParam("complaintState") String complaintState
+			 @QueryParam("complaintState") String complaintState
 
 	) {
-		Complaints c = new Complaints(id, complaintBody, complaintObject);
+		Complaints c = new Complaints();
+		c.setId(id);
+		c.setComplaintBody(complaintBody);
 		complaintws.UpdateComplaint(c);
 
 		return Response.status(200).entity(status).build();
@@ -69,6 +82,7 @@ public class ComplaintsWS {
 	@DELETE
 	@Path("deleteComplaint")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response deleteComplaint(@QueryParam("id") int id) {
 		complaintws.DeleteComplaint(id);
 		return Response.status(200).entity(status).build();
@@ -77,6 +91,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("complaintbyid")
+	@Secured
 	public Complaints GetcomplaintByID(@QueryParam("id") int id) {
 		return complaintws.GetComplaintsById(id);
 	}
@@ -84,6 +99,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("complaintsuser")
+	@Secured
 	public List<Complaints> GetComplaintsByUser(@QueryParam("iduser") int id) {
 		return complaintws.GetComplaintsByUser(id);
 	}
@@ -91,6 +107,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("mycomplaints")
+	@Secured
 	public List<Complaints> GetMyComplaints() {
 		return complaintws.GetMyComplaints();
 	}
@@ -98,6 +115,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("complaintsbystate")
+	@Secured
 	public List<Complaints> GetComplaintsByState(@QueryParam("state") String state) {
 		return complaintws.GetComplaintsByState(state);
 	}
@@ -105,6 +123,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("complaintsbytype")
+	@Secured
 	public List<Complaints> GetComplaintsByType(@QueryParam("idtype") int id) {
 		return complaintws.GetComplaintsByType(id);
 	}
@@ -112,6 +131,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("complaintsbydateA")
+	@Secured
 	public List<Complaints> GetComplaintsOrderByDateASC() {
 		return complaintws.GetComplaintsOrderByDateASC();
 	}
@@ -119,6 +139,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("complaintsbydateD")
+	@Secured
 	public List<Complaints> GetComplaintsOrderByDateDESC() {
 		return complaintws.GetComplaintsOrderByDateDESC();
 	}
@@ -126,26 +147,41 @@ public class ComplaintsWS {
 	@PUT
 	@Path("treatcomplaint")
 	@Produces(MediaType.APPLICATION_JSON)
-
+	@Secured
 	public Response TreatComplaint(@QueryParam("idcomplaint") int id, @QueryParam("state") String State
 
 	) {
-		complaintws.TreatComplaint(id, State);
+		boolean test=complaintws.TreatComplaint(id, State);
 
-		return Response.status(200).entity(status).build();
+		if(test)
+		{
+			return Response.status(200).entity(status).build();
+
+		}
+		return Response.status(200).entity("You are not admin").build();
+
 	}
 
 	@GET
-	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbyuser")
+	@Secured
 	public int NbComplaintByUser(@QueryParam("iduser") int id) {
 		return complaintws.NbComplaintByUser(id);
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("nbcomplaintbyObject")
+	@Secured
+	public int NbComplaintByObject(@QueryParam("idobject") int objectid) {
+		return complaintws.NbComplaintByCatégorie(objectid);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbytype")
+	@Secured
 	public int NbComplaintByType(@QueryParam("idType") int id) {
 		return complaintws.NbComplaintByType(id);
 	}
@@ -153,6 +189,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbystate")
+	@Secured
 	public int NbComplaintByState(@QueryParam("State") String state) {
 		return complaintws.NbComplaintByState(state);
 	}
@@ -160,6 +197,7 @@ public class ComplaintsWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("nbcomplaintbyperiod")
+	@Secured
 	public int NbComplaintByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Dfin") Date d2) {
 		return complaintws.NbComplaintByperiod(d1, d2);
 	}
@@ -167,14 +205,21 @@ public class ComplaintsWS {
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("affectTechnician")
-	public Response AffectTechnician(@QueryParam("idcomplaint") int id, @QueryParam("idtechnician") int idtech) {
-		complaintws.AffectTechnicien(id, idtech);
+	@Secured
+	public Response AffectTechnician(@QueryParam("idcomplaint") int id) {
+		boolean test=complaintws.AffectTechnicien(id);
+		if(test)
+		{
 		return Response.status(200).entity(status).build();
+		}
+		return Response.status(200).entity("You are not admin").build();
+
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("searchcomplaint")
+	@Secured
 	public List<Complaints> SearchComplaint(@QueryParam("motcle") String motcle) {
 		return complaintws.SearchComplaint(motcle);
 	}

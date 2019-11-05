@@ -6,14 +6,20 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table(name = "typecomplaint")
+@Table(name = "typecomplaint",uniqueConstraints=
+@UniqueConstraint(columnNames = {"TypeName"}))
 public class TypeComplaint implements Serializable {
 
 	/**
@@ -27,10 +33,34 @@ public class TypeComplaint implements Serializable {
 	@Column(name = "TypeName")
 	private String TypeName;
 
-	/*
-	 * @OneToMany(cascade = CascadeType.ALL, mappedBy="TypeComplaint") private
-	 * Set<Complaints> complaints;
-	 */
+	
+	 /*@OneToMany(cascade = CascadeType.ALL, mappedBy="TypeComplaint",fetch = FetchType.EAGER) 
+	 @JsonManagedReference
+		@JsonIgnore
+	 private Set<Complaints> complaints;*/
+	 
+	 @OneToMany(cascade = CascadeType.ALL, mappedBy="typeComplaint",fetch = FetchType.EAGER,orphanRemoval=true) 
+	 @JsonIgnore
+	 private Set<ComplaintObject> objects;
+	 
+	 
+	 
+	/*public Set<Complaints> getComplaints() {
+		return complaints;
+	}
+
+	public void setComplaints(Set<Complaints> complaints) {
+		this.complaints = complaints;
+	}*/
+
+	public Set<ComplaintObject> getObjects() {
+		return objects;
+	}
+
+	public void setObjects(Set<ComplaintObject> objects) {
+		this.objects = objects;
+	}
+
 	public TypeComplaint(int id, String typeName, Set<Complaints> complaints) {
 		super();
 		this.id = id;

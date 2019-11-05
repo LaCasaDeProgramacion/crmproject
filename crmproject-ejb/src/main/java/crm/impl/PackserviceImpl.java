@@ -25,10 +25,12 @@ import javax.sound.midi.Soundbank;
 import crm.entities.Pack;
 import crm.entities.Product;
 import crm.entities.ProductsPack;
-import crm.entities.ProductsPackPk;
+
 import crm.entities.Promotion;
+import crm.entities.Roles;
 import crm.entities.prospecting.Vehicule;
 import crm.interfaces.IPackServiceRemote;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -42,7 +44,8 @@ public class PackserviceImpl implements IPackServiceRemote {
 	PromotionserviceImpl promservice;
 
 	@Override
-	public void addpack(Pack pack) {
+	public Boolean addpack(Pack pack) {
+		if(UserSession.getInstance().getRole()==Roles.ADMIN || UserSession.getInstance().getRole()==Roles.VENDOR) {
 		System.out.println("IN : Add Pack");
 
 		Date d = new Date();
@@ -54,19 +57,23 @@ public class PackserviceImpl implements IPackServiceRemote {
 		em.persist(pack);
 
 		System.out.println("OUT : Add Pack");
+		return true;
+		}else {
+			return false ;
+		}
 	}
 
 	@Override
-	public void assignproducttopack(List<Integer> Products, int packid) {
+	public Boolean assignproducttopack(List<Integer> Products, int packid) {
+		if(UserSession.getInstance().getRole()==Roles.ADMIN || UserSession.getInstance().getRole()==Roles.VENDOR) {
 		double i = 0;
 		List<Integer> items = new ArrayList<>();
 		Pack pack = em.find(Pack.class, packid);
 		for (int idproduct : Products) {
-			ProductsPackPk prodpackpk = new ProductsPackPk(packid, idproduct);
 			ProductsPack pp = new ProductsPack();
 
 			Product prod = em.find(Product.class, idproduct);
-			pp.setProductspackPK(prodpackpk);
+
 			pp.setPack(pack);
 			pp.setProduct(prod);
 			// integrated price
@@ -89,6 +96,10 @@ public class PackserviceImpl implements IPackServiceRemote {
 		int minimumquantity = findMin(items);
 		pack.setIntegratedquantity(minimumquantity);
 		em.persist(pack);
+		return true;
+		}else {
+			return false ;
+		}
 
 	}
 
@@ -129,14 +140,24 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 	@Override
 	public List<Object> searchPack(String Packtext) {
-		Query query = em
-				.createQuery("SELECT p FROM Pack p JOIN ProductsPack pp ON p.id = pp.pack JOIN Product prod ON prod.id = pp.product "
+		Query query = em.createQuery(
+				"SELECT p FROM Pack p JOIN ProductsPack pp ON p.id = pp.pack JOIN Product prod ON prod.id = pp.product "
 						+ " WHERE p.title LIKE :code or p.description LIKE :code or prod.productName LIKE :code or prod.productDescription LIKE :code "
 						+ "  GROUP BY pp.product ORDER BY p.createdate DESC");
 		query.setParameter("code", "%" + Packtext + "%");
 		List<Object> results = query.getResultList();
-		
-		return results;
+		if (results.isEmpty()) {
+			Query querytwo = em.createQuery(
+					"SELECT prod FROM Product prod JOIN ProductsPack pp ON p.id = pp.pack JOIN Pack p ON prod.id = pp.product "
+							+ " WHERE p.title LIKE :code or p.description LIKE :code or prod.productName LIKE :code or prod.productDescription LIKE :code "
+							+ "  GROUP BY pp.product ORDER BY p.createdate DESC");
+			query.setParameter("code", "%" + Packtext + "%");
+			List<Object> prodResult = query.getResultList();
+			return prodResult;
+		} else {
+			return results;
+		}
+
 	}
 
 	@Override
@@ -144,8 +165,8 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 		Pack pack = em.find(Pack.class, packid);
 
-		Query query = em.createQuery("SELECT pp.product FROM ProductsPack pp WHERE pp.pack =:pack ").setParameter("pack",
-				pack);
+		Query query = em.createQuery("SELECT pp.product FROM ProductsPack pp WHERE pp.pack =:pack ")
+				.setParameter("pack", pack);
 		List<Product> products = query.getResultList();
 
 		return products;
@@ -171,125 +192,79 @@ public class PackserviceImpl implements IPackServiceRemote {
 		return sortedlist.get(0);
 	}
 
-	
-
-	
-	
-
-	@Override
-	public void removeProductfrompack(Product product) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public Pack updatepack(Pack pack, int idpack, List<Integer> Products) {
-
-		List<Product> newproductspack = new ArrayList<Product>();// toutes les produit
-		List<Product> oldproductspack;// les produits déja assigned to pack
-        List<Product> addproducts=new ArrayList<Product>();
-		List<Product> toodeletefrompack = new ArrayList<Product>();// les produit to delete
-
-		// simple attribute to update
-		Pack packtoupdate = em.find(Pack.class, idpack);
-		packtoupdate.setTitle(pack.getTitle());
-		packtoupdate.setDescription(pack.getDescription());
-		packtoupdate.setPicture(pack.getPicture());
-		packtoupdate.setValidfrom(pack.getValidfrom());
-		packtoupdate.setValiduntil(pack.getValiduntil());
-
-		if (!Products.isEmpty()) {
-
-			
-			oldproductspack = findproductsPack(idpack);
-			// add product to list of the new productsPack we want to add to pack
-			for (int idprod : Products) {
-				Product allproduct = em.find(Product.class, idprod);
-				System.out.println("productts name : " + allproduct.getProductName());
-				newproductspack.add(allproduct);
-
-			}
-			// testing of duplicate and unique product between product we want to add
-			// already added to pack
-			for (Product product : newproductspack) {
-				if (oldproductspack.contains(product)) {
-					toodeletefrompack.add(product);
-				}else {
-					addproducts.add(product);
+		if (em.find(Pack.class, idpack) != null) {
+			Pack packtoupdate = em.find(Pack.class, idpack);
+			// simple attribut
+			packtoupdate.setTitle(pack.getTitle());
+			packtoupdate.setDescription(pack.getDescription());
+			packtoupdate.setPicture(pack.getPicture());
+			packtoupdate.setValidfrom(pack.getValidfrom());
+			packtoupdate.setValiduntil(pack.getValiduntil());
+			if (!Products.isEmpty()) {
+				List<Product> oldproductspack = findproductsPack(idpack);// nzedha test notfound mbe3ed
+				List<Product> newproductpack = new ArrayList<Product>();
+				List<Product> toDeletefromProductPack = new ArrayList<Product>();
+				for (int id : Products) {
+					if (em.find(Product.class, id) != null) {
+						newproductpack.add(em.find(Product.class, id));
+					} else {
+						System.out.println("Product not found in data base");
+					}
 				}
-			}
-			// delete duplicated list of product
-			if (!toodeletefrompack.isEmpty()) {
-                     for(Product prod:toodeletefrompack) {
-				Query query = em.createQuery("DELETE FROM ProductsPack pp WHERE pp.product=:product AND pp.pack =:pack")
-						.setParameter("product", prod).setParameter("pack",
-						packtoupdate);
-				query.executeUpdate();
-                     }
-			}
-			double i = 0;
-			List<Integer> items = new ArrayList<>();
-			for (Product prod : newproductspack) {
-				System.out.println("productss to add iddddddd :   " + prod.getId());
-				ProductsPackPk prodpackpk = new ProductsPackPk(idpack, prod.getId());
-				ProductsPack pp = new ProductsPack();
-				//Product prod = em.find(Product.class, prod.getId());
-				pp.setProductspackPK(prodpackpk);
-				pp.setPack(packtoupdate);
-				pp.setProduct(prod); // integrated price
-				double integratedprice = promservice.productPromotionValue(prod.getId());
-				pp.setProductIntegratedPrice(integratedprice); // integrated quantity
-				pp.setIntegratedQuantity(prod.getProductQuantity()); // to set integrated price with default value it
-																		// can be modified
-				i = (i + integratedprice);
 
-				// to set pack integrated quantity with default value
-				items.add(prod.getProductQuantity());
-				
-				if (oldproductspack.contains(prod)) {
-					em.merge(pp);
-				}else {
+				for (Product p : newproductpack) {
+					if (oldproductspack.contains(p)) {
+						toDeletefromProductPack.add(p);
+					}
+				}
+
+				for (Product p : oldproductspack) {
+					Query query = em
+							.createQuery("DELETE FROM ProductsPack pp WHERE pp.product=:product AND pp.pack =:pack")
+							.setParameter("product", p).setParameter("pack", packtoupdate);
+					query.executeUpdate();
+
+				}
+
+				// inserer nouvelle list
+				double i = 0;
+				List<Integer> items = new ArrayList<>();
+				Pack packretaked = em.find(Pack.class, idpack);
+				for (Product p : newproductpack) {
+
+					ProductsPack pp = new ProductsPack();
+					pp.setPack(packtoupdate);
+					pp.setProduct(p);
+					// integrated price
+					double integratedprice = promservice.productPromotionValue(p.getId());
+					pp.setProductIntegratedPrice(integratedprice);
+					// integrated quantity
+					pp.setIntegratedQuantity(p.getProductQuantity());
+					// to set integrated price with default value it can be modified
+					i = (i + integratedprice);
+
+					// to set pack integrated quantity with default value
+					items.add(p.getProductQuantity());
+
 					em.persist(pp);
+
 				}
+				// set pack integratedprice integratedquantity
 
-			}
-			// add the new list product
-			///////////////////////////////////////////////////////////////
-
-			// set pack integratedprice integratedquantity
-			if (pack.getIntegratedprice() == 99999999.99) {
 				packtoupdate.setIntegratedprice(i);
-
-			} else {
-				packtoupdate.setIntegratedprice(pack.getIntegratedprice());
-			}
-			if (pack.getIntegratedquantity() == 99999999) {
 				int minimumquantity = findMin(items);
 				packtoupdate.setIntegratedquantity(minimumquantity);
-			} else {
-				packtoupdate.setIntegratedquantity(pack.getIntegratedquantity());
-			}
-
-		} else if (Products.isEmpty()) {
-
-			packtoupdate.setProductsPack(null);
-			if (pack.getIntegratedprice() == 99999999.99) {
-				packtoupdate.setIntegratedprice(0.0);
+				em.merge(packtoupdate);
 
 			} else {
-				packtoupdate.setIntegratedprice(pack.getIntegratedprice());
+				System.out.println("nouvelle list product is empty");
 			}
-			if (pack.getIntegratedquantity() == 99999999) {
-				packtoupdate.setIntegratedquantity(0);
-
-			} else {
-				packtoupdate.setIntegratedquantity(pack.getIntegratedquantity());
-			}
-
+			return packtoupdate;
+		} else {
+			return null;
 		}
-
-		em.persist(packtoupdate);
-		return packtoupdate;
 
 	}
 
@@ -301,10 +276,11 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 	@Override
 	public List<Pack> availablepacks() {
-		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZoneId z = ZoneId.of(TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138));
 		ZonedDateTime now = ZonedDateTime.now(z);
-		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
-		TypedQuery<Pack> query = em.createQuery("select e from Pack e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil AND e.archivestatus=0 ORDER BY e.createdate DESC",
+		Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Pack> query = em.createQuery(
+				"select e from Pack e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil AND e.archivestatus=0 ORDER BY e.createdate DESC",
 				Pack.class);
 		query.setParameter("timestamp", timestamp);
 		List<Pack> results = query.getResultList();
@@ -313,10 +289,11 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 	@Override
 	public List<Pack> notavailablepacks() {
-		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZoneId z = ZoneId.of(TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138));
 		ZonedDateTime now = ZonedDateTime.now(z);
-		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
-		TypedQuery<Pack> query = em.createQuery("select e from Pack e WHERE DATE(:timestamp) NOT BETWEEN e.validfrom AND e.validuntil OR e.archivestatus=1 ORDER BY e.createdate DESC",
+		Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Pack> query = em.createQuery(
+				"select e from Pack e WHERE DATE(:timestamp) NOT BETWEEN e.validfrom AND e.validuntil OR e.archivestatus=1 ORDER BY e.createdate DESC",
 				Pack.class);
 		query.setParameter("timestamp", timestamp);
 		List<Pack> results = query.getResultList();
@@ -325,48 +302,47 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 	@Override
 	public List<Pack> packsNotArchived() {
-		TypedQuery<Pack> query = em.createQuery("select e from Pack e WHERE  e.archivestatus=0 ORDER BY e.createdate DESC",
-				Pack.class);
+		TypedQuery<Pack> query = em
+				.createQuery("select e from Pack e WHERE  e.archivestatus=0 ORDER BY e.createdate DESC", Pack.class);
 		List<Pack> results = query.getResultList();
 		return results;
 	}
 
 	@Override
 	public List<Pack> packsArchived() {
-		TypedQuery<Pack> query = em.createQuery("select e from Pack e WHERE  e.archivestatus=1 ORDER BY e.createdate DESC",
-				Pack.class);
+		TypedQuery<Pack> query = em
+				.createQuery("select e from Pack e WHERE  e.archivestatus=1 ORDER BY e.createdate DESC", Pack.class);
 		List<Pack> results = query.getResultList();
 		return results;
 	}
 
 	@Override
 	public List<Pack> availablepacksorderbypriceDESC() {
-		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZoneId z = ZoneId.of(TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138));
 		ZonedDateTime now = ZonedDateTime.now(z);
-		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
-		TypedQuery<Pack> query = em.createQuery("select e from Pack e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil AND e.archivestatus=0 ORDER BY e.integratedprice DESC",
+		Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Pack> query = em.createQuery(
+				"select e from Pack e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil AND e.archivestatus=0 ORDER BY e.integratedprice DESC",
 				Pack.class);
 		query.setParameter("timestamp", timestamp);
-		
+
 		List<Pack> results = query.getResultList();
 		return results;
-		
+
 	}
 
 	@Override
 	public List<Pack> availablepacksorderbypriceASC() {
-		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZoneId z = ZoneId.of(TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138));
 		ZonedDateTime now = ZonedDateTime.now(z);
-		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
-		TypedQuery<Pack> query = em.createQuery("select e from Pack e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil AND e.archivestatus=0 ORDER BY e.integratedprice ASC",
+		Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Pack> query = em.createQuery(
+				"select e from Pack e WHERE DATE(:timestamp) BETWEEN e.validfrom AND e.validuntil AND e.archivestatus=0 ORDER BY e.integratedprice ASC",
 				Pack.class);
 		query.setParameter("timestamp", timestamp);
-		
+
 		List<Pack> results = query.getResultList();
 		return results;
 	}
-
-	
-
 
 }

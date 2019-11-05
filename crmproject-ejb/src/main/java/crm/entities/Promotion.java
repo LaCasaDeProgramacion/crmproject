@@ -47,7 +47,8 @@ public int maximumorderproducts; // max d'achat produit par promotion
 public int enabledpromotion; //enabled promotion
 @OneToOne(fetch = FetchType.EAGER)
 public Product product;
-
+@Column(name="promotionbycoupon")
+public Boolean promotionbycoupon;
 
 public String getTitle() {
 	return title;
@@ -124,6 +125,13 @@ public double getProductnewvalue() {
 }
 public void setProductnewvalue(double productnewvalue) {
 	this.productnewvalue = productnewvalue;
+}
+
+public Boolean getPromotionbycoupon() {
+	return promotionbycoupon;
+}
+public void setPromotionbycoupon(Boolean promotionbycoupon) {
+	this.promotionbycoupon = promotionbycoupon;
 }
 public Promotion(){
 	}

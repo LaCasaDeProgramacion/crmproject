@@ -45,8 +45,18 @@ public class Store implements Serializable {
 		@Column(name="end")
 	    private Timestamp end;
 		
-		
-		@OneToMany(cascade = CascadeType.ALL,mappedBy = "store",  orphanRemoval = true)
+
+		@Column(name="distance")
+	    private double distance;
+		public double getDistance() {
+			return distance;
+		}
+
+		public void setDistance(double distance) {
+			this.distance = distance;
+		}
+
+		@OneToMany(cascade = CascadeType.ALL,mappedBy = "store")
 	    private Set<Product> product;
 
 

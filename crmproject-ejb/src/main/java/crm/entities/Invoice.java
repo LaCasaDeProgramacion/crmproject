@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import crm.entities.prospecting.PointOfSale;
 
 @Entity
@@ -35,8 +37,9 @@ public class Invoice implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Services> listServices ;
 	
-	@ManyToMany(cascade = CascadeType.ALL) 
-	private Set<Pack> pack;
+	@OneToMany(mappedBy="invoice",fetch = FetchType.EAGER)
+	@JsonManagedReference
+	public Set<InvoicesPacks> invoicespacks;
 	
 	@OneToOne
 	private Command cmd; 
@@ -101,12 +104,14 @@ public class Invoice implements Serializable {
 	public void setListServices(List<Services> listServices) {
 		this.listServices = listServices;
 	}
-	public Set<Pack> getPack() {
-		return pack;
+	
+
+	public Set<InvoicesPacks> getInvoicespacks() {
+		return invoicespacks;
 	}
 
-	public void setPack(Set<Pack> pack) {
-		this.pack = pack;
+	public void setInvoicespacks(Set<InvoicesPacks> invoicespacks) {
+		this.invoicespacks = invoicespacks;
 	}
 
 	public Command getCmd() {

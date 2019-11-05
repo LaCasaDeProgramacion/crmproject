@@ -12,8 +12,8 @@ import crm.entities.Promotion;
 @Remote
 public interface IPromotionServiceRemote {
 	public int addPromotion(Promotion promotion);
-	public void assignProductTopromotion(int productId, int promotionId);
-	public void removePromotion(int id);
+	public Boolean assignProductTopromotion(int productId, int promotionId);
+	public Boolean removePromotion(int id);
 	public Promotion updatePromotion(Promotion promotion,int idpromot,int idproduct);
 	public Promotion findPromotionById(int promotion);
 	public List<Promotion> searchPromotion(String Promotiontext);//Complicated Search 
