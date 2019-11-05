@@ -49,7 +49,7 @@ public class CustomTaskStat {
         timerService.createIntervalTimer(0L,
                 repeatInterval, new TimerConfig(null, false));
     }
-
+/*
     @Timeout
     public void process(Timer timer) {
         doAction();
@@ -80,4 +80,5 @@ public class CustomTaskStat {
 		//serviceImpl.DeleteService(min.getKey().getId());
 		System.out.println(min.getKey().getId());
     }
+    */
 }

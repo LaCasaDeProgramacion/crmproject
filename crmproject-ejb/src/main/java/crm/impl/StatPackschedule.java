@@ -18,9 +18,11 @@ import crm.entities.StatPack;
 public class StatPackschedule {
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
-@EJB
-StatPackserviceImpl statpackserviceimpl;
-@Schedule(second="*/5",minute="*" ,hour="*")
+
+//@EJB
+//StatPackserviceImpl statpackserviceimpl;
+//@Schedule(second="*/5",minute="*" ,hour="*")
+	/*
 public void everyHourCreateStattest() { //if new pack created we create stat
 
 	TypedQuery<Pack> packids = em.createQuery("SELECT p FROM Pack p",Pack.class);
@@ -46,8 +48,9 @@ public void everyHourCreateStattest() { //if new pack created we create stat
 	}
 	
 }
-@Schedule(second="*",minute="*" ,hour="*/1")
-public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
+*/
+//@Schedule(second="*",minute="*" ,hour="*/1")
+//public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
 	
 	
 	/*statpackserviceimpl.updatestatpack(packid, gainmoney, quantityselled, changetitle);*/
@@ -61,4 +64,5 @@ public void everyhourtestexistingpackstat() {
 }  */
 
 
-}
+//}
+

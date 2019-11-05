@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Category;
 import crm.entities.Product;
 import crm.entities.Store;
@@ -32,6 +33,7 @@ public class StoreWs {
 	StoreImpl storeimpl;
 	  private final String status = "{\"status\":\"ok\"}";
 	  
+	  @Secured
 	  @POST
 	    @Path("addStore")
 	    @Produces(MediaType.APPLICATION_JSON)
@@ -56,7 +58,7 @@ storeimpl.addStore(store_name);
 		  return storeimpl.datestore(store_id);
 	    }	
 	  
-	
+	 
 	  
 	  @POST
 	    @Path("calculatedistance")
@@ -73,7 +75,22 @@ storeimpl.addStore(store_name);
 		return storeimpl.distance(latstore, lonstore);
 	    }
 
+	  @POST
+	    @Path("calculatedistancebystoreid")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public double calculatedistancebystoreid(
+	           
+	            @QueryParam("store_id")int store_id
+	          
+
+	    
+	    ){
 		 
+		
+		return storeimpl.distancebystoreid(store_id);
+	    }
+		 
+	  @Secured
 	  @DELETE
 	    @Path("deleteStore")
 	    @Produces(MediaType.APPLICATION_JSON)
@@ -94,7 +111,17 @@ storeimpl.addStore(store_name);
 	      return storeimpl.searchForstore(store_name);
 	     }
 
+	  @GET
+	     @Path("getDistanceasc")
+	     @Produces(MediaType.APPLICATION_JSON)
+	     public List<Store> getDistanceasc(
+	            
+	     ){
 	  
+	      return storeimpl.getNearestStore();
+	     }
+
+	  @Secured
 		@PUT
 		@Path("updateStore")
 		public Response updateStore( 
