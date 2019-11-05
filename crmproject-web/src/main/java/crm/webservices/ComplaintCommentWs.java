@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.ComplaintComments;
 import crm.entities.Complaints;
 import crm.impl.ComplaintCommentsImpl;
@@ -27,6 +28,7 @@ public class ComplaintCommentWs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("getcomments")
+	@Secured
 	public List<ComplaintComments> getComments(@QueryParam("idcomplaint") int id) {
 		return commentWS.GetCommentsByComplaint(id);
 	}
@@ -34,6 +36,7 @@ public class ComplaintCommentWs {
 	@POST
 	@Path("addComment")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Secured
 	public Response addComment(@QueryParam("comment") String comment,
 			@QueryParam("idComplaint") int idComplaint
 			
@@ -48,6 +51,7 @@ public class ComplaintCommentWs {
 
 	@PUT
 	@Path("updateComment")
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 
 	public Response updateComment(@QueryParam("id") int id, @QueryParam("comment") String comment
@@ -64,6 +68,7 @@ public class ComplaintCommentWs {
 
 	@DELETE
 	@Path("deleteComment")
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteComment(@QueryParam("id") int id) {
 		commentWS.DeleteComment(id);
@@ -72,6 +77,7 @@ public class ComplaintCommentWs {
 	
 	@PUT
 	@Path("likecomment")
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 
 	public Response likeComment(@QueryParam("id") int idComment
@@ -86,6 +92,7 @@ public class ComplaintCommentWs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("Getnblike")
+	@Secured
 	public int Getnblike(@QueryParam("idcomment") int id) {
 		return commentWS.GetNbLikes(id);
 	}

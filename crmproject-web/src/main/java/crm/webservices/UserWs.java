@@ -90,13 +90,15 @@ public class UserWs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("profile")
-	public User Profile() {
+	public Response Profile() {
 
-			return userImpl.getUserById();
-			
+		if ( userImpl.getUserById() != null )
+			return Response.status(Status.ACCEPTED).entity(userImpl.getUserById()).build(); 
+		else return Response.status(Status.NOT_FOUND).entity("NOT CONNECTED").build();
+	}
 
 		
-	}
+	
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)

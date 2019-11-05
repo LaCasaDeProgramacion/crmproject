@@ -45,7 +45,7 @@ public class Customtask {
         List<Complaints> listcomp=complaintImpl.GetComplaintsByState("In_progress");
         for(Complaints c:listcomp)
         {
-        	NotificationComplaint nc=new NotificationComplaint(c.getComplaintObject());
+        	NotificationComplaint nc=new NotificationComplaint(c.getComplaintObject().getObject());
         	notifImpl.addNotification(nc, c.getId());
         }
     }

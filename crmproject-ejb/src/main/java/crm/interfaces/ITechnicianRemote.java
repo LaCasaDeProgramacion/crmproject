@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
+import crm.entities.Product;
 import crm.entities.Technician;
 
 @Remote
@@ -14,4 +15,5 @@ public interface ITechnicianRemote {
 	List<Technician> getAllTechnician();
 	void DeleteTechnician(int idtechnician);
 	boolean IsAvailable(int idtechnician);
+	public Technician getrandomtechnician();
 }

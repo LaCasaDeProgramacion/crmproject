@@ -12,7 +12,7 @@ import crm.entities.User;
 @Remote
 public interface IComplaintRemote {
 
-	void AddComplaint(Complaints complaint, int idtypeComplaint);
+	void AddComplaint(Complaints complaint,int idObject);
 
 	void DeleteComplaint(int id);
 
@@ -42,9 +42,12 @@ public interface IComplaintRemote {
 
 	int NbComplaintByState(String State);
 	
+	int NbComplaintByCatégorie(int idcat);
+
+	
 	int NbComplaintByperiod(Date d1 ,Date d2);
 	
-	void AffectTechnicien(int idcomplaint,int idtechnician);
+	void AffectTechnicien(int idcomplaint);
 	
 	List<Complaints> SearchComplaint(String motclé);
 

@@ -20,8 +20,8 @@ public class StatPackschedule {
 	EntityManager em;
 @EJB
 StatPackserviceImpl statpackserviceimpl;
-@Schedule(second="*/5",minute="*" ,hour="*")
-public void everyHourCreateStattest() { //if new pack created we create stat
+//@Schedule(second="*",minute="*" ,hour="*/1")
+/*public void everyHourCreateStattest() { //if new pack created we create stat
 
 	TypedQuery<Pack> packids = em.createQuery("SELECT p FROM Pack p",Pack.class);
 	List<Pack> packs = packids.getResultList();
@@ -45,8 +45,8 @@ public void everyHourCreateStattest() { //if new pack created we create stat
 	System.out.println("Stat created For Pack"+p.getTitle());
 	}
 	
-}
-@Schedule(second="*",minute="*" ,hour="*/1")
+}*/
+//@Schedule(second="*",minute="*" ,hour="*/1")
 public void everyDayupdatestatstest() {//if we found new facture of buying packs we update stat
 	
 	

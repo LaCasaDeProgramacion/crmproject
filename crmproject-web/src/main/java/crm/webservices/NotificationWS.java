@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Complaints;
 import crm.entities.NotificationComplaint;
 import crm.impl.NotificationImpl;
@@ -27,6 +28,7 @@ public class NotificationWS {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("allcompgetallnotiflaints")
+	@Secured
 	public List<NotificationComplaint> getallnotif() {
 		return notificationImpl.getallnotif();
 	}
@@ -34,7 +36,7 @@ public class NotificationWS {
 	@PUT
 	@Path("MarkNotifAsRead")
 	@Produces(MediaType.APPLICATION_JSON)
-
+	@Secured
 	public Response MarkNotifAsRead(@QueryParam("id") int id
 
 	) {
@@ -46,7 +48,7 @@ public class NotificationWS {
 	@PUT
 	@Path("MarkAllAsRead")
 	@Produces(MediaType.APPLICATION_JSON)
-
+	@Secured
 	public Response MarkAllAsRead(
 
 	) {
