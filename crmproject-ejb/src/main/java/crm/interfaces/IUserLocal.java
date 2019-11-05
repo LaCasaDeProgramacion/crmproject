@@ -12,7 +12,7 @@ public interface IUserLocal {
 	public boolean authenticate(String username, String password);
 	public void updateToken(String username,String token);
 
-	public void confirmCode(String code,int idUser);
+	public void confirmCode(String code,String username);
 	public void logout();
 	public List<User> getAdmin();
 	public User getUserById();

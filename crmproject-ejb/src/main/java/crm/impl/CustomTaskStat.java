@@ -50,7 +50,7 @@ public class CustomTaskStat {
                 repeatInterval, new TimerConfig(null, false));
     }
 
-    @Timeout
+  /*  @Timeout
     public void process(Timer timer) {
         doAction();
     }
@@ -79,5 +79,5 @@ public class CustomTaskStat {
                 Comparator.comparing(Entry::getValue));
 		//serviceImpl.DeleteService(min.getKey().getId());
 		System.out.println(min.getKey().getId());
-    }
+    }*/
 }

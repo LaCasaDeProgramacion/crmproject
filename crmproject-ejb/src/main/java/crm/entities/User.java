@@ -19,6 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import crm.entities.prospecting.Post;
 import crm.entities.prospecting.Topic;
@@ -29,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@Table(name="User")
+@Table(name="User", uniqueConstraints= @UniqueConstraint(columnNames = {"username","cin","email"}))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, 
 property = "id")
 public class User implements Serializable {
@@ -66,16 +67,16 @@ public class User implements Serializable {
 	@JsonManagedReference
 	public Set<UsersCoupon> usersCoupon;
 	
-	@OneToMany(mappedBy="user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JsonManagedReference
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
 	private Set<Post> posts; 
 	
-	@OneToMany(mappedBy="user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JsonManagedReference
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
 	private Set<Topic> topics; 
 	
-	@OneToMany(mappedBy="user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JsonManagedReference
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
 	private Set<Views> view ; 
 	
 	
@@ -181,23 +182,32 @@ public class User implements Serializable {
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
 	}
+	@JsonIgnore
 	public Set<Post> getPosts() {
 		return posts;
 	}
 	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
 	}
+	@JsonIgnore
 	public Set<Topic> getTopics() {
 		return topics;
 	}
 	public void setTopics(Set<Topic> topics) {
 		this.topics = topics;
 	}
+	@JsonIgnore
 	public Set<Views> getView() {
 		return view;
 	}
 	public void setView(Set<Views> view) {
 		this.view = view;
+	}
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", cin=" + cin + ", username=" + username + ", email=" + email + ", enabled="
+				+ enabled + ", password=" + password + ", confirm=" + confirm + ", token=" + token + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", role=" + role + ", dateBirth=" + dateBirth + "]";
 	}
 	
 	

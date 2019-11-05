@@ -5,9 +5,12 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="Event_vehicule")
@@ -17,7 +20,8 @@ public class Event_vehicule implements Serializable{
 	private Event_vehiculePK event_vehiculePK ; 
 	@Column(name="launched")
 	private boolean launched; 
-	@ManyToOne
+	
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idVehicule", referencedColumnName = "id", insertable=false, updatable=false)
 	private Vehicule vehicule;
 	
@@ -60,6 +64,7 @@ public class Event_vehicule implements Serializable{
 		this.vehicule = vehicule;
 	}
 
+	@JsonIgnore
 	public Event getEvent() {
 		return eventV;
 	}
@@ -76,6 +81,7 @@ public class Event_vehicule implements Serializable{
 		this.launched = launched;
 	}
 
+	@JsonIgnore
 	public Event getEventV() {
 		return eventV;
 	}
