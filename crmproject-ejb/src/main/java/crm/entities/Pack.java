@@ -61,7 +61,10 @@ public class Pack implements Serializable {
 	@JsonIgnore
 	@JsonManagedReference
 	public List<ProductsPack> productsPack;
-
+	@OneToMany(mappedBy="pack",fetch=FetchType.EAGER)
+	@JsonIgnore
+	@JsonManagedReference
+	public Set<InvoicesPacks> invoicespack;
 	public int getId() {
 		return id;
 	}
@@ -156,4 +159,13 @@ public class Pack implements Serializable {
 	public Pack() {
 
 	}
+
+	public Set<InvoicesPacks> getInvoicespack() {
+		return invoicespack;
+	}
+
+	public void setInvoicespack(Set<InvoicesPacks> invoicespack) {
+		this.invoicespack = invoicespack;
+	}
+	
 }

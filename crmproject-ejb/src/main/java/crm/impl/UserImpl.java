@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import crm.entities.Basket;
 import crm.entities.Complaints;
 import crm.entities.Roles;
 import crm.entities.User;
@@ -38,26 +39,21 @@ public class UserImpl implements IUserLocal, IUserRemote{
 
 	@Override
 	public void addUser(User user) {
-		 
 		String salt=BCrypt.gensalt();
 		String paass=BCrypt.hashpw(user.getPassword(), salt);
 		user.setPassword(paass);
 		System.out.print(paass);
 		user.setEnabled(false);
 		user.setConfirm(codeGen.getInstance().randomString(5));
-		em.persist(user);
-		
-		
+	    em.persist(user);
 	}
 	@Override
 	public boolean authenticate(String username, String password) {
 
-		TypedQuery<User> q=  em.createQuery("SELECT u from User u where u.username= :username ",User.class); 
-		q.setParameter("username", username);
-		
+		TypedQuery<User> q= em.createQuery("SELECT u from User u where u.username=:username",User.class); 
+		q.setParameter("username",username);
 		User user=q.getSingleResult();
-		
-		if(BCrypt.checkpw(password, user.getPassword()) && user.isEnabled()==true)
+		if(BCrypt.checkpw(password, user.getPassword()))
 		{
 			UserSession.getInstance(user);
 			return true;
@@ -70,8 +66,8 @@ public class UserImpl implements IUserLocal, IUserRemote{
 	@Override
 	public void updateToken(String username,String token)
 	{
-		TypedQuery<User> q=  em.createQuery("SELECT u from User u where u.username= :username ",User.class);
-		q.setParameter("username", username);
+		TypedQuery<User> q=  em.createQuery("SELECT u from User u where u.username=:username",User.class);
+		q.setParameter("username",username);
 		User u=q.getSingleResult();
 		u.setToken(token);
 		em.merge(u);
@@ -154,7 +150,7 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		u.setPassword(paass);
 		em.merge(u);
 	}
-
+	
 
 	
 
