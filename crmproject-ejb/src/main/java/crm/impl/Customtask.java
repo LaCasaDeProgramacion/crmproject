@@ -35,12 +35,12 @@ public class Customtask {
                 repeatInterval, new TimerConfig(null, false));
     }
 
-    @Timeout
+   /* @Timeout
     public void process(Timer timer) {
         doAction();
-    }
+    }*/
 
-    public void doAction() {
+   /* public void doAction() {
         System.out.println("Action called!");
         List<Complaints> listcomp=complaintImpl.GetComplaintsByState("In_progress");
         for(Complaints c:listcomp)
@@ -48,6 +48,6 @@ public class Customtask {
         	NotificationComplaint nc=new NotificationComplaint(c.getComplaintObject().getObject());
         	notifImpl.addNotification(nc, c.getId());
         }
-    }
+    }*/
 
 }

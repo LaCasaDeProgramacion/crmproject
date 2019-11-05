@@ -9,6 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.prospecting.*;
 import crm.impl.prospecting.AgentImpl;
 
@@ -20,6 +21,7 @@ public class AgentWs {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	
 	@Path("all")
     public Response getAgents(@QueryParam(value = "pro")String pro)
     {
@@ -33,6 +35,7 @@ public class AgentWs {
 	
 	 @GET
      @Path("search")
+	 
      @Produces(MediaType.APPLICATION_JSON)
      public Response searchAgent(@QueryParam("cin") int cin){
 		 
@@ -46,6 +49,7 @@ public class AgentWs {
 	 
 	 @POST
 	    @Path("add")
+	 @Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addAgent(
 	    		
@@ -58,15 +62,17 @@ public class AgentWs {
 			    @QueryParam("role") RoleAgent role, 
 			    @QueryParam("accessPerm") boolean accessPerm, 
 			    @QueryParam("drivenLicence") boolean drivenLicence )
-	 	{
+	 		{
 		 		Agent agent = new Agent( cin, number,firstName, lastName, email, 
 		 								datebirth, role, accessPerm, drivenLicence); 
-				 agentImlp.addAgent(agent);
+				 if (agentImlp.addAgent(agent))
 				 return Response.status(Status.CREATED).entity("ADDED").build();
-	    }
+				 else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build(); 
+	 		}
 	 
 	 @PUT
      @Path("update")
+	 @Secured
      @Produces(MediaType.APPLICATION_JSON)
      public Response updateAgent(
     		 	@QueryParam("id")int id, 
@@ -84,25 +90,32 @@ public class AgentWs {
 		 Agent agent = new Agent(id, cin, number,firstName, lastName, email, 
 					datebirth, role, accessPerm, drivenLicence); 
 		 int res = agentImlp.updateAgent(agent);
-		 if (res!= 0)
+		 if (res==1)
 		 {
 			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
 		 }
-		 else return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-         
+		 if (res==-1)
+			 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	  	else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();
+
      }
  	 
 	  	@DELETE
 	    @Path("delete")
+	  	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response deleteAgent(
 	            @QueryParam("id")int id
 	    ){
-	  		if (agentImlp.deleteAgent(id))
+	  		if (agentImlp.deleteAgent(id)==1)
 	  		{
 	  			return Response.status(Status.GONE).entity("DELETED").build();
 	  		}
+	  		if (agentImlp.deleteAgent(id)==-1)
+	  		{
 			    return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-	    }
+	  		}
+	  		else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();
+	  	}
 
 }

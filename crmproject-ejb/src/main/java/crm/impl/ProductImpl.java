@@ -80,6 +80,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	        emp.setProductStatus(productStatus);
 	        emp.setCategory(categ);
 	        emp.setStore(store);
+	        emp.setNumberOfViews(0);
 
 	        em.persist(emp);
 	      
@@ -156,7 +157,7 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 	Product p = em.find(Product.class, id);
 	if(p!=null)
 	{
-		 p.setProductName(productName);
+		 	p.setProductName(productName);
 	        p.setProductDescription(productDescription);
 	        p.setProductPrice(productPrice);
 	        p.setProductQuantity(productQuantity);
@@ -164,6 +165,7 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 	       
 	        p.setCategory(em.find(Category.class, category_id));
 	        p.setStore(em.find(Store.class, store_id));
+	        p.setNumberOfViews(p.getNumberOfViews());
 	        em.merge(p);
 	        return 1;
 	}

@@ -28,6 +28,7 @@ import crm.entities.User;
 import crm.impl.UserImpl;
 
 import crm.utils.BCrypt;
+import crm.utils.UserSession;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -91,34 +92,38 @@ public class UserWs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("profile")
 	public Response Profile() {
+<<<<<<< HEAD
 
+=======
+		System.out.println("++++++++++++++++++++++++" + UserSession.getInstance().getFirstName());
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 		if ( userImpl.getUserById() != null )
 			return Response.status(Status.ACCEPTED).entity(userImpl.getUserById()).build(); 
 		else return Response.status(Status.NOT_FOUND).entity("NOT CONNECTED").build();
 	}
+<<<<<<< HEAD
 
 		
 	
+=======
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("resetPass")
 	public Response ResetPass(@QueryParam("username") String username) {
-
 			 userImpl.ResetingPassword(username);
 			 return Response.status(Status.ACCEPTED).entity("Reseting Password").build();
-			
-
-		
+	
 	}
 	@PUT
 	@Path("confirm")
 	@Produces(MediaType.APPLICATION_JSON)
 
-	public Response Confirm(@QueryParam("code") String code, @QueryParam("idUser") int idUser
+	public Response Confirm(@QueryParam("code") String code, @QueryParam("username") String username
 
 	) {
-		userImpl.confirmCode(code, idUser);
+		userImpl.confirmCode(code, username);
 
 		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
 	}

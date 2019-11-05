@@ -57,7 +57,7 @@ public class CustomTaskStat {
                 repeatInterval, new TimerConfig(null, false));
     }
 
-    @Timeout
+  /*  @Timeout
     public void process(Timer timer) {
         doAction();
     }
@@ -122,7 +122,11 @@ public class CustomTaskStat {
 		}
 		
 		System.out.println(min.getKey().getId());
+<<<<<<< HEAD
 		System.out.println(max.getKey().getId());
 
     }
+=======
+    }*/
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 }

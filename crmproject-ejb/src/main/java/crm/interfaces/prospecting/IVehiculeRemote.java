@@ -10,8 +10,8 @@ import crm.entities.prospecting.Vehicule;
 public interface IVehiculeRemote {
 	public List<Vehicule> allVehicules();
 	public List<Vehicule> searchForVehicule(String registration);
-	public boolean addVehicule(String registration , String color , boolean inUse , String picture , int idModel) ;
-	public boolean deleteVehicule(int id);
-	public boolean updateVehicule(int id, String registration , String color , boolean inUse , String picture , int idModel) ;
+	public int addVehicule(String registration , String color , boolean inUse , String picture , int idModel) ;
+	public int deleteVehicule(int id);
+	public int updateVehicule(int id, String registration , String color , boolean inUse , String picture , int idModel) ;
 	
 }

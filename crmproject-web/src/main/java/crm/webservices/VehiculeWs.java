@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.prospecting.Agent;
 import crm.entities.prospecting.RoleAgent;
 import crm.entities.prospecting.Vehicule;
@@ -56,6 +57,7 @@ public class VehiculeWs {
 	 
 	 	@POST
 	    @Path("add")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addVehicule(
 	    		
@@ -65,17 +67,19 @@ public class VehiculeWs {
 	    		@QueryParam("picture") String picture , 
 	    		@QueryParam("idModel") int idModel )
 	 	{
-		 		if (vehiculeImpl.addVehicule(registration, color, inUse, picture, idModel))
-		 		{
-		 			 return Response.status(Status.CREATED).entity("ADDED").build();
-		 		}
-		 		return Response.status(Status.NOT_FOUND).entity("MODEL NOT FOUND").build();
-				
+	 		int res = vehiculeImpl.addVehicule(registration, color, inUse, picture, idModel); 
+	 		if (res==1)
+	 			return Response.status(Status.CREATED).entity("ADDED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("MODEL NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+			 
 	    }
 	 	
 	 	
 	 	 @PUT
 	     @Path("update")
+	 	 @Secured
 	     @Produces(MediaType.APPLICATION_JSON)
 	     public Response updateVehicule(
 	    		 	@QueryParam("id")int id, 
@@ -87,26 +91,29 @@ public class VehiculeWs {
 	    
 	     ){
 			
-			 boolean res = vehiculeImpl.updateVehicule(id, registration, color, inUse, picture, idModel); 
-			 if (res)
-			 {
-				 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
-			 }
-			 else return Response.status(Status.NOT_FOUND).entity("Vehicule or Model NOT FOUND").build();
-	         
+			 int res = vehiculeImpl.updateVehicule(id, registration, color, inUse, picture, idModel); 
+			 if (res==1)
+		 			return Response.status(Status.CREATED).entity("UPDATED").build();
+					if(res==-1)
+					return Response.status(Status.NOT_FOUND).entity("MODEL/VEHICULE NOT FOUND").build();
+					else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				 
 	     }
 	 	 
 	 	@DELETE
 	    @Path("delete")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response deleteVehicule(
 	            @QueryParam("id")int id
 	    ){
-	  		if (vehiculeImpl.deleteVehicule(id))
-	  		{
-	  			return Response.status(Status.GONE).entity("DELETED").build();
-	  		}
-			    return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	 		int res = vehiculeImpl.deleteVehicule(id); 
+	 		if (res==1)
+	 			return Response.status(Status.CREATED).entity("DELETED").build();
+				if(res==-1)
+				return Response.status(Status.NOT_FOUND).entity("VEHICULE NOT FOUND").build();
+				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+			 
 	    }
 
 }

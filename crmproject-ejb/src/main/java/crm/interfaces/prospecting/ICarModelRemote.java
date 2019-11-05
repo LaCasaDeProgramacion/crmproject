@@ -11,8 +11,8 @@ public interface ICarModelRemote {
 	public List<Object> BrandsOfModel(int idModel); 
 	public List<CarModel> allModels();
 	public List<CarModel> searchForModel(String model);
-	public boolean addCarModel(String model, int idBrand) ;
-	public boolean deleteCarModel(int id);
+	public int addCarModel(String model, int idBrand) ;
+	public int deleteCarModel(int id);
 	public int updateCarModel(String model, int id) ;
 
 }

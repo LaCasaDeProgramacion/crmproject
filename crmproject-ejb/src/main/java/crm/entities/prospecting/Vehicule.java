@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name ="Vehicule")
 
@@ -21,7 +23,7 @@ public class Vehicule implements Serializable {
 	@Column(name="picture")
 	private String picture ;
 	
-	@ManyToOne
+	@ManyToOne (fetch= FetchType.EAGER)
 	private CarModel carmodel ; 
 
 	@OneToMany (mappedBy="vehicule")
@@ -33,6 +35,7 @@ public class Vehicule implements Serializable {
 	}
 	
 
+	@JsonIgnore
 	public List<Event_vehicule> getEvent_vehicule() {
 		return event_vehicule;
 	}

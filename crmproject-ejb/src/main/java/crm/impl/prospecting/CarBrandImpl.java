@@ -6,8 +6,11 @@ import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import crm.entities.Roles;
 import crm.entities.prospecting.*;
 import crm.interfaces.prospecting.*;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -19,48 +22,57 @@ public class CarBrandImpl implements ICarBrandLocal, ICarBrandRemote  {
 	
 	@Override
 	public List<CarBrand> allBrands() {
-		Query q = em.createQuery("SELECT c.id,  c.brand FROM CarBrand c");
+		Query q = em.createQuery("SELECT c FROM CarBrand c");
 		return (List<CarBrand>) q.getResultList();
 	}
 
 	@Override
 	public List<CarBrand> searchForBrand(String name) {
-		Query q = em.createQuery("SELECT c.id,  c.brand FROM CarBrand c where c.brand like :name");
+		Query q = em.createQuery("SELECT c FROM CarBrand c where c.brand like :name");
 		q.setParameter("name", name);
 		return (List<CarBrand>) q.getResultList();
 	}
 
 	@Override
-	public void addCarBrand(CarBrand brand) {
-		em.persist(brand);
+	public boolean addCarBrand(CarBrand brand) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		{
+			em.persist(brand);
+			return true ; 
+		}
+		return false ; 
+		
 	}
 
 	@Override
-	public boolean deleteCarBrand(int id) {
+	public int deleteCarBrand(int id) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		{
 		CarBrand c = em.find(CarBrand.class, id); 
 		if (c!=null)
 		{
 			em.remove(c);
-		//	Query q = em.createQuery("DELETE FROM CarBrand a WHERE a.id = :id");
-	      //  q.setParameter("id", id);
-	      //  q.executeUpdate();
-	        return true ; 
+	        return 1 ; 
 		}
 		
-		return false ; 
-	
+		else return -1 ; 
+		}return 0; 
 	}
 
 	@Override
 	public int updateCarBrand(CarBrand brand) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		{
 		CarBrand a = em.find(CarBrand.class, brand.getId());
 		if (a!= null)
 		{
 			a.setBrand(brand.getBrand());
-			return em.merge(a).getId(); 
+			 em.merge(a); 
+			 return 1; 
 		
 		}
-		 return 0; 
+		else return -1 ; 
+		}return 0; 
 	}
 	
 	

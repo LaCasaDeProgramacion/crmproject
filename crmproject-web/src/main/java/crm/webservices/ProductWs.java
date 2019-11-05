@@ -19,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import crm.AuthenticateWS.Secured;
 import crm.entities.Category;
 import crm.entities.Product;
 import crm.entities.Store;
@@ -74,8 +75,9 @@ public class ProductWs   {
      }
 
 
-	 @POST
+	 	@POST
 	    @Path("addProduct")
+	 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addProduct(
 	            @QueryParam("productName")String productName,
@@ -109,8 +111,9 @@ public class ProductWs   {
 			
 		
 			if(productImpl.updateProduct(id, productName, productDescription, productQuantity, productPrice, productStatus, category_id, store_id)==1)
-			Response.status(200).entity(status).build();
+			//Response.status(200).entity(status).build();
 			return Response.ok("Your product has been Modified!").build();
+			else  return Response.ok("ERRUEU").build();
 		}
 	 
 	 

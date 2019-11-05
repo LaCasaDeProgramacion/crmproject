@@ -56,10 +56,9 @@ public class PointOfSaleWs {
 	    		@QueryParam("longitude")float longitude){
 		 
 		 
-			 pointOfSaleImpl.addPointOfSale(name, latitude, longitude);
+			if (pointOfSaleImpl.addPointOfSale(name, latitude, longitude)) 
 			 return Response.status(Status.CREATED).entity("ADDED").build();
-		 
-		 //else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
+			else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
 		 
 				 
 	    }
@@ -74,12 +73,17 @@ public class PointOfSaleWs {
              				   @QueryParam("latitude")float latitude, @QueryParam("longitude")float longitude
       
      ){
-		 if (pointOfSaleImpl.updatePointOfSale(id, name, latitude, longitude) != 0)
+		 if (pointOfSaleImpl.updatePointOfSale(id, name, latitude, longitude) ==1 )
 		 {
 			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
 		 }
-		
-		  return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 if (pointOfSaleImpl.updatePointOfSale(id, name, latitude, longitude) ==-1 )
+		 {
+			 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 }
+		  else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
+
+		  
      }
  	 
 	 
@@ -89,13 +93,14 @@ public class PointOfSaleWs {
 	    public Response deletePOS(
 	            @QueryParam("id")int id
 	    ){
-		  if( pointOfSaleImpl.deletePointOfSale(id))
+		  if( pointOfSaleImpl.deletePointOfSale(id)==1)
 		  {
 			  return Response.status(Status.GONE).entity("DELETED").build();
 		  }
-		  
+		  if( pointOfSaleImpl.deletePointOfSale(id)==-1)
+			  return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
 		   
-		  return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		  else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build(); 
 	    }
 
 }

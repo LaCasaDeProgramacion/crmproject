@@ -8,8 +8,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.ejb.*;
 import javax.persistence.*;
+
+import crm.entities.Roles;
 import crm.entities.prospecting.*;
 import crm.interfaces.prospecting.*;
+import crm.utils.UserSession;
 
 @Stateless
 @LocalBean
@@ -21,46 +24,54 @@ public class EventImpl implements IEventLocal, IEventRemote{
 	@Override
 	public List<Event> allEvents() {
 		Query q = em.createQuery(
-				"SELECT e.id,  e.name, e.startDate, e.endDate, e.launched, e.location.longitude, e.location.latitude , e.launched  FROM Event e");
+				"SELECT e  FROM Event e");
 		return (List<Event>) q.getResultList();
 	}
 
 	@Override
 	public List<Object> searchForEvent(String name) {
-		Query q = em.createQuery("SELECT e.id,  e.name, e.startDate, e.endDate, e.launched, e.location.longitude, e.location.latitude , e.launched  FROM Event e where e.name =:name");
+		Query q = em.createQuery("SELECT e FROM Event e where e.name =:name");
 		q.setParameter("name", name);
 		return  q.getResultList();
 	}
 
 	@Override
-	public void addEvent(String name, Date startDate, Date endDate, float longitude, float latitude) {
-		Location location = new Location(latitude, longitude); 
-		Event event = new Event (); 
-		event.setLocation(location);
-		event.setName(name);
-		event.setEndDate(endDate);
-		event.setStartDate(startDate);
-		event.setLaunched(true);
-		em.persist(event);
-	}
-
-	@Override
-	public boolean deleteEvent(int id) {
-		Event c = em.find(Event.class, id); 
-		if (c!=null)
+	public boolean addEvent(String name, Date startDate, Date endDate, float longitude, float latitude) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
 		{
-			em.remove(c);
-			//Query q = em.createQuery("DELETE FROM Event a WHERE a.id = :id");
-	       // q.setParameter("id", id);
-	       // q.executeUpdate();
-	        return true ; 
-		}
+			Location location = new Location(latitude, longitude); 
+			Event event = new Event (); 
+			event.setLocation(location);
+			event.setName(name);
+			event.setEndDate(endDate);
+			event.setStartDate(startDate);
+			event.setLaunched(true);
+			em.persist(event);
+			return true ; 
+			
+		}return false ; 
 		
-		return false ; 
 	}
 
 	@Override
-	public boolean updateEvent(int id, String name, Date startDate, Date endDate, Boolean launched ) {
+	public int deleteEvent(int id) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		{
+			Event c = em.find(Event.class, id); 
+			if (c!=null)
+			{
+				em.remove(c);
+		        return 1 ; 
+			}
+			
+			else return -1 ; 
+		} return 0; 
+	}
+
+	@Override
+	public int updateEvent(int id, String name, Date startDate, Date endDate, Boolean launched ) {
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		{
 		Event event = em.find(Event.class, id);
 		if (event!= null)
 		{
@@ -69,10 +80,11 @@ public class EventImpl implements IEventLocal, IEventRemote{
 			event.setStartDate(startDate);
 			event.setLaunched(launched);
 			em.merge(event); 
-			return true ; 
+			return 1 ; 
 		
 		}
-		 return false; 
+		 return -1; 
+		}return 0; 
 	}
 	
 	/* ---------------------- Event-Vehicules  ----------------------  */
@@ -80,23 +92,28 @@ public class EventImpl implements IEventLocal, IEventRemote{
 	@Override
 	public int reserveVehicule (int idVehicule , int idEvent )
 	{
-		Vehicule vehicule = em.find(Vehicule.class,idVehicule); 
-		Event event = em.find(Event.class, idEvent); 
-		if ((event!= null)&&(vehicule!= null))
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
 		{
-			if (disponibilityVehicule(idVehicule, idEvent)==1)
+			Vehicule vehicule = em.find(Vehicule.class,idVehicule); 
+			Event event = em.find(Event.class, idEvent); 
+			if ((event!= null)&&(vehicule!= null))
 			{
-				Event_vehiculePK event_vehiculePK = new Event_vehiculePK(idEvent, idVehicule) ; 
-				Event_vehicule EV = new Event_vehicule(event_vehiculePK,  vehicule, event);
-				EV.setLaunched(event.isLaunched());
-				em.persist(EV);
-				return 1 ; //reservartion effectue 
+				if (disponibilityVehicule(idVehicule, idEvent)==1)
+				{
+					Event_vehiculePK event_vehiculePK = new Event_vehiculePK(idEvent, idVehicule) ; 
+					Event_vehicule EV = new Event_vehicule(event_vehiculePK,  vehicule, event);
+					EV.setLaunched(event.isLaunched());
+					em.persist(EV);
+					return 1 ; //reservartion effectue 
+					
+				}
+				else return 2; //indisponible 
 				
 			}
-			else return 2; //indisponible 
+			else return 0; // voiture ou event introuvable 
 			
-		}
-		else return 0; // voiture ou event introuvable 
+		}return -1; 
+		
 		
 	}
 	
@@ -169,8 +186,7 @@ public class EventImpl implements IEventLocal, IEventRemote{
 	@Override
 	public List<Event_vehicule> AssignmentVehiculeList()
 	{
-		Query q = em.createQuery("Select  v.vehicule.carmodel.model, v.vehicule.carmodel.carbrand.brand, "
-				+ " v.eventV.name , v.eventV.launched  from Event_vehicule v ");
+		Query q = em.createQuery("Select  v  from Event_vehicule v ");
 		return  (List<Event_vehicule>) q.getResultList();
 	}
 	
@@ -226,31 +242,38 @@ public class EventImpl implements IEventLocal, IEventRemote{
 	@Override
 	public int reserveAgent (int idAgent , int idEvent )
 	{
-		Agent agent= em.find(Agent.class,idAgent); 
-		Event event = em.find(Event.class, idEvent); 
-		if ((event!= null)&&(agent!= null))
+		System.out.println("FONCTION RESERVATION 1");
+		if (UserSession.getInstance().getRole()== Roles.ADMIN)
 		{
-			if (disponibilityAgent(idAgent, idEvent)==1)
+			System.out.println("FONCTION RESERVATION 2");
+			Agent agent= em.find(Agent.class,idAgent); 
+			Event event = em.find(Event.class, idEvent); 
+			if ((event!= null)&&(agent!= null))
 			{
-				Event_agentPK event_agentPK = new Event_agentPK(idAgent, idEvent); 
-				Event_agent EA = new Event_agent(event_agentPK, agent, event); 
-				EA.setLaunched(event.isLaunched());
-				em.persist(EA);
-				return 1 ; //reservartion effectue 
+				if (disponibilityAgent(idAgent, idEvent)==1)
+				{
+					Event_agentPK event_agentPK = new Event_agentPK(idAgent, idEvent); 
+					Event_agent EA = new Event_agent(event_agentPK, agent, event); 
+					EA.setLaunched(event.isLaunched());
+					em.persist(EA);
+					System.out.println("FONCTION RESERVATION 3");
+					return 1 ; //reservartion effectue 
+					
+				}
+				else return 2; //indisponible 
 				
 			}
-			else return 2; //indisponible 
+			else return 0; // voiture ou event introuvable 
 			
-		}
-		else return 0; // voiture ou event introuvable 
+		}return -1; 
+		
 		
 	}
 	
 	@Override
 	public List<Event_agent> AssignmentAgentList()
 	{
-		Query q = em.createQuery("Select  v.agent.firstName, v.agent.lastName , "
-				+ " v.event.name  from Event_agent v ");
+		Query q = em.createQuery("Select  v from Event_agent v ");
 		return  (List<Event_agent>) q.getResultList();
 	}
 	
@@ -269,8 +292,7 @@ public class EventImpl implements IEventLocal, IEventRemote{
 			    for (Object id : ids) {			      
 			      if (disponibilityVehicule((Integer)id, idEvent)==1)
 			      {
-			    	  Query q2 = em.createQuery("SELECT v.id,  v.registration, v.color, v.inUse, v.picture,  m.model , b.brand " + 
-			    	  		" FROM Vehicule v JOIN v.carmodel m JOIN m.carbrand b  where v.id =:id");
+			    	  Query q2 = em.createQuery("SELECT v FROM Vehicule  v where v.id =:id");
 			    	  q2.setParameter("id", (Integer)id ); 
 			    	  listVehicules.add(q2.getResultList()); 
 			      }
@@ -279,8 +301,6 @@ public class EventImpl implements IEventLocal, IEventRemote{
 		
 		}
 		return listVehicules; 
-		
-		
 	}
 	@Override
 	public List<Object> AgentDispoForEvent(int idEvent)
@@ -295,20 +315,14 @@ public class EventImpl implements IEventLocal, IEventRemote{
 			    for (Object id : ids) {			      
 			      if (disponibilityAgent((Integer)id, idEvent)==1)
 			      {
-			    	  Query q2 = em.createQuery("SELECT a.id,  a.cin , a.number, a.firstName, a.lastName, a.role, a.email, a.dateBirth, a.accessPerm " + 
-			    	  		" , a.drivenLicence FROM Agent a where id =:id");
+			    	  Query q2 = em.createQuery("SELECT a FROM Agent a where id =:id");
 			    	  q2.setParameter("id", (Integer)id ); 
 			    	  listAgents.add(q2.getResultList()); 
 			      }
 			     
 			    }
-			    
-			  
-		
 		 }
-		
-		return listAgents; 
-				
+		return listAgents; 		
 	}
 	
 	
@@ -368,6 +382,7 @@ public class EventImpl implements IEventLocal, IEventRemote{
 				int nb_latitude =0; 
 				float Latitude=0; 
 				Query query3 = em.createQuery("SELECT i.pos.location.latitude from Invoice i GROUP BY i.pos.id ORDER by count(*) ASC"); 
+				
 				List latitude = query3.getResultList(); 
 				if (!latitude.isEmpty())
 				{
@@ -386,7 +401,7 @@ public class EventImpl implements IEventLocal, IEventRemote{
 				int nb_longitude =0; 
 				float Longitude=0;
 				Query query4 = em.createQuery("SELECT i.pos.location.longitude from Invoice i GROUP BY i.pos.id ORDER by count(*) ASC"); 
-				List longitude = query3.getResultList(); 
+				List longitude = query4.getResultList(); 
 				System.out.println("Longiture " + longitude);
 				if (!longitude.isEmpty())
 				{
@@ -414,14 +429,16 @@ public class EventImpl implements IEventLocal, IEventRemote{
 		    List ids = query1.getResultList();
 		    List<Object> listAgents = new ArrayList<Object>(); 
 		    for (Object id : ids) {			      
-		      if (disponibilityAgent((Integer)id, event.getId())==1 &&  nb_Agent <=2)
+		      if (disponibilityAgent((Integer)id, event.getId())==1 &&  nb_Agent <2)
 		      {
 		    	  nb_Agent ++; 
 		    	  reserveAgent((Integer)id, event.getId() ); 
+		    	  
+		    	  System.out.println("+++++++++++++++++++++++++++++++  nb_Agent " + nb_Agent + " id " + (Integer)id);
 		      }
 		     
 		    }
-			
+		
 //3- reserver Vehicle 
 			
 		    int nb_Vehicule =0; 
@@ -429,7 +446,7 @@ public class EventImpl implements IEventLocal, IEventRemote{
 		    List ids2 = query2.getResultList();
 		    List<Object> listVehicules= new ArrayList<Object>(); 
 		    for (Object id : ids2) {			      
-		      if ((disponibilityVehicule((Integer)id, event.getId() ) ==1 &&  nb_Vehicule <=2))
+		      if ((disponibilityVehicule((Integer)id, event.getId() ) ==1 &&  nb_Vehicule <2))
 		      {
 		    	  nb_Vehicule ++; 
 		    	  reserveVehicule((Integer)id, event.getId()); 
@@ -482,8 +499,8 @@ public class EventImpl implements IEventLocal, IEventRemote{
 			        q2.setParameter("idEvent", idEvent);
 			        q2.executeUpdate();
 			        
-					deleteEvent(event.getId()); 
 					
+					em.remove(em.find(Event.class, event.getId()));
 			        return 2;
 					
 				}

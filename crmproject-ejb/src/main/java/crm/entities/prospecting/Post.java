@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import crm.entities.User;
 
 
@@ -69,6 +71,7 @@ public class Post {
 		this.date_post = date_post;
 	}
 
+	@JsonIgnore
 	public User getUser() {
 		return user;
 	}
@@ -77,6 +80,7 @@ public class Post {
 		this.user = user;
 	}
 
+	@JsonIgnore
 	public Topic getTopic() {
 		return topic;
 	}

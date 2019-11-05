@@ -10,7 +10,7 @@ public interface ICarBrandLocal {
 
 	public List<CarBrand> allBrands();
 	public List<CarBrand> searchForBrand(String name);
-	public void addCarBrand(CarBrand brand) ;
-	public boolean deleteCarBrand(int id);
+	public boolean addCarBrand(CarBrand brand) ;
+	public int deleteCarBrand(int id);
 	public int updateCarBrand(CarBrand brand) ;
 }

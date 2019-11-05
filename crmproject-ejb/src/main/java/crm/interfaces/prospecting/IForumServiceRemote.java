@@ -17,10 +17,9 @@ public interface IForumServiceRemote {
 	
 	/* ----------------------- CRUD FORUM ----------------------- */
 	public List<Forum> allForums();
-	public void addForum(String name, String description, Roles auth_view, Roles auth_post, Category_Forum category_Forum);
-	public boolean deleteForum(int id);
-	public boolean updateForum(int id, String name, String description, Roles auth_view, Roles auth_post,
-			Category_Forum category_Forum);
+	public boolean addForum(String name, String description, Category_Forum category_Forum);
+	public int deleteForum(int id);
+	public int updateForum(int id, String name, String description,  Category_Forum category_Forum);
 	/* ----------------------- CRUD Topic ----------------------- */
 	public List<Topic> allTopics();
 	public int addTopic(String title, int idForum);
@@ -38,7 +37,7 @@ public interface IForumServiceRemote {
 	public List<Object> PostsPerTopics(int idTopic);
 	
 	/* ----------------------- suite aux vus  ----------------------- */
-	public void sendEmailProspect();
+	public boolean sendEmailProspect();
 	
 
 }

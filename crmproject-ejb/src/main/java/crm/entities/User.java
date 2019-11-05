@@ -32,9 +32,15 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+<<<<<<< HEAD
 @Table(name = "User",uniqueConstraints=
 @UniqueConstraint(columnNames = {"username","cin","email"}))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id")
+=======
+@Table(name="User", uniqueConstraints= @UniqueConstraint(columnNames = {"username","cin","email"}))
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, 
+property = "id")
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,6 +96,7 @@ public class User implements Serializable {
 	private Set<TelephoneLines> tellines;
 
 	
+<<<<<<< HEAD
 	public Set<Complaints> getComplaints() {
 		return complaints;
 	}
@@ -106,6 +113,22 @@ public class User implements Serializable {
 		this.tellines = tellines;
 	}
 
+=======
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	private Set<Post> posts; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	private Set<Topic> topics; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	private Set<Views> view ; 
+	
+	
+	
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 	public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
 			Date dateBirth) {
 		super();
@@ -227,7 +250,11 @@ public class User implements Serializable {
 	public void setDateBirth(Date dateBirth) {
 		this.dateBirth = dateBirth;
 	}
+<<<<<<< HEAD
 
+=======
+	@JsonIgnore
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 	public Set<Post> getPosts() {
 		return posts;
 	}
@@ -235,7 +262,11 @@ public class User implements Serializable {
 	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
 	}
+<<<<<<< HEAD
 
+=======
+	@JsonIgnore
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 	public Set<Topic> getTopics() {
 		return topics;
 	}
@@ -243,7 +274,11 @@ public class User implements Serializable {
 	public void setTopics(Set<Topic> topics) {
 		this.topics = topics;
 	}
+<<<<<<< HEAD
 
+=======
+	@JsonIgnore
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 	public Set<Views> getView() {
 		return view;
 	}
@@ -251,5 +286,21 @@ public class User implements Serializable {
 	public void setView(Set<Views> view) {
 		this.view = view;
 	}
+<<<<<<< HEAD
+=======
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", cin=" + cin + ", username=" + username + ", email=" + email + ", enabled="
+				+ enabled + ", password=" + password + ", confirm=" + confirm + ", token=" + token + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", role=" + role + ", dateBirth=" + dateBirth + "]";
+	}
+	
+	
+	
+	
+    
+    
+
+>>>>>>> 509bcef1cd54b460828105e56ce1b0c18c71adc3
 
 }

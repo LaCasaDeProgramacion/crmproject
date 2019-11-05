@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity 
 @Table(name="CarBrand")
 
@@ -46,7 +48,8 @@ public class CarBrand implements Serializable {
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
-
+	
+	@JsonIgnore
 	public List<CarModel> getCarModels() {
 		return carModels;
 	}
