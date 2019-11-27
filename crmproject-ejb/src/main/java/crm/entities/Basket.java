@@ -33,8 +33,7 @@ public class Basket implements Serializable{
 	@OneToOne 
 	private User user;
 	
-	@ManyToMany(cascade=CascadeType.ALL)
-	Set<Product> products;
+	
 	
 	public Basket() {
 		super();
@@ -66,13 +65,7 @@ public class Basket implements Serializable{
 		this.user = user;
 	}
 
-	public Set<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(Set<Product> products) {
-		this.products = products;
-	}
+	
 
 	
 }

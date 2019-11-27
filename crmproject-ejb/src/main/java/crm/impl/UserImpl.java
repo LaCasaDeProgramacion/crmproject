@@ -10,9 +10,10 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
-import javax.management.Query;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import crm.entities.Basket;
@@ -55,21 +56,26 @@ public class UserImpl implements IUserLocal, IUserRemote{
 
 	}
 	@Override
-	public boolean authenticate(String username, String password) {
+	public User authenticate(String username, String password) {
 
-		TypedQuery<User> q= em.createQuery("SELECT u from User u where u.username=:username",User.class); 
+		Query q= em.createQuery("SELECT u from User u where u.username=:username"); 
 		q.setParameter("username",username);
-		User user=q.getSingleResult();
+		List<User> listuser=q.getResultList();
+	    if(!listuser.isEmpty())	{
+	    	for(User user:listuser) {
 		if(BCrypt.checkpw(password, user.getPassword()))
 		{
+			
 			UserSession.getInstance(user);
 			System.out.println("get instaaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnce \n " + user);
-			return true;
+			return user;
 		}
 
 		else
-			return false;
-
+			return null;
+	    }
+	    }
+	    	return null;
 	}
 	@Override
 	public void updateToken(String username,String token)
@@ -82,7 +88,7 @@ public class UserImpl implements IUserLocal, IUserRemote{
 	}
 
 	@Override
-	public void confirmCode(String code,String username) {
+	public boolean confirmCode(String code,String username) {
 		TypedQuery<User> q=  em.createQuery("SELECT u from User u where u.username= :username ",User.class);
 		q.setParameter("username", username);
 		User user=q.getSingleResult();
@@ -91,7 +97,8 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		{
 			user.setEnabled(true);
 			em.merge(user);
-		}
+			return true ; 
+		} return false ; 
 		
 	}
 	@Override
@@ -162,8 +169,22 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		em.merge(u);
 	}
 	
+  @Override
+	public boolean updateUser(User user, int idUser) {
+		if (em.find(User.class, idUser) != null) {
+			User Usertoupdate = em.find(User.class, idUser);
+			Usertoupdate.setCin(user.getCin());
+			Usertoupdate.setDateBirth(user.getDateBirth());
+			Usertoupdate.setEmail(user.getEmail());
+			Usertoupdate.setLastName(user.getLastName());
+			Usertoupdate.setFirstName(user.getFirstName());
+			Usertoupdate.setUsername(user.getUsername());
+		   em.merge(Usertoupdate);
+		   return true;
+		}
+		return false;
+	}
 
-	
 
 
 }

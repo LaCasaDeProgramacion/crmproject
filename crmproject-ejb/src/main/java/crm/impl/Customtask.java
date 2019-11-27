@@ -25,8 +25,8 @@ public class Customtask {
 	@Resource
     private TimerService timerService;
 
-    //private long repeatInterval = 60000L; // in milliseconds
-    private long repeatInterval = 86400000L; // in milliseconds
+    private long repeatInterval = 60000L; // in milliseconds
+    //private long repeatInterval = 86400000L; // in milliseconds
 
     
     @PostConstruct
@@ -34,13 +34,13 @@ public class Customtask {
         timerService.createIntervalTimer(0L,
                 repeatInterval, new TimerConfig(null, false));
     }
-/*
+
     @Timeout
     public void process(Timer timer) {
         doAction();
     }
-    */
-/*
+    
+
     public void doAction() {
         System.out.println("Action called!");
         List<Complaints> listcomp=complaintImpl.GetComplaintsByState("In_progress");
@@ -50,6 +50,6 @@ public class Customtask {
         	notifImpl.addNotification(nc, c.getId());
         }
     }
-    */
+    
 
 }

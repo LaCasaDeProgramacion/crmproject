@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -26,6 +27,7 @@ public class BasketWs {
 	
 	@POST
 	@Path("addproducttoBasket")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProductToBasket( 
 			@QueryParam("basket_id")int basket_id,
 			@QueryParam("product_id")int product_id
@@ -36,7 +38,7 @@ public class BasketWs {
 	}
 
 	
-	@PUT
+	@DELETE
 	@Path("remProdBasket")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response remouveProductFromBasket( 

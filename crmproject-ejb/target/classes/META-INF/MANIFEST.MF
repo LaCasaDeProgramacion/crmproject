@@ -1,10 +1,5 @@
 Manifest-Version: 1.0
-<<<<<<< HEAD
 Built-By: Lenovo
-Build-Jdk: 1.8.0_201
-=======
-Built-By: Nassreddine
-Build-Jdk: 1.8.0_181
->>>>>>> d42d136eaf1a08e729549ff235faaaa8ebfe4cde
+Build-Jdk: 1.8.0_231
 Created-By: Maven Integration for Eclipse
 

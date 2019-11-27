@@ -30,9 +30,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@Table(name="User", uniqueConstraints= @UniqueConstraint(columnNames = {"username","cin","email"}))
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, 
-property = "id")
+@Table(name="User", uniqueConstraints= @UniqueConstraint(columnNames = {"username","cin"}))
 public class User implements Serializable {
 	@Id
 	@GeneratedValue( strategy = GenerationType.IDENTITY )

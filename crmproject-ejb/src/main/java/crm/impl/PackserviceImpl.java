@@ -148,7 +148,7 @@ public class PackserviceImpl implements IPackServiceRemote {
 		List<Object> results = query.getResultList();
 		if (results.isEmpty()) {
 			Query querytwo = em.createQuery(
-					"SELECT prod FROM Product prod JOIN ProductsPack pp ON p.id = pp.pack JOIN Pack p ON prod.id = pp.product "
+					"SELECT prod FROM Product prod JOIN ProductsPack pp ON prod.id = pp.product JOIN Pack p ON p.id = pp.pack "
 							+ " WHERE p.title LIKE :code or p.description LIKE :code or prod.productName LIKE :code or prod.productDescription LIKE :code "
 							+ "  GROUP BY pp.product ORDER BY p.createdate DESC");
 			query.setParameter("code", "%" + Packtext + "%");
@@ -157,7 +157,6 @@ public class PackserviceImpl implements IPackServiceRemote {
 		} else {
 			return results;
 		}
-
 	}
 
 	@Override

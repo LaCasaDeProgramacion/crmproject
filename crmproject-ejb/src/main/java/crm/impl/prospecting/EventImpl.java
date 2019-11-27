@@ -331,7 +331,7 @@ public class EventImpl implements IEventLocal, IEventRemote{
 	@Override
 	public List<Object> VenteParPos()
 	{
-		Query q = em.createQuery("select count(*) as s  , p.namePS , p.location.latitude, p.location.longitude from Invoice i join PointOfSale p "
+		Query q = em.createQuery("select count(*) as s  , p from Invoice i join PointOfSale p "
 				+ "on i.pos.id= p.id group by i.pos.id order by s "); 
 		return q.getResultList(); 
 	}

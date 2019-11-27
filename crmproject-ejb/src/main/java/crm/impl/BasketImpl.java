@@ -29,24 +29,21 @@ public class BasketImpl implements IBasketServiceLocale,IBasketServiceRemote{
 	@Override
 	public void addProductToBasket(int basket_id,int product_id) {
        
-		Query qp  = em.createQuery("SELECT p FROM Product p WHERE p.id = :idp ",Product.class);
-		qp.setParameter("idp",product_id );
-		Product p = (Product) qp.getSingleResult();
+		Product p = em.find(Product.class, product_id);
 		
 		
 		
 	   Basket b = em.find(Basket.class,basket_id);
 		
-	   Set<Product> prod = b.getProducts();
-	   prod.add(p);
+	   
 	   
 	   BasketProduct bp = new BasketProduct();
 	   
 	   bp.setB_id(basket_id);
-	   bp.setP_id(product_id);
+	   bp.setP_id(p.getId());
 	   
-	   em.merge(b);
-	   em.merge(bp);
+//	   em.merge(b);
+	   em.persist(bp);
 		
 		 
 	}

@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import crm.entities.Roles;
+import crm.entities.User;
 import crm.entities.prospecting.*;
 import crm.interfaces.prospecting.*;
 import crm.utils.UserSession;
@@ -32,22 +33,26 @@ public class CarBrandImpl implements ICarBrandLocal, ICarBrandRemote  {
 		q.setParameter("name", name);
 		return (List<CarBrand>) q.getResultList();
 	}
+	
+	 
 
 	@Override
-	public boolean addCarBrand(CarBrand brand) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
-		{
-			em.persist(brand);
+	public boolean addCarBrand(String brand) {
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		//{
+			CarBrand carbrand = new CarBrand (); 
+			carbrand.setBrand(brand);
+			em.persist(carbrand);
 			return true ; 
-		}
-		return false ; 
+		//}
+		//return false ; 
 		
 	}
 
 	@Override
 	public int deleteCarBrand(int id) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		//{
 		CarBrand c = em.find(CarBrand.class, id); 
 		if (c!=null)
 		{
@@ -56,13 +61,13 @@ public class CarBrandImpl implements ICarBrandLocal, ICarBrandRemote  {
 		}
 		
 		else return -1 ; 
-		}return 0; 
+		//}return 0; 
 	}
 
 	@Override
 	public int updateCarBrand(CarBrand brand) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+	//	{
 		CarBrand a = em.find(CarBrand.class, brand.getId());
 		if (a!= null)
 		{
@@ -72,7 +77,13 @@ public class CarBrandImpl implements ICarBrandLocal, ICarBrandRemote  {
 		
 		}
 		else return -1 ; 
-		}return 0; 
+		//}return 0; 
+	}
+	
+	@Override
+	public CarBrand getBrandById(int id) {
+		CarBrand brand=em.find(CarBrand.class, id);
+		return brand;
 	}
 	
 	

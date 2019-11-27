@@ -21,7 +21,7 @@ public class StatPackschedule {
 
 @EJB 
 StatPackserviceImpl statpackserviceimpl;
-@Schedule(second="*/10",minute="*",hour="*" ,persistent=false)
+@Schedule(minute="*/1",hour="*" ,persistent=false)
 public void ScheduleMethods() {
 	System.out.println("*************************Add New Packs Stats**************************************");
 	TypedQuery<Pack> packids = em.createQuery("SELECT p FROM Pack p",Pack.class);

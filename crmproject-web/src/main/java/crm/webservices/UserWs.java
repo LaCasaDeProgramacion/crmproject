@@ -35,6 +35,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Path("user")
 public class UserWs {
+	private final String status = "{\"status\":\"ok\"}";
+	private final String status1 = "{\"status\":\"error\"}";
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	@EJB
 	UserImpl userImpl;
@@ -59,7 +63,7 @@ public class UserWs {
 		Roles rolee=Roles.valueOf(role);
 		User user = new User(cin, username, email, password, firstName, lastName, rolee, dateBirth); 
 		userImpl.addUser(user);
-	    return Response.status(Status.CREATED).entity(" added with basket ").build();
+	    return Response.status(Status.CREATED).entity(statusstart+"added"+statusend).build();
 }
 
 	
@@ -68,17 +72,18 @@ public class UserWs {
 	@Path("authenticate")
 	public Response authenticateUser(@QueryParam("username")String username, @QueryParam("password")String password) {
 
-			Boolean test = userImpl.authenticate(username, password);
-				if (test)
+			User user= userImpl.authenticate(username, password);
+				if (user != null)
 				{
 					String token = issueToken(username);
 					userImpl.updateToken(username,token);
 					System.out.println("****************** " + token);
-					 return Response.status(Status.CREATED).entity("CONNECTED").build();
+					 return Response.status(Status.CREATED).entity(user).build();
 					
 				}
 				else {
-					return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+					User user1 = new User(); 
+					return Response.status(Status.CREATED).entity(statusstart+"null"+statusend).build();
 
 				}
 			
@@ -102,7 +107,7 @@ public class UserWs {
 	@Path("resetPass")
 	public Response ResetPass(@QueryParam("username") String username) {
 			 userImpl.ResetingPassword(username);
-			 return Response.status(Status.ACCEPTED).entity("Reseting Password").build();
+			 return Response.status(Status.OK).entity(statusstart+"Reseting Password"+statusend).build();
 	
 	}
 	@PUT
@@ -112,9 +117,9 @@ public class UserWs {
 	public Response Confirm(@QueryParam("code") String code, @QueryParam("username") String username
 
 	) {
-		userImpl.confirmCode(code, username);
-
-		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+		if (userImpl.confirmCode(code, username))
+		return Response.status(Status.ACCEPTED).entity(statusstart+"ACCEPTED"+statusend).build();
+		else return Response.status(Status.ACCEPTED).entity(statusstart+"ERROR"+statusend).build();
 	}
 	@PUT
 	@Path("updatePass")
@@ -125,7 +130,7 @@ public class UserWs {
 	) {
 		userImpl.UpdatePassword(username, newPass);
 
-		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+		return Response.status(Status.ACCEPTED).entity(statusstart+"ACCEPTED"+statusend).build();
 	}
 	@PUT
 	@Path("logout")
@@ -136,7 +141,31 @@ public class UserWs {
 	) {
 		userImpl.logout();
 
-		return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+		return Response.status(Status.ACCEPTED).entity(statusstart+"ACCEPTED"+statusend).build();
+	}
+	@PUT
+	@Path("updateProfil")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateUser(
+			 @QueryParam("id") int userid,
+			   @QueryParam("cin")int cin,
+			   @QueryParam("datebirth")Date datebirth,
+			   @QueryParam("email")String email,
+		       @QueryParam("lastname")String lastname,
+		       @QueryParam("firstname")String firstname,
+		       @QueryParam("username") String username) {
+				User us = new User();
+				us.setCin(cin);
+				us.setDateBirth(datebirth);
+				us.setEmail(email);
+				us.setLastName(lastname);
+				us.setFirstName(firstname);
+				us.setUsername(username);
+		        Boolean test = userImpl.updateUser(us, userid);
+		        if(test) {
+		        	return Response.status(Status.OK).entity(statusstart+test+statusend).build() ;
+		        }
+		return Response.status(Status.OK).entity(statusstart+test+statusend).build() ;
 	}
 	private String issueToken(String username) {
 		// Issue a token (can be a random String persisted to a database or a JWT token)

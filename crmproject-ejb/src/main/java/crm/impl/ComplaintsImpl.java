@@ -117,11 +117,10 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		 * q.setParameter("id", id); return (Complaints) q.getSingleResult();
 		 */
 
-		if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
-		{
+		
 		Complaints cm = em.find(Complaints.class, id);
 		if (cm.getAdmin() == null) {
-			User admin = em.find(User.class, 1); // Session
+			User admin = em.find(User.class, UserSession.getInstance().getId()); // Session
 			if (admin.getRole() == Roles.ADMIN) {
 				cm.setAdmin(admin);
 				cm.setComplaintState(ComplaintState.In_progress);
@@ -143,12 +142,8 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		}
 		return cm;
 		}
-		else
-			
-			{
-				return em.find(Complaints.class, id);
-			}
-	}
+		
+	
 
 	@Override
 	public List<Complaints> GetComplaintsByUser(int iduser) {

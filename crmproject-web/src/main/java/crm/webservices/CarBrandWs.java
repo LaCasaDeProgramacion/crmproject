@@ -43,21 +43,21 @@ public class CarBrandWs {
      }
 	 
 	 @POST
-	    @Path("add")
-	 	@Secured
+	    @Path("add/{name}")
+	 //	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
-	    public Response addCarBrand(@QueryParam("name")String name )
+	    public Response addCarBrand( @PathParam(value="name") String  name)
 	 	{
-		 		CarBrand brand = new CarBrand( name); 
-				 if(carBrandImpl.addCarBrand(brand))
-				 return Response.status(Status.CREATED).entity("ADDED").build();
+		 		
+				 if(carBrandImpl.addCarBrand(name))
+				 return Response.status(200).entity("ADDED").build();
 				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
 
 	    }
 	 
 	 @PUT
      @Path("update")
-	 @Secured
+	// @Secured
      @Produces(MediaType.APPLICATION_JSON)
      public Response updateCarBrand(
     		 	@QueryParam("name")String name, @QueryParam("id")int id ){
@@ -72,21 +72,32 @@ public class CarBrandWs {
 			 
          
      }
- 	 
+	 private final String status = "{\"status\":\"ok\"}";
 	  	@DELETE
 	    @Path("delete")
-	  	@Secured
+	 // 	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response delete( @QueryParam("id")int id){
 	  		
 	  		int res = carBrandImpl.deleteCarBrand(id); 
 	  			if (res==1)
-		 			return Response.status(Status.CREATED).entity("DELETED").build();
+		 			return Response.status(Status.CREATED).entity(status).build();
 					if(res==-1)
 					return Response.status(Status.NOT_FOUND).entity("AGENT NOT FOUND OR ALREADY HAS A CONTRACT").build();
 					else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
 				 
 	    }
+	  	
+		 @GET
+	     @Path("byid")
+	     @Produces(MediaType.APPLICATION_JSON)
+	     public Object carById(@QueryParam("id") int id){
+			 CarBrand e = new CarBrand(); 
+			  e = carBrandImpl.getBrandById(id) ; 
+			
+				 return Response.status(Status.OK).entity(e).build();
+			
+	     }
 
 
 }
