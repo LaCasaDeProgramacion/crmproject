@@ -20,7 +20,10 @@ public class CarModelWs {
 
 	@EJB
 	CarModelImpl carModelImpl;
-	
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
+	private final String statusok = "{\"status\":\"ok\"}";
+	private final String statuserreuer = "{\"status\":\"erreur\"}";
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("all")
@@ -29,9 +32,9 @@ public class CarModelWs {
 		List<CarModel> list = carModelImpl.allModels(); 
         if (!list.isEmpty())
         {
-        	return Response.status(Status.FOUND).entity(list).build();
+        	return Response.status(Status.OK).entity(list).build();
         }
-        return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+        return Response.status(Status.OK).entity(statuserreuer).build();
         
     }
 	
@@ -43,10 +46,10 @@ public class CarModelWs {
 		List  list = carModelImpl.BrandsOfModel(idmodel); 
 		if (list ==null )
 		{
-			return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+			return Response.status(Status.OK).entity(statuserreuer).build();
 		}
 		else
-        	return Response.status(Status.FOUND).entity(list).build();
+        	return Response.status(Status.OK).entity(list).build();
         
         
         
@@ -62,7 +65,7 @@ public class CarModelWs {
 		 {
 			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statuserreuer).build();
          
          
      }
@@ -75,10 +78,10 @@ public class CarModelWs {
 	 	{
 	 		int res = carModelImpl.addCarModel(model, idBrand); 
 	 		if (res==1)
-	 			return Response.status(Status.CREATED).entity("ADDED").build();
+	 			return Response.status(Status.OK).entity(statusok).build();
 				if(res==-1)
-				return Response.status(Status.NOT_FOUND).entity("BRAND NOT FOUND").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				return Response.status(Status.OK).entity(statusstart+"BRAND NOT FOUND"+statusend).build();
+				else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();  
 			 
 	    }
 	 
@@ -91,10 +94,10 @@ public class CarModelWs {
 		
 		 int res = carModelImpl.updateCarModel(model, id);
 		 if (res==1)
-	 			return Response.status(Status.CREATED).entity("UPDATED").build();
+	 			return Response.status(Status.OK).entity(statusok).build();
 				if(res==-1)
-				return Response.status(Status.NOT_FOUND).entity("MODEL NOT FOUND").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				return Response.status(Status.OK).entity(statusstart+"MODEL NOT FOUND"+statusend).build();
+				else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();  
 			 
      }
  	 
@@ -105,10 +108,10 @@ public class CarModelWs {
 	    public Response delete( @QueryParam("id")int id){
 	  		int res= carModelImpl.deleteCarModel(id);
 	  	if (res==1)
-		 			return Response.status(Status.CREATED).entity("DELETED").build();
+		 			return Response.status(Status.OK).entity(statusok).build();
 					if(res==-1)
-					return Response.status(Status.NOT_FOUND).entity("MODEL NOT FOUND").build();
-					else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+					return Response.status(Status.OK).entity(statusstart+"MODEL NOT FOUND"+statusend).build();
+					else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();  
 				 
 	    }
 	

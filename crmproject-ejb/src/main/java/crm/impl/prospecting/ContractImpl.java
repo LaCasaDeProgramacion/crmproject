@@ -34,15 +34,20 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 		q.setParameter("title", title);
 		return (List<Contract>) q.getResultList(); 
 	}
+	@Override 
+	public Contract getById(int id)
+	{
+		return em.find(Contract.class,id); 
+	}
 
 	@Override
-	public int addContract(String title , Date startDate, Date endDate, float salary, String comment,String status, int idAgent ) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole()== Roles.VENDOR)
-		{
+	public Contract addContract(String title , Date startDate, Date endDate, float salary, String comment,String status, int idAgent ) {
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole()== Roles.VENDOR)
+		//{
 			Contract contract = new Contract(); 
 			Agent agent = em.find(Agent.class,idAgent); 
-			if ((agent != null)&& (agent.getContract()==null) )
-			{
+			//if ((agent != null)&& (agent.getContract()==null) )
+			//{
 				contract.setAgent(agent);
 				agent.setContract(contract);
 				
@@ -55,11 +60,11 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 				
 				em.persist(contract);
 				em.merge(agent); 
-				return 1 ; //added
-			}
-			else return -1; 
+				return contract ; //added
+			//}
+			//else return -1; 
 			
-		}return 0; //user 
+		//}return 0; //user 
 		
 		
 	
@@ -69,8 +74,8 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 
 	@Override
 	public int updateContract(int id,String title, Date startDate, Date endDate, float salary, String comment,String status, int idAgent) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole()== Roles.VENDOR)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole()== Roles.VENDOR)
+		//{
 			Contract contract = em.find(Contract.class, id);
 			Agent agent = em.find(Agent.class, idAgent); 
 			if (contract!= null && agent!=null)
@@ -103,14 +108,14 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 	
 			}
 			else return -1; //contract - agent 
-		}return 0; //user 
+		//}return 0; //user 
 	}
 
 	@Override
 	public int deleteContract(int id) {
 		Contract c = em.find(Contract.class, id); 
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole()== Roles.VENDOR)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole()== Roles.VENDOR)
+		//{
 			if (c!=null)
 			{
 				Agent a = c.getAgent(); 
@@ -123,7 +128,7 @@ public class ContractImpl implements IContractLocal, IContractRemote  {
 		        return 1 ; //deleted
 			}
 			else return -1; //contract 
-		} return 1; //user
+		//} return 1; //user
 	}
 
 	

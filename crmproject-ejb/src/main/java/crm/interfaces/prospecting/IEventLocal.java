@@ -12,9 +12,9 @@ public interface IEventLocal {
 	
 	public List<Event> allEvents();
 	public List<Object> searchForEvent(String name);
-	public boolean addEvent(String name, Date startDate, Date endDate , float longitude, float latitude) ;
+	public boolean addEvent(String name, Date startDate, Date endDate , float longitude, float latitude, String picture) ;
 	public int deleteEvent(int id);
-	public int updateEvent(int id, String name, Date startDate, Date endDate, Boolean launched) ;
+	public int updateEvent(int id, String name, Date startDate, Date endDate, Boolean launched, String picture) ;
 	
 	
 	public int disponibilityVehicule(int idVehicule , int idEvent);
@@ -27,6 +27,14 @@ public interface IEventLocal {
 	public List<Object> VehiculeDispoForEvent (int idEvent); 
 	public List<Object> AgentDispoForEvent(int idEvent); 
 	public List<Object> VenteParPos(); 
-	public int propositionEvent(); 
+	public Event propositionEvent(); 
 	public int replyRequestEvent(Boolean resp, int idEvent ); 
+	public List<Event> EventDispoForVeh(int idVehicule);
+	public List<Event> EventDispoForAgent(int idAgent);
+	public Event recentSuggestion();
+	public Event getEventById(int id);
+	public void updateEventCalendar(int id,String name, Date startDate, Date endDate ); 
+
+
+
 }

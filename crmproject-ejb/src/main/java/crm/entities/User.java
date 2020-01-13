@@ -61,6 +61,9 @@ public class User implements Serializable {
 	@Column(name="dateBirth")
     private Date dateBirth;
 
+	@Column(name="picture")
+    private String picture;
+	
 	@OneToMany(mappedBy="user",fetch = FetchType.EAGER)
 	@JsonManagedReference
 	public Set<UsersCoupon> usersCoupon;
@@ -150,6 +153,12 @@ public class User implements Serializable {
 
 	
 
+	public String getPicture() {
+		return picture;
+	}
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
 	public Set<UsersCoupon> getUsersCoupon() {
 		return usersCoupon;
 	}

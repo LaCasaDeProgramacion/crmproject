@@ -34,7 +34,17 @@ public class Agent implements Serializable {
 	private boolean accessPerm ; 
 	@Column(name="drivenLicence")
 	private boolean drivenLicence ;
+	@Column(name="picture")
+	private String picture ;
 	
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+
 	@ManyToOne
 	private PointOfSale pointofsale; 
 	
@@ -49,7 +59,7 @@ public class Agent implements Serializable {
 	}
 	
 	public Agent (int cin, int number, String firstName,String  lastName,String  email, 
-				Date datebirth, RoleAgent role, boolean accessPerm,boolean drivenLicence)
+				Date datebirth, RoleAgent role, boolean accessPerm,boolean drivenLicence,  String picture)
 	{
 		this.cin= cin ; 
 		this.number = number ; 
@@ -60,10 +70,11 @@ public class Agent implements Serializable {
 		this.role = role ; 
 		this.accessPerm = accessPerm; 
 		this.drivenLicence = drivenLicence; 
+		this.picture = picture; 
 		
 	}
 	public Agent (int id, int cin, int number, String firstName,String  lastName,String  email, 
-			Date datebirth, RoleAgent Agent, boolean accessPerm,boolean drivenLicence)
+			Date datebirth, RoleAgent Agent, boolean accessPerm,boolean drivenLicence, String picture)
 {
 		this.id=id; 
 		this.cin= cin ; 
@@ -75,9 +86,12 @@ public class Agent implements Serializable {
 		this.role = role ; 
 		this.accessPerm = accessPerm; 
 		this.drivenLicence = drivenLicence; 
-		
+		this.picture = picture; 
 }
 	
+	
+
+
 	public int getId() {
 		return id;
 	}

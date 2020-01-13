@@ -25,6 +25,8 @@ public class Event implements Serializable {
 	private Location location ;
 	@Column(name="launched")
 	private boolean launched; 
+	@Column(name="picture")
+	private String picture ;
 	
 	@OneToMany (mappedBy="event", cascade=CascadeType.ALL)
 	private List<Event_agent> event_agent ; 
@@ -108,6 +110,14 @@ public class Event implements Serializable {
 
 	public void setLaunched(boolean launched) {
 		this.launched = launched;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 
 }
