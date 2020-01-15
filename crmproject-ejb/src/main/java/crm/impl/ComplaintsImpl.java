@@ -143,16 +143,9 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		}
 		return cm;
 		}
-<<<<<<< Updated upstream
+
 		
-=======
-		else
-			
-			{
-				return em.find(Complaints.class, id);
-			}
-	}
->>>>>>> Stashed changes
+	
 	
 
 	@Override
