@@ -288,11 +288,11 @@ store.setStore_image(store_image);
 	
 	 public double distancebystoreid(int store_id) {
 			Store s = new Store();
-<<<<<<< HEAD
+
 			Store store = em.find(Store.class, store_id);
-=======
-			Store store = findbyId(1);
->>>>>>> 7dd3f3d3d7ed486131d936d54ac2c588213d44c9
+
+		
+
 			Store sto = em.find(Store.class, store.getStore_id());
 				 IPInfo ipInfo = IPInfo.builder().setToken("930323b76e6a48").setCountryFile(new File("path/to/file.json")).build();
 
