@@ -3,7 +3,9 @@ package crm.webservices;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -30,6 +32,7 @@ import crm.entities.StatPack;
 import crm.entities.TitleStat;
 import crm.impl.PackserviceImpl;
 import crm.impl.StatPackserviceImpl;
+import crm.webservices.*;
 
 @Path("packs")
 
@@ -38,6 +41,8 @@ public class PackWs {
 	PackserviceImpl packserviceimpl;
    @EJB
    StatPackserviceImpl statpackserviceimpl;
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	@POST
 	@Path("addpack")
 	
@@ -74,9 +79,9 @@ public class PackWs {
 
 		Boolean test =packserviceimpl.assignproducttopack(productsid, packid);
 		if(test==false) {
-			return Response.status(Status.NOT_ACCEPTABLE).entity("Not Admin or Vendor").build();
+			return Response.status(Status.OK).entity(statusstart+"Not Admin or Vendor"+statusend).build();
 		}else {
-			return Response.status(Status.OK).entity("Products added to pack").build();
+			return Response.status(Status.OK).entity(statusstart+"Products added to pack"+statusend).build();
 		}
 		
 
@@ -113,7 +118,7 @@ public class PackWs {
 	@Secured
 	public Response archivePack(@QueryParam("packid") int packid) {
 		packserviceimpl.archivepack(packid);
-		return Response.status(Status.OK).entity("archiving pack true ! ").build();
+		return Response.status(Status.OK).entity(statusstart+"archiving pack true ! "+statusend).build();
 
 	}
 	@PUT
@@ -122,7 +127,7 @@ public class PackWs {
 	@Secured
 	public Response unarchivingpack(@QueryParam("packid") int packid) {
 		packserviceimpl.unarchivingpack(packid);
-		return Response.status(Status.OK).entity("archiving pack false ! ").build();
+		return Response.status(Status.OK).entity(statusstart+"archiving pack false ! "+statusend).build();
 
 	}
 
@@ -132,7 +137,6 @@ public class PackWs {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Product> findproductsPack(@QueryParam("packid") int packid) {
 		List<Product> packproducts = packserviceimpl.findproductsPack(packid);
-		
 		
 		return packproducts;
 		
@@ -156,7 +160,7 @@ public class PackWs {
 			 ) {
 		 
 		 packserviceimpl.removePack(id);
-	     return Response.status(200).entity("Deleted pack with "+id).build();
+	     return Response.status(200).entity(statusstart+"Deleted pack"+statusend).build();
 	 }
 	 @GET
 	    @Path("findpackbyid")
@@ -191,8 +195,8 @@ public class PackWs {
 	 @GET
 	 @Path("packsarchived")
 	 @Produces(MediaType.APPLICATION_JSON)
-	 public List<Pack> packsarchived() {
-				return packserviceimpl.packsArchived();
+	 public Response packsarchived() {
+				return Response.status(Status.OK).entity(packserviceimpl.packsArchived()).build();
 		 
 	 }
 	 @GET
@@ -277,6 +281,13 @@ public class PackWs {
 	 public List<StatPack> jsonStatPackByEverething(@QueryParam("month")String month,@QueryParam("year")String year,@QueryParam("TitleStat")String ts) {
 				return statpackserviceimpl.jsonStatPackByEverething(month, year, ts);
 		 }
-	 
+	 @GET
+	 @Path("getprodbyid")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public Product getprodbyid(@QueryParam("id")int id) {
+		return packserviceimpl.getProductbyId(id);
+		 
+	 }
+	
 	 
 }

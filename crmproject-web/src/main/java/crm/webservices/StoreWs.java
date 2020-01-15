@@ -47,7 +47,13 @@ public class StoreWs {
 storeimpl.addStore(store_name);
 	        return Response.status(200).entity(status).build();
 	    }
-	  
+	  @GET
+		@Produces(MediaType.APPLICATION_JSON)
+		@Path("allstores")
+	    public List<Store> getStores()
+	    {
+	        return storeimpl.allStores();
+	    }
 	  
 	  @GET
 		@Produces(MediaType.APPLICATION_JSON)

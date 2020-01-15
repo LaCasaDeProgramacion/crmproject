@@ -28,6 +28,7 @@ public class Topic implements Serializable {
 	private Date creation_date ;
 	
 	
+	
 	@OneToMany (mappedBy="topic" , cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
 	private List<Post> posts ; 
 	
@@ -56,6 +57,8 @@ public class Topic implements Serializable {
 	}
 
 
+
+
 	@JsonIgnore
 	public List<Views> getViews() {
 		return views;
@@ -66,18 +69,14 @@ public class Topic implements Serializable {
 		this.views = views;
 	}
 
-	@JsonIgnore
+	
 	public User getUser() {
 		return user;
 	}
 
-
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-
-	@JsonIgnore
 	public Forum getForum() {
 		return forum;
 	}

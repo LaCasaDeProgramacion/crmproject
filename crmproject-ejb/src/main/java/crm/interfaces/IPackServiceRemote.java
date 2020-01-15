@@ -33,6 +33,8 @@ public interface IPackServiceRemote {
 	public List<Pack> availablepacksorderbypriceDESC();
 	public List<Pack> availablepacksorderbypriceASC();
 	
+	public Product getProductbyId(int idprod);
+	
 	
 
 	

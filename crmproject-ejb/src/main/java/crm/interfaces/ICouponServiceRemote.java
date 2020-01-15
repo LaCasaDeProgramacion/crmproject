@@ -10,7 +10,7 @@ import crm.entities.User;
 
 @Remote
 public interface ICouponServiceRemote {
- public Boolean AssignCouponToPromotionToUserRandomly();
+ public Coupon AssignCouponToPromotionToUserRandomly();
  public Coupon GetCouponByUser();
  public String HourMinuteSecondLeftToUseCoupon();
  public Boolean ifalreadyhavecoupon();

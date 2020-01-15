@@ -24,7 +24,8 @@ import crm.impl.PackserviceImpl;
 public class CouponWS {
 	@EJB
 	CouponserviceImpl couponserviceimpl;
-	
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	@PUT
 	@Path("assigncoupontopromotion")
@@ -33,13 +34,13 @@ public class CouponWS {
 	public Response assigncoupontopromotion() {
 		
 		if(couponserviceimpl.ifalreadyhavecoupon()) {
-			return Response.status(Status.OK).entity("Already have Coupon of This Day OR Not Client or Not Prospect").build();
+			return Response.status(Status.OK).entity(statusstart+"Already have Coupon of This Day OR Not Client or Not Prospect"+statusend).build();
 		}else {
-		Boolean test =couponserviceimpl.AssignCouponToPromotionToUserRandomly();
-		if(test==true) {
-			return Response.status(Status.OK).entity("Coupon added With Randomly Promotion Unit And Assigned to Current User  ").build();
+		Coupon test =couponserviceimpl.AssignCouponToPromotionToUserRandomly();
+		if(test!=null) {
+			return Response.status(Status.OK).entity(test).build();
 		}else {
-			return Response.status(Status.NOT_ACCEPTABLE).entity("you are not client or prospect ").build();
+			return Response.status(Status.OK).entity(statusstart+"you are not client or prospect "+statusend).build();
 		}
 		
 		}
@@ -68,9 +69,9 @@ public class CouponWS {
 		
 		String c = couponserviceimpl.HourMinuteSecondLeftToUseCoupon();
 		if(c.equals("false")) {
-			return Response.status(Status.OK).entity("your not Client or not Prospect").build();
+			return Response.status(Status.OK).entity(statusstart+"your not Client or not Prospect"+statusend).build();
 		}else {
-		return Response.status(Status.OK).entity(c).build();
+		return Response.status(Status.OK).entity(statusstart+c+statusend).build();
 		}
 	
 	}

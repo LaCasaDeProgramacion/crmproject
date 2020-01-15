@@ -45,7 +45,7 @@ public class CouponserviceImpl implements ICouponServiceRemote {
 	ProductImpl productimpl;
 
 	@Override
-	public Boolean AssignCouponToPromotionToUserRandomly() {
+	public Coupon AssignCouponToPromotionToUserRandomly() {
 		Promotion p = new Promotion();
 		p.setPromotionbycoupon(true);
 		p.setMaximumorderproducts(1);
@@ -115,9 +115,10 @@ public class CouponserviceImpl implements ICouponServiceRemote {
 			uc.setUser(em.find(User.class, UserSession.getInstance().getId()));
 			uc.setUserscouponpk(pk);
 			em.persist(uc);  
-			return true;
+			return Coupontosetuser;
 		}else {
-			return false;
+			 
+			return null;
 		}
 		
 

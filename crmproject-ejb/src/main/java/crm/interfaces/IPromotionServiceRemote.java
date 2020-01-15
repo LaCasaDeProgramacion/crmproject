@@ -24,11 +24,13 @@ public interface IPromotionServiceRemote {
     public Promotion enabledpromotion(Promotion promotion);
     public Product displayProductbypromotion(Promotion promotion);
 	
-	
+	public List<Promotion> AssignedPromotions();
 	public List<Promotion> findAllPromotionusabled();
 	public List<Promotion> promotionNotUsedYet();
 	//give product id return promotion price : 
-	public double productPromotionValue(int productid);                        
+	public double productPromotionValue(int productid);     
+	
+	
 	
 	
 }
