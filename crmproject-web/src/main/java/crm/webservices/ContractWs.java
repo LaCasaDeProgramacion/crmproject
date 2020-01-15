@@ -17,7 +17,8 @@ public class ContractWs {
 
 	@EJB
 	ContractImpl contractImpl;
-	
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("all")
@@ -26,9 +27,9 @@ public class ContractWs {
 		List<Contract> list = contractImpl.allContracts(); 
         if (!list.isEmpty())
         {
-        	return Response.status(Status.FOUND).entity(list).build();
+        	return Response.status(Status.OK).entity(list).build();
         }
-        return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+        return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
         
     }
 	
@@ -43,7 +44,16 @@ public class ContractWs {
 		 {
 			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
+         
+         
+     }
+	 @GET
+     @Path("getById")
+     @Produces(MediaType.APPLICATION_JSON)
+     public Object getById(@QueryParam("id") int id){
+		 
+		 return Response.status(Status.OK).entity(contractImpl.getById(id)).build();
          
          
      }
@@ -61,12 +71,14 @@ public class ContractWs {
 	    		@QueryParam("status") String status, 
 	    		@QueryParam("idAgent") int idAgent)
 	 	{
-		 		int res = contractImpl.addContract(title, startDate, endDate, salary, comment,status, idAgent);
+		 		/*int res = contractImpl.addContract(title, startDate, endDate, salary, comment,status, idAgent);
 	 				if (res==1)
-		 			return Response.status(Status.CREATED).entity("ADDED").build();
+		 			return Response.status(Status.OK).entity(statusstart+"ADDED"+statusend).build();
 	 				if(res==-1)
-	 				return Response.status(Status.NOT_FOUND).entity("AGENT NOT FOUND OR ALREADY HAS A CONTRACT").build();
-	 				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+	 				return Response.status(Status.OK).entity(statusstart+"AGENT NOT FOUND OR ALREADY HAS A CONTRACT"+statusend).build();
+	 				else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();  */
+ 			return Response.status(Status.OK).entity(contractImpl.addContract(title, startDate, endDate, salary, comment,status, idAgent)).build();
+
 				 
 	    }
 	 
@@ -87,10 +99,10 @@ public class ContractWs {
 		
 		 int res = contractImpl.updateContract(id, title, startDate, endDate, salary, comment,status, idAgent);
 		 		if (res==1)
-	 			return Response.status(Status.CREATED).entity("UPDATED").build();
+	 			return Response.status(Status.OK).entity(statusstart+"UPDATED"+statusend).build();
 				if(res==-1)
-				return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
+				else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();  
 			 
          
      }
@@ -102,10 +114,10 @@ public class ContractWs {
 	    public Response deleteContract( @QueryParam("id")int id){
 	  		int res = contractImpl.deleteContract(id); 
 	  			if (res==1)
-	 			return Response.status(Status.CREATED).entity("DELETED").build();
+	 			return Response.status(Status.OK).entity(statusstart+"DELETED"+statusend).build();
 				if(res==-1)
-				return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
+				else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();  
 			 
 	    }
 	

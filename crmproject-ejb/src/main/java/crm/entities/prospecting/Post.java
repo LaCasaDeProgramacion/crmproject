@@ -71,7 +71,7 @@ public class Post {
 		this.date_post = date_post;
 	}
 
-	@JsonIgnore
+	
 	public User getUser() {
 		return user;
 	}

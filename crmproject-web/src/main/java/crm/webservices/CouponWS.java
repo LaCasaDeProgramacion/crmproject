@@ -69,9 +69,9 @@ public class CouponWS {
 		
 		String c = couponserviceimpl.HourMinuteSecondLeftToUseCoupon();
 		if(c.equals("false")) {
-			return Response.status(Status.OK).entity("your not Client or not Prospect").build();
+			return Response.status(Status.OK).entity(statusstart+"your not Client or not Prospect"+statusend).build();
 		}else {
-		return Response.status(Status.OK).entity(c).build();
+		return Response.status(Status.OK).entity(statusstart+c+statusend).build();
 		}
 	
 	}

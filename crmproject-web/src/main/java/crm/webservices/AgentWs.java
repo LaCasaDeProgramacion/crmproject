@@ -18,6 +18,8 @@ public class AgentWs {
 	
 	@EJB
 	AgentImpl agentImlp;
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -28,9 +30,9 @@ public class AgentWs {
 		 List<Agent> e = agentImlp.allAgents(); 
 		 if (!e.isEmpty())
 		 {
-			 return Response.status(Status.FOUND).entity(e).build();
+			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
     }
 	
 	 @GET
@@ -42,10 +44,26 @@ public class AgentWs {
 		 List<Agent> e = agentImlp.searchForAgent(cin); 
 		 if (!e.isEmpty()) 
 		 {
-			 return Response.status(Status.FOUND).entity(e).build();
+			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
      }
+	 @GET
+     @Path("getById")
+	 
+     @Produces(MediaType.APPLICATION_JSON)
+     public Response getById(@QueryParam("id") int id){
+		 
+		 return Response.status(Status.OK).entity(this.agentImlp.getById(id)).build();
+     }
+	 @GET
+     @Path("getIdContrat")
+     @Produces(MediaType.APPLICATION_JSON)
+     public Response getIdContrat(@QueryParam("id") int id){
+		 
+		 return Response.status(Status.OK).entity(this.agentImlp.getIdContract(id)).build();
+     }
+	 
 	 
 	 @POST
 	    @Path("add")
@@ -61,13 +79,14 @@ public class AgentWs {
 			    @QueryParam("datebirth") Date datebirth, 
 			    @QueryParam("role") RoleAgent role, 
 			    @QueryParam("accessPerm") boolean accessPerm, 
-			    @QueryParam("drivenLicence") boolean drivenLicence )
+			    @QueryParam("drivenLicence") boolean drivenLicence, 
+			    @QueryParam("picture") String picture
+	    		)
 	 		{
 		 		Agent agent = new Agent( cin, number,firstName, lastName, email, 
-		 								datebirth, role, accessPerm, drivenLicence); 
-				 if (agentImlp.addAgent(agent))
-				 return Response.status(Status.CREATED).entity("ADDED").build();
-				 else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build(); 
+		 								datebirth, role, accessPerm, drivenLicence, picture); 
+			
+				 return Response.status(Status.OK).entity(agentImlp.addAgent(agent)).build();
 	 		}
 	 
 	 @PUT
@@ -84,38 +103,38 @@ public class AgentWs {
 			    @QueryParam("datebirth") Date datebirth, 
 			    @QueryParam("role") RoleAgent role, 
 			    @QueryParam("accessPerm") boolean accessPerm, 
-			    @QueryParam("drivenLicence") boolean drivenLicence 
+			    @QueryParam("drivenLicence") boolean drivenLicence , 
+			    @QueryParam("picture") String picture
     
      ){
 		 Agent agent = new Agent(id, cin, number,firstName, lastName, email, 
-					datebirth, role, accessPerm, drivenLicence); 
+					datebirth, role, accessPerm, drivenLicence, picture); 
 		 int res = agentImlp.updateAgent(agent);
 		 if (res==1)
 		 {
-			 return Response.status(Status.ACCEPTED).entity("UPDATED").build();
+			 return Response.status(Status.OK).entity(statusstart+"UPDATED"+statusend).build();
 		 }
 		 if (res==-1)
-			 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
-	  	else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();
+			 return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
+	  	else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN/VENDOR"+statusend).build();
 
      }
  	 
 	  	@DELETE
 	    @Path("delete")
-	  	@Secured
+	  
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response deleteAgent(
 	            @QueryParam("id")int id
 	    ){
 	  		if (agentImlp.deleteAgent(id)==1)
 	  		{
-	  			return Response.status(Status.GONE).entity("DELETED").build();
+	  			return Response.status(Status.OK).entity(statusstart+"DELETED"+statusend).build();
 	  		}
-	  		if (agentImlp.deleteAgent(id)==-1)
-	  		{
-			    return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	  		
+			    return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
 	  		}
-	  		else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();
-	  	}
+	  	
+	  	
 
 }

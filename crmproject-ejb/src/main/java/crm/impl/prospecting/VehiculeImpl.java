@@ -25,6 +25,11 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 		Query q = em.createQuery("SELECT v FROM Vehicule v" );
 		return (List<Vehicule>) q.getResultList();
 	}
+	
+	@Override
+	public Vehicule VehiclePerId(int id) {
+		return em.find(Vehicule.class, id); 
+	}
 
 	@Override
 	public List<Vehicule> searchForVehicule(String registration) {
@@ -36,8 +41,8 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 
 	@Override
 	public int addVehicule(String registration , String color , boolean inUse , String picture , int idModel) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		//{
 			CarModel model = em.find(CarModel.class, idModel); 
 			if (model!= null )
 			{
@@ -54,28 +59,31 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 			}
 			return -1 ; 
 			
-		}return 0; 
+	//	}return 0; 
 		
 	}
 
 	@Override
 	public int deleteVehicule(int id) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
-		{
+	//	if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+	//	{
 			Vehicule a = em.find(Vehicule.class, id); 
 				if (a!=null)
 				{
+					a.setCarmodel(null);
+					
+					em.merge(a); 
 					em.remove(a);
 			        return 1 ; 
 				}
 			return -1 ; 
-		}return 0; 
+		//}return 0; 
 	}
 
 	@Override
 	public int updateVehicule(int id, String registration , String color , boolean inUse , String picture , int idModel) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN || UserSession.getInstance().getRole() == Roles.VENDOR)
+		//{
 			Vehicule vehicule = em.find(Vehicule.class,id );
 			CarModel model = em.find(CarModel.class, idModel); 
 			if (vehicule== null || model==null)
@@ -96,7 +104,7 @@ public class VehiculeImpl implements IVehiculeLocal, IVehiculeRemote {
 				
 			}
 			
-		}return 0; 
+		//}return 0; 
 		
 		 
 	}

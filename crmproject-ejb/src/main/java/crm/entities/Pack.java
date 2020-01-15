@@ -65,6 +65,16 @@ public class Pack implements Serializable {
 	@JsonIgnore
 	@JsonManagedReference
 	public Set<InvoicesPacks> invoicespack;
+	@Transient
+    private List<Product> products ;
+    
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
 
 	public int getId() {
 		return id;

@@ -7,6 +7,8 @@ import java.util.List;
 import javax.management.relation.Role;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import crm.entities.Roles;
 
 @Entity 
@@ -19,8 +21,9 @@ public class Forum implements Serializable {
 	
 	private String name; 
 	private String description ; 
-	@Enumerated(EnumType.STRING)
-	private Category_Forum category_Forum ;  
+    private String picture ; 
+    private int nbTopics ; 
+ 
 	@OneToMany(mappedBy="forum", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Topic> topics; 
 	
@@ -30,14 +33,16 @@ public class Forum implements Serializable {
 	}
 
 	
-	public Forum(String name, String description,  Category_Forum category_Forum) {
+	public Forum(String name, String description,  String picture) {
 		super();
 		this.name = name;
 		this.description = description;
-		this.category_Forum = category_Forum;
+		this.picture = picture;
+		this.nbTopics=0; 
 	}
 
 
+	@JsonIgnore
 	public List<Topic> getTopics() {
 		return topics;
 	}
@@ -72,13 +77,27 @@ public class Forum implements Serializable {
 		this.description = description;
 	}
 
-	public Category_Forum getCategory_Forum() {
-		return category_Forum;
+
+	public String getPicture() {
+		return picture;
 	}
 
-	public void setCategory_Forum(Category_Forum category_Forum) {
-		this.category_Forum = category_Forum;
+
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
+
+
+	public int getNbTopics() {
+		return nbTopics;
+	}
+
+
+	public void setNbTopics(int nbTopics) {
+		this.nbTopics = nbTopics;
+	}
+
+	
 
 
 	

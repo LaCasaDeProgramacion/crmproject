@@ -47,6 +47,7 @@ public class StoreWs {
 storeimpl.addStore(store_name, store_image);
 	        return Response.status(200).entity(status).build();
 	    }
+<<<<<<< HEAD
 	  
 	  @GET
 		@Produces(MediaType.APPLICATION_JSON)
@@ -57,6 +58,8 @@ storeimpl.addStore(store_name, store_image);
 		  return storeimpl.findstorebyid(store_id);
 	    }
 	  
+=======
+>>>>>>> 7dd3f3d3d7ed486131d936d54ac2c588213d44c9
 	  @GET
 		@Produces(MediaType.APPLICATION_JSON)
 		@Path("allstores")
