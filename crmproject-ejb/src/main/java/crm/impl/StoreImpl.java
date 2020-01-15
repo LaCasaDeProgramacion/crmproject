@@ -284,7 +284,7 @@ store.setStore_city(response.getCity());
 	
 	 public double distancebystoreid(int store_id) {
 			Store s = new Store();
-			Store store = findbyId(store_id);
+			Store store = findbyId(1);
 			Store sto = em.find(Store.class, store.getStore_id());
 				 IPInfo ipInfo = IPInfo.builder().setToken("930323b76e6a48").setCountryFile(new File("path/to/file.json")).build();
 

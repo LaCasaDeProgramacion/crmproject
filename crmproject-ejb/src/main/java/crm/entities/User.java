@@ -61,6 +61,7 @@ public class User implements Serializable {
   @Column(name="dateBirth")
     private Date dateBirth;
 
+<<<<<<< HEAD
   @Column(name="picture")
     private String picture;
   
@@ -109,6 +110,56 @@ public class User implements Serializable {
   public User() {
     super();
   }
+=======
+	@Column(name="picture")
+    private String picture;
+	
+	@OneToMany(mappedBy="user",fetch = FetchType.EAGER)
+	@JsonManagedReference
+	public Set<UsersCoupon> usersCoupon;
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	private Set<Post> posts; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	private Set<Topic> topics; 
+	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	private Set<Views> view ; 
+	
+	
+	
+	public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
+			Date dateBirth) {
+		super();
+		this.cin = cin;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.role = role;
+		this.dateBirth = dateBirth;
+	}
+	public String getConfirm() {
+		return confirm;
+	}
+	public void setConfirm(String confirm) {
+		this.confirm = confirm;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public User() {
+		super();
+	}
+>>>>>>> 68ca0317b4dbda54e57f0ca4b39b0260108475d3
 
   public int getId() {
     return id;
@@ -153,6 +204,7 @@ public class User implements Serializable {
 
   
 
+<<<<<<< HEAD
   public String getPicture() {
     return picture;
   }
@@ -220,6 +272,75 @@ public class User implements Serializable {
   
   
   
+=======
+	public String getPicture() {
+		return picture;
+	}
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+	public Set<UsersCoupon> getUsersCoupon() {
+		return usersCoupon;
+	}
+	public void setUsersCoupon(Set<UsersCoupon> usersCoupon) {
+		this.usersCoupon = usersCoupon;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public Roles getRole() {
+		return role;
+	}
+	public void setRole(Roles role) {
+		this.role = role;
+	}
+	public Date getDateBirth() {
+		return dateBirth;
+	}
+	public void setDateBirth(Date dateBirth) {
+		this.dateBirth = dateBirth;
+	}
+	@JsonIgnore
+	public Set<Post> getPosts() {
+		return posts;
+	}
+	public void setPosts(Set<Post> posts) {
+		this.posts = posts;
+	}
+	@JsonIgnore
+	public Set<Topic> getTopics() {
+		return topics;
+	}
+	public void setTopics(Set<Topic> topics) {
+		this.topics = topics;
+	}
+	@JsonIgnore
+	public Set<Views> getView() {
+		return view;
+	}
+	public void setView(Set<Views> view) {
+		this.view = view;
+	}
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", cin=" + cin + ", username=" + username + ", email=" + email + ", enabled="
+				+ enabled + ", password=" + password + ", confirm=" + confirm + ", token=" + token + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", role=" + role + ", dateBirth=" + dateBirth + "]";
+	}
+	
+	
+	
+	
+>>>>>>> 68ca0317b4dbda54e57f0ca4b39b0260108475d3
     
     
 

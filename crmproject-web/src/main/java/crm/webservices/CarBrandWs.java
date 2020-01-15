@@ -18,6 +18,8 @@ public class CarBrandWs {
 	
 	@EJB
 	CarBrandImpl carBrandImpl; 
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -37,7 +39,7 @@ public class CarBrandWs {
 		 {
 			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
          
          
      }
@@ -50,8 +52,8 @@ public class CarBrandWs {
 	 	{
 		 		
 				 if(carBrandImpl.addCarBrand(name))
-				 return Response.status(200).entity("ADDED").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				 return Response.status(Status.OK).entity(statusstart+"ADDED"+statusend).build();
+				else return Response.status(Status.OK).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
 
 	    }
 	 
@@ -65,10 +67,10 @@ public class CarBrandWs {
 		 brand.setId(id);
 		 int res = carBrandImpl.updateCarBrand(brand);
 		 		if (res==1)
-	 			return Response.status(Status.CREATED).entity("UPDATED").build();
+	 			return Response.status(Status.OK).entity(statusstart+"UPDATED"+statusend).build();
 				if(res==-1)
-				return Response.status(Status.NOT_FOUND).entity("AGENT NOT FOUND OR ALREADY HAS A CONTRACT").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+				return Response.status(Status.OK).entity(statusstart+"AGENT NOT FOUND OR ALREADY HAS A CONTRACT"+statusend ).build();
+				else return Response.status(Status.OK).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
 			 
          
      }
@@ -81,10 +83,10 @@ public class CarBrandWs {
 	  		
 	  		int res = carBrandImpl.deleteCarBrand(id); 
 	  			if (res==1)
-		 			return Response.status(Status.CREATED).entity(status).build();
+		 			return Response.status(Status.OK).entity(statusstart+"ok"+statusend).build();
 					if(res==-1)
-					return Response.status(Status.NOT_FOUND).entity("AGENT NOT FOUND OR ALREADY HAS A CONTRACT").build();
-					else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
+					return Response.status(Status.OK).entity(statusstart+"AGENT NOT FOUND OR ALREADY HAS A CONTRACT"+statusend).build();
+					else return Response.status(Status.OK).entity("YOU ARE NOT AN ADMIN/VENDOR").build();  
 				 
 	    }
 	  	

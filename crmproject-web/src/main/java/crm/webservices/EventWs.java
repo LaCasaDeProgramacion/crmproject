@@ -17,7 +17,9 @@ import crm.impl.prospecting.EventImpl;
 public class EventWs {
 	
 		@EJB 
-		EventImpl eventImpl ; 
+		EventImpl eventImpl ;
+		private final String statusstart = "{\"statusrslt\":\"";
+		private final String statusend = "\"}";
 	
 		/* ---------------------- Events  ----------------------  */
 
@@ -29,9 +31,9 @@ public class EventWs {
 		List<Event> list = eventImpl.allEvents(); 
         if (!list.isEmpty())
         {
-        	return Response.status(Status.FOUND).entity(list).build();
+        	return Response.status(Status.OK).entity(list).build();
         }
-        return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+        return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
         
     }
 	
@@ -43,15 +45,21 @@ public class EventWs {
 		 List e = eventImpl.searchForEvent(name); 
 		 if (e.isEmpty())
 		 {
-			 return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+			 return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
 			
 		 }
 		 else  {
-			 return Response.status(Status.FOUND).entity(e).build();
+			 return Response.status(Status.OK).entity(e).build();
 		 }
 		 
          
          
+		}
+		@GET
+	    @Path("getById")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Object getEventById(@QueryParam("id") int id){
+			 return Response.status(Status.OK).entity(eventImpl.getEventById(id)).build();
 		}
 	 
 	 	@POST
@@ -62,12 +70,14 @@ public class EventWs {
 						    	 @QueryParam("startDate") Date startDate, 
 						    	 @QueryParam("endDate")Date endDate, 
 						    	 @QueryParam("longitude")float longitude,
-						    	 @QueryParam("latitude")float latitude)
+						    	 @QueryParam("latitude")float latitude, 
+						    	 @QueryParam("picture")String picture
+	    		)
 	 	{
 		 		 
-	 		if (eventImpl.addEvent(name, startDate, endDate, longitude, latitude))
-		 	return Response.status(Status.CREATED).entity("ADDED").build();
-			else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+	 		if (eventImpl.addEvent(name, startDate, endDate, longitude, latitude, picture))
+		 	return Response.status(Status.OK).entity(statusstart+"ADDED"+statusend).build();
+			else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN"+statusend).build();  
  
 				 
 	    }
@@ -81,28 +91,42 @@ public class EventWs {
 	    	 @QueryParam("startDate") Date startDate, 
 	    	 @QueryParam("endDate")Date endDate, 
 	    	 @QueryParam("launched")Boolean launched, 
+	    	 @QueryParam("picture")String picture, 
 	    	 @QueryParam("id") int id){
 		
-		 int res = eventImpl.updateEvent(id, name, startDate, endDate, launched); 
+		 int res = eventImpl.updateEvent(id, name, startDate, endDate, launched, picture); 
 	 		if (res==1)
-			return Response.status(Status.CREATED).entity("UPDATED").build();
+			return Response.status(Status.OK).entity(statusstart+"UPDATED"+statusend).build();
 			if(res==-1)
-			return Response.status(Status.NOT_FOUND).entity("EVENT NOT FOUND").build();
-			else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+			return Response.status(Status.OK).entity(statusstart+"EVENT NOT FOUND"+statusend).build();
+			else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN"+statusend).build();  
 		 
      }
- 	 
+		@PUT
+	    @Path("updateCalendar")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Response updateEvent(
+	    		 @QueryParam("id") int id, 
+	    		 @QueryParam("name")String name,
+	    	 @QueryParam("startDate") Date startDate, 
+	    	 @QueryParam("endDate")Date endDate 
+	    	){
+		
+		    eventImpl.updateEventCalendar(id, name, startDate, endDate);
+			return Response.status(Status.OK).entity(statusstart+"UPDATED"+statusend).build();
+		 
+     }
 	  	@DELETE
 	    @Path("delete")
-	  	@Secured
+	  
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response deleteEvent( @QueryParam("id")int id){
 	  		 int res = eventImpl.deleteEvent(id); 
 	  		if (res==1)
-				return Response.status(Status.CREATED).entity("DELETED").build();
+				return Response.status(Status.OK).entity(statusstart+"DELETED"+statusend).build();
 				if(res==-1)
-				return Response.status(Status.NOT_FOUND).entity("EVENT NOT FOUND").build();
-				else return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+				return Response.status(Status.OK).entity(statusstart+"EVENT NOT FOUND"+statusend).build();
+				else return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN"+statusend).build();  
 			 
 	    }
 	  	
@@ -110,26 +134,26 @@ public class EventWs {
 	  	
 	  	@POST
 	  	@Path("reserve")
-	  	@Secured
+	  	
 	  	@Produces(MediaType.APPLICATION_JSON)
 	  	public Response reserverVehicule (@QueryParam("idVehicule") int idVehicule , @QueryParam("idEvent") int idEvent, @QueryParam("launched") boolean launched)
 	  	{
 	  		int res = eventImpl.reserveVehicule(idVehicule, idEvent); 
 	  		if (res==1)
 	  		{
-	  			return Response.status(Status.OK).entity("AFFECTED").build();
+	  			return Response.status(Status.OK).entity(statusstart+"AFFECTED"+statusend).build();
 			}
 	  		if (res==-1)
 	  		{
-			 return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+			 return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN"+statusend).build();  
 
 			}
 	  		else if (res==0)
 	  		{
-	  			 return Response.status(Status.NOT_FOUND).entity("VEHICULE OR EVENT NOT FOUND").build();
+	  			 return Response.status(Status.OK).entity(statusstart+"VEHICULE OR EVENT NOT FOUND"+statusend).build();
 	  		}
 	  		else {
-	  			return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE").build();
+	  			return Response.status(Status.OK).entity(statusstart+"NOT AVAILABLE"+statusend).build();
 	  		}
 	  	}
 	  	
@@ -141,9 +165,9 @@ public class EventWs {
 			List<Event> list = eventImpl.EventsOfVehicule(idVehicule) ; 
 	        if (!list.isEmpty())
 	        {
-	        	return Response.status(Status.FOUND).entity(list).build();
+	        	return Response.status(Status.OK).entity(list).build();
 	        }
-	        return Response.status(Status.NOT_FOUND).entity("NOT FOUND").build();
+	        return Response.status(Status.OK).entity(statusstart+"NOT FOUND"+statusend).build();
 	        
 	    }
 	  	
@@ -155,14 +179,14 @@ public class EventWs {
 			int rep = eventImpl.disponibilityVehicule(idVehicule, idEvent); 
 			if (rep==1)
 			{
-				return Response.status(Status.OK).entity("DISPO").build();
+				return Response.status(Status.OK).entity(statusstart+"DISPO"+statusend).build();
 			}
 			else if (rep==0)
 			{
-				return Response.status(Status.NOT_FOUND).entity("INDISPO").build();
+				return Response.status(Status.OK).entity(statusstart+"INDISPO"+statusend).build();
 			}
 			else {
-				return Response.status(Status.NOT_FOUND).entity("VEHICLE OR EVENT NOT FOUND ").build();
+				return Response.status(Status.OK).entity(statusstart+"VEHICLE OR EVENT NOT FOUND"+statusend).build();
 			}
 				
 		}
@@ -175,7 +199,7 @@ public class EventWs {
 			List<Event_vehicule> list = eventImpl.AssignmentVehiculeList(); 
 			if (list== null)
 			{
-				 return Response.status(Status.NOT_FOUND).entity("EMPTY").build();
+				 return Response.status(Status.OK).entity(statusstart+"EMPTY"+statusend).build();
 			}
 			else return Response.status(Status.OK).entity(list).build();
 				
@@ -192,39 +216,39 @@ public class EventWs {
 			int rep = eventImpl.disponibilityAgent(idAgent, idEvent);
 			if (rep==1)
 			{
-				return Response.status(Status.OK).entity("DISPO").build();
+				return Response.status(Status.OK).entity(statusstart+"DISPO"+statusend).build();
 			}
 			else if (rep==0)
 			{
-				return Response.status(Status.NOT_FOUND).entity("INDISPO").build();
+				return Response.status(Status.OK).entity(statusstart+"INDISPO"+statusend).build();
 			}
 			else {
-				return Response.status(Status.NOT_FOUND).entity("AGENT OR EVENT NOT FOUND ").build();
+				return Response.status(Status.OK).entity(statusstart+"AGENT OR EVENT NOT FOUND"+statusend).build();
 			}
 			
 		}
 		
 	  	@POST
 	  	@Path("reserveAgent")
-	  	@Secured
+	  	
 	  	@Produces(MediaType.APPLICATION_JSON)
 	  	public Response reserveAgent(@QueryParam("idAgent") int idAgent , @QueryParam("idEvent") int idEvent,  @QueryParam("launched") boolean launched)
 	  	{
 	  		int res = eventImpl.reserveAgent(idAgent, idEvent); 
 	  		if (res==1)
 	  		{
-	  			return Response.status(Status.OK).entity("AFFECTED").build();
+	  			return Response.status(Status.OK).entity(statusstart+"AFFECTED"+statusend).build();
 			}
 	  		if (res== -1)
 	  		{
-	  			return Response.status(Status.BAD_REQUEST).entity("YOU ARE NOT AN ADMIN").build();  
+	  			return Response.status(Status.OK).entity(statusstart+"YOU ARE NOT AN ADMIN"+statusend).build();  
 	  		}
 	  		else if (res==0)
 	  		{
-	  			 return Response.status(Status.NOT_FOUND).entity("VEHICULE OR EVENT NOT FOUND").build();
+	  			 return Response.status(Status.OK).entity(statusstart+"VEHICULE OR EVENT NOT FOUND"+statusend).build();
 	  		}
 	  		else {
-	  			return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE").build();
+	  			return Response.status(Status.OK).entity(statusstart+"NOT AVAILABLE"+statusend).build();
 	  		}
 	  	}
 	  	
@@ -236,7 +260,7 @@ public class EventWs {
 			List<Event_agent> list = eventImpl.AssignmentAgentList(); 
 			if (list== null)
 			{
-				 return Response.status(Status.NOT_FOUND).entity("EMPTY").build();
+				 return Response.status(Status.OK).entity(statusstart+"EMPTY"+statusend).build();
 			}
 			else return Response.status(Status.OK).entity(list).build();
 				
@@ -254,7 +278,7 @@ public class EventWs {
 		 {
 			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE CARS OR EVENT NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statusstart+"NOT AVAILABLE CARS OR EVENT NOT FOUND"+statusend).build();
          
          
 		}
@@ -267,7 +291,7 @@ public class EventWs {
 		 {
 			 return Response.status(Status.OK).entity(e).build();
 		 }
-		 return Response.status(Status.NOT_FOUND).entity("NOT AVAILABLE AGENT OR EVENT NOT FOUND").build();
+		 return Response.status(Status.OK).entity(statusstart+"NOT AVAILABLE AGENT OR EVENT NOT FOUND"+statusend).build();
          
          
 		}
@@ -284,7 +308,7 @@ public class EventWs {
 	  		{
 	  			return Response.status(Status.OK).entity(list).build();
 	  		}
-	  		 return Response.status(Status.NOT_FOUND).entity("NO INVOICE/POS").build();
+	  		 return Response.status(Status.OK).entity(statusstart+"NO INVOICE/POS"+statusend).build();
 	  	
 	  	}
 	  	
@@ -294,15 +318,30 @@ public class EventWs {
 	  	@Secured
 	    @Produces(MediaType.APPLICATION_JSON)
 	  	public Object PropositionEvent(@QueryParam(value = "pro")String pro){
-	  		if (eventImpl.propositionEvent() == 1)
+	  		Event event = new Event (); 
+	  		event = eventImpl.propositionEvent(); 
+	  		if (event != null)
 	  		{
-	  			return Response.status(Status.OK).entity("ADDED PROPOSITION").build();
+	  			return Response.status(Status.OK).entity(event).build();
 	  		}
-	  		return Response.status(Status.CONFLICT).entity("Please answer the previous request of event")
+	  		return Response.status(Status.OK).entity(statusstart+"Please answer the previous request of event"+statusend)
 	  				.build();
-	  			
 	  		
-	  	
+	  	}
+		@GET
+	    @Path("recentSuggestion")
+	  	@Secured
+	    @Produces(MediaType.APPLICATION_JSON)
+	  	public Object recentSuggestion(@QueryParam(value = "pro")String pro){
+	  		Event event = new Event (); 
+	  		event = eventImpl.recentSuggestion(); 
+	  		if (event != null)
+	  		{
+	  			return Response.status(Status.OK).entity(event).build();
+	  		}
+	  		return Response.status(Status.OK).entity(statusstart+"No recentSuggestion"+statusend)
+	  				.build();
+	  		
 	  	}
 	  	
 		@PUT
@@ -314,19 +353,52 @@ public class EventWs {
 		 int res = eventImpl.replyRequestEvent(resp, idEvent); 
 		 if (res==1)
 		 {
-			 return Response.status(Status.ACCEPTED).entity("ACCEPTED").build();
+			 return Response.status(Status.OK).entity(statusstart+"ACCEPTED"+statusend).build();
 		 }
 		 if (res==2)
 		 {
-			 return Response.status(Status.GONE).entity("REFUSED").build();
+			 return Response.status(Status.OK).entity(statusstart+"REFUSED"+statusend).build();
 		 }
 		 if (res==3)
 		 {
-			 return Response.status(Status.GONE).entity("ALREADY ACCEPTED").build(); 
+			 return Response.status(Status.OK).entity(statusstart+"ALREADY ACCEPTED"+statusend).build(); 
 		 }
-		 else return Response.status(Status.NOT_FOUND).entity("EVENT NOT FOUND").build();
+		 else return Response.status(Status.OK).entity(statusstart+"EVENT NOT FOUND"+statusend).build();
          
      }
+		
+		
+		
+		
+		
+		@GET
+	    @Path("EventsForVeh")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Object EventsForVeh(@QueryParam("idVehicule") int idVehicule){
+		 
+		 List<Event> e = eventImpl.EventDispoForVeh(idVehicule); 
+		 if (!e.isEmpty())
+		 {
+			 return Response.status(Status.OK).entity(e).build();
+		 }
+		 return Response.status(Status.OK).entity(statusstart+"LIST EMPTY"+statusend).build();
+         
+         
+		}
+		@GET
+	    @Path("EventsForAgent")
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Object EventsForAgent(@QueryParam("idAgent") int idAgent){
+		 
+		 List<Event> e = eventImpl.EventDispoForAgent(idAgent); 
+		 if (!e.isEmpty())
+		 {
+			 return Response.status(Status.OK).entity(e).build();
+		 }
+		 return Response.status(Status.OK).entity(statusstart+"LIST EMPTY"+statusend).build();
+         
+         
+		}
 	  	
 	  	
 	

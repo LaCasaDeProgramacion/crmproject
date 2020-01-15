@@ -2,6 +2,7 @@ package crm.impl.prospecting;
 
 import java.sql.Date;
 import java.text.DateFormat;
+import java.text.Normalizer.Form;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -38,46 +39,62 @@ public class ForumImpl implements IForumServiceRemote {
 	}
 	
 	@Override
-	public boolean addForum(String name , String description,  Category_Forum category_Forum) {
-		if (UserSession.getInstance().getRole()== Roles.ADMIN)
-		{
-			Forum forum = new Forum(name, description,   category_Forum);
+	public Forum addForum(String name , String description,  String picture) {
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		//{
+			Forum forum = new Forum(name, description,   picture);
 			em.persist(forum);
-			return true ; 
-		}
-		else return false ; 
+			return forum ; 
+		//}
+		//else return false ; 
 		 
 	}
 	
 	@Override
 	public int deleteForum(int id) {
 		Forum a = em.find(Forum.class, id); 
-		if (a!=null && UserSession.getInstance().getRole()== Roles.ADMIN)
-		{
+		//if (a!=null && UserSession.getInstance().getRole()== Roles.ADMIN)
+		//{
 			em.remove(a);
 	        return 1 ; 
-		}
-		if (a==null ) return 0; //forum not found
-		else return -1; // you are not an admin
+		//}
+		//if (a==null ) return 0; //forum not found
+		//else return -1; // you are not an admin
 	}
 	
 	@Override
-	public int updateForum(int id, String name , String description,   Category_Forum category_Forum) {
+	public int updateForum(int id, String name , String description, String picture) {
 		Forum forum= em.find(Forum.class,id );
 		
-		if (forum != null && UserSession.getInstance().getRole()== Roles.ADMIN )
-		{
+		//if (forum != null && UserSession.getInstance().getRole()== Roles.ADMIN )
+		//{
 		forum.setName(name);
 		forum.setDescription(description);
-		forum.setCategory_Forum(category_Forum);
+		forum.setPicture(picture);
 		
 			em.merge(forum);
 			 return 1 ; 
-		}
-		if (forum==null ) return 0; //forum not found
-		else return -1; // you are not an admin
+		//}
+		//if (forum==null ) return 0; //forum not found
+		//else return -1; // you are not an admin
 		 
 	}
+	
+	@Override
+	public List<Forum> popularForums()
+	{
+		Query q = em.createQuery("select f from Forum f order by f.nbTopics DESC  "); 
+		return (List<Forum>) q.getResultList();
+	}
+	
+	@Override
+	public List<Topic> topicsOfForum(int idForum)
+	{
+		Query q = em.createQuery("select t from Topic t Where t.forum.id =:idForum"); 
+		q.setParameter("idForum", idForum); 
+		return (List<Topic>)q.getResultList(); 
+	}
+	
 
 	/* ----------------------- CRUD Topic ----------------------- */
 	
@@ -88,22 +105,40 @@ public class ForumImpl implements IForumServiceRemote {
 		
 	}
 	
+	@Override 
+	public User getUser(int id)
+	{
+		Query q = em.createQuery("select t.user from Topic t where t.id =:id"); 
+		q.setParameter("id", id); 
+		return (User)q.getSingleResult(); 
+	}
+	
+	@Override 
+	public Topic getById(int id)
+	{
+		return em.find(Topic.class, id); 
+	}
+	
+	
 	@Override
-	public int addTopic(String title , int idForum) {
+	public int addTopic(String title    , int idForum,  int idUser) {
 		Forum forum = em.find(Forum.class, idForum); 
-		User user = em.find(User.class,UserSession.getInstance().getId()); 
+		User user = em.find(User.class,idUser); 
 		if (forum != null )
 		{
-			if (user!=null)
-			{
+			//if (user!=null)
+			//{
+				forum.setNbTopics(forum.getNbTopics()+1);
+				em.merge(forum); 
+			
 				Calendar aujourdhui = Calendar.getInstance();
 				Date date = new Date(aujourdhui.getTime().getTime());
 				Topic topic = new Topic(title, 0, date, forum, user); 
 				em.persist(topic);
 				return 1; 
 				
-			}
-			else return 0; //user introuvable ur not connected
+			//}
+			//else return 0; //user introuvable ur not connected
 			
 		}
 		else return -1; //forum introuvable
@@ -130,7 +165,7 @@ public class ForumImpl implements IForumServiceRemote {
 	}
 	
 	@Override
-	public int updateTopic(int id, String title , int idForum) {
+	public int updateTopic(int id, String title , int idForum ) {
 		Topic topic = em.find(Topic.class, id); 
 		Forum forum = em.find(Forum.class, idForum); 
 		User user = em.find(User.class,UserSession.getInstance().getId()); 
@@ -144,6 +179,7 @@ public class ForumImpl implements IForumServiceRemote {
 					topic.setCreation_date(date);
 					topic.setForum(forum);
 					topic.setUser(user);
+					
 					em.merge(topic); 
 					return 1; 
 					
@@ -165,10 +201,18 @@ public class ForumImpl implements IForumServiceRemote {
 		
 	}
 	
+	@Override 
+	public Object nbPostPerTopic (int idTopic)
+	{
+		Query q = em.createQuery("Select count(*) from Post p where p.topic.id =:id "); 
+		q.setParameter("id", idTopic); 
+		return q.getSingleResult();  
+	}
+	
 	@Override
-	public int addPost(String text,int idTopic ) {
+	public int addPost(String text,int idTopic , int idUser ) {
 		Topic topic= em.find(Topic.class, idTopic); 
-		User user = em.find(User.class,UserSession.getInstance().getId()); 
+		User user = em.find(User.class,idUser); 
 		if (topic != null )
 		{
 			if (user!=null)
@@ -186,8 +230,13 @@ public class ForumImpl implements IForumServiceRemote {
 	}
 	@Override
 	public int deletePost(int id) {
-		Post a = em.find(Post.class, id); 
-		if (a!=null)
+		 Post a = em.find(Post.class, id); 
+		 a.setUser(null);
+		 a.setTopic(null);
+		 em.merge(a); 
+		 em.remove(a);
+	     return 1; 
+		/*if (a!=null)
 		{
 			if ( (a.getUser().getRole()== Roles.ADMIN) ||
 				 (a.getUser().getId()== UserSession.getInstance().getId()) )
@@ -201,7 +250,7 @@ public class ForumImpl implements IForumServiceRemote {
 		else 
 		{
 			return 0;
-		}
+		}*/
 		
 	}
 	@Override
@@ -283,22 +332,24 @@ public class ForumImpl implements IForumServiceRemote {
 	}
 	
 	@Override
-	public List<Object> PostsPerTopics (int idTopic)
+	public List<Object> PostsPerTopics (int idTopic, int idUser)
 	{
 		Topic topic = em.find(Topic.class,idTopic); 
 		
 		
 		if (topic != null )
 		{
-			if (checkView(UserSession.getInstance().getId(), idTopic) == 1)
+			if (checkView(idUser, idTopic) == 1)
 			{
 				int nb = topic.getNb_seen(); 
 					nb++; 
 					topic.setNb_seen(nb);
 					em.merge(topic); 
 					
-			   Views view = new Views(em.find(User.class, UserSession.getInstance().getId()), topic); 
+			   Views view = new Views(em.find(User.class, idUser), topic); 
+			   
 			   em.persist(view);
+			   sendEmailProspect(); 
 			}
 			Query q = em.createQuery("select t.topic.title, t.text, t.user.firstName, t.user.lastName, t.topic.nb_seen from Post t where t.topic.id =:idTopic"); 
 			q.setParameter("idTopic", idTopic); 
@@ -311,8 +362,8 @@ public class ForumImpl implements IForumServiceRemote {
 	@Override
 	public boolean sendEmailProspect() 
 	{
-		if (UserSession.getInstance().getRole()== Roles.ADMIN)
-		{
+		//if (UserSession.getInstance().getRole()== Roles.ADMIN)
+		//{
 			//recuperation  derniers 2 produits 
 			
 			int count =0; 
@@ -363,10 +414,22 @@ public class ForumImpl implements IForumServiceRemote {
 			
 			return true ; 
 		}
-		else 
-			return false ; 
+		//else 
+		//	return false ; 
 		
 	    
+	//}
+	
+	@Override
+	public void contactUs(String subject, String message)
+	{
+		try {
+			Mail_API.sendMail("dorra.benabid@esprit.tn", subject, message);
+			
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	
