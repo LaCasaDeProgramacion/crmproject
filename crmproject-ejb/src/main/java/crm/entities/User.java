@@ -61,6 +61,7 @@ public class User implements Serializable {
   @Column(name="dateBirth")
     private Date dateBirth;
 
+<<<<<<< Updated upstream
 
   @Column(name="picture")
     private String picture;
@@ -154,6 +155,100 @@ public class User implements Serializable {
 
   
 
+=======
+  @Column(name="picture")
+    private String picture;
+  
+  @OneToMany(mappedBy="user",fetch = FetchType.EAGER)
+  @JsonManagedReference
+  public Set<UsersCoupon> usersCoupon;
+  
+  @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+  //@JsonManagedReference
+  private Set<Post> posts; 
+  
+  @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+  //@JsonManagedReference
+  private Set<Topic> topics; 
+  
+  @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+  //@JsonManagedReference
+  private Set<Views> view ; 
+  
+  
+  
+  public User(int cin, String username, String email, String password, String firstName, String lastName, Roles role,
+      Date dateBirth) {
+    super();
+    this.cin = cin;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.role = role;
+    this.dateBirth = dateBirth;
+  }
+  public String getConfirm() {
+    return confirm;
+  }
+  public void setConfirm(String confirm) {
+    this.confirm = confirm;
+  }
+  public String getToken() {
+    return token;
+  }
+  public void setToken(String token) {
+    this.token = token;
+  }
+  public User() {
+    super();
+  }
+
+  public int getId() {
+    return id;
+  }
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public int getCin() {
+    return cin;
+  }
+  public void setCin(int cin) {
+    this.cin = cin;
+  }
+  public String getUsername() {
+    return username;
+  }
+  public void setUsername(String username) {
+    this.username = username;
+  }
+  public String getEmail() {
+    return email;
+  }
+  public void setEmail(String email) {
+    this.email = email;
+  }
+  public boolean isEnabled() {
+    return enabled;
+  }
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+
+  }
+  public String getPassword() {
+    return password;
+  }
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  
+
+  
+
+>>>>>>> Stashed changes
   public String getPicture() {
     return picture;
   }
@@ -220,6 +315,10 @@ public class User implements Serializable {
   
   
   
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
     
     
 

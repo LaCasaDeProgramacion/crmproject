@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -30,7 +31,7 @@ public class ServiceWS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("allservices")
+	@Path("all")
 	@Secured
 	public List<Services> getServices() {
 		return servicews.GetAll();
@@ -48,12 +49,7 @@ public class ServiceWS {
 	@Path("addService")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response addService(@QueryParam("serviceDescription") String serviceDescription,
-			@QueryParam("serviceName") String serviceName
-            ,@QueryParam("activationcode") String activationcode
-
-	) {
-		Services s = new Services(serviceDescription, serviceName,activationcode);
+	public Response addService(Services s) {
 
 		String res=servicews.AddService(s);
 		if(res.equals("SERVICE EXIST"))
@@ -67,24 +63,23 @@ public class ServiceWS {
 	}
 
 	@PUT
-	@Path("updateService")
+	@Path("updateService/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response updateService(@QueryParam("id") int id, @QueryParam("serviceDescription") String serviceDescription,
-			@QueryParam("serviceName") String serviceName
+	public Response updateService(@PathParam("id") int id,Services s
 
 	) {
-		Services s = new Services(id, serviceDescription, serviceName);
+		s.setId(id);
 		servicews.UpdateService(s);
 
 		return Response.status(200).entity(status).build();
 	}
 	
 	@PUT
-	@Path("DisabledService")
+	@Path("DisabledService/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response DisabledService(@QueryParam("id") int id
+	public Response DisabledService(@PathParam("id") int id
 
 	) {
 		servicews.DisableService(id);
@@ -93,19 +88,19 @@ public class ServiceWS {
 	}
 
 	@DELETE
-	@Path("deleteService")
+	@Path("deleteService/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response deleteComplaint(@QueryParam("id") int id) {
+	public Response deleteComplaint(@PathParam("id") int id) {
 		servicews.DeleteService(id);
 		return Response.status(200).entity(status).build();
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("searchservice")
+	@Path("searchservice/{name}")
 	@Secured
-	public Services SearchServiceByName(@QueryParam("name") String Name) {
+	public Services SearchServiceByName(@PathParam("name") String Name) {
 		return servicews.SearchServicesByName(Name);
 	}
 	
@@ -119,17 +114,17 @@ public class ServiceWS {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getservicebyId")
+	@Path("getservicebyId/{id}")
 	@Secured
-	public Services GetServiceById(@QueryParam("id") int id) {
+	public Services GetServiceById(@PathParam("id") int id) {
 		return servicews.GetServiceById(id);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("nbserviceused")
+	@Path("nbserviceused/{id}")
 	@Secured
-	public int NbServiceUsed(@QueryParam("idService") int id) {
+	public int NbServiceUsed(@PathParam("id") int id) {
 		return servicews.NbServiceUsed(id);
 	}
 }

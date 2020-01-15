@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -27,17 +28,17 @@ public class NotificationWS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("allcompgetallnotiflaints")
+	@Path("all")
 	@Secured
 	public List<NotificationComplaint> getallnotif() {
 		return notificationImpl.getallnotif();
 	}
 
 	@PUT
-	@Path("MarkNotifAsRead")
+	@Path("MarkNotifAsRead/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response MarkNotifAsRead(@QueryParam("id") int id
+	public Response MarkNotifAsRead(@PathParam("id") int id
 
 	) {
 		notificationImpl.MarkNotifAsRead(id);

@@ -127,6 +127,12 @@ public class UserImpl implements IUserLocal, IUserRemote{
 		return (List<User>) q.getResultList();
 	}
 	@Override
+	public List<User> getClient() {
+		TypedQuery<User> q = em.createQuery("SELECT u FROM User u WHERE u.role = :role", User.class);
+		q.setParameter("role", Roles.CLIENT);
+		return (List<User>) q.getResultList();
+	}
+	@Override
 	public User getUserById() {
 		User user=em.find(User.class, UserSession.getInstance().getId());
 		return user;

@@ -5,6 +5,7 @@ import java.security.Key;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.ejb.EJB;
@@ -86,6 +87,16 @@ public class UserWs {
 					return Response.status(Status.CREATED).entity(statusstart+"null"+statusend).build();
 
 				}
+			
+
+		
+	}
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("getClient")
+	public List<User> GetClients() {
+
+			return userImpl.getClient();
 			
 
 		

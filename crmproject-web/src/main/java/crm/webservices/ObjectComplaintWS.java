@@ -7,6 +7,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -26,7 +27,7 @@ public class ObjectComplaintWS {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("allobjects")
+	@Path("all")
 	@Secured
 	public List<ComplaintObject> GetAllObjects() {
 		return complaintObjectImpl.GetAllComplaintObject();
@@ -34,23 +35,22 @@ public class ObjectComplaintWS {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("objectsbytype")
+	@Path("objectsbytype/{idType}")
 	@Secured
-	public List<ComplaintObject> GetObjectsByType(@QueryParam("inttype") int id) {
+	public List<ComplaintObject> GetObjectsByType(@PathParam("idType") int id) {
 		return complaintObjectImpl.GetComplaintObjectByType(id);
 	}
 
 	@POST
-	@Path("addComplaintObjectType")
+	@Path("add/{idtype}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response AddComplaintObjectType(@QueryParam("object") String object,
-			@QueryParam("idtype") int idType
+	public Response AddComplaintObjectType(ComplaintObject c,
+			@PathParam("idtype") int idType
 			
 
 	) {
-		ComplaintObject c = new ComplaintObject();
-		c.setObject(object);
+		
 		
 
 		complaintObjectImpl.addComplaintObject(c, idType);
@@ -58,16 +58,14 @@ public class ObjectComplaintWS {
 	}
 	
 	@POST
-	@Path("addComplaintObject")
+	@Path("add")
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response AddComplaintObject(@QueryParam("object") String object
+	public Response AddComplaintObject(ComplaintObject c
 			
 			
 
 	) {
-		ComplaintObject c = new ComplaintObject();
-		c.setObject(object);
 		
 
 		complaintObjectImpl.addComplaintObject(c);
@@ -75,10 +73,10 @@ public class ObjectComplaintWS {
 	}
 	
 	@DELETE
-	@Path("deletetype")
+	@Path("deletetype/{id}")
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteType(@QueryParam("id") int id) {
+	public Response deleteType(@PathParam("id") int id) {
 		complaintObjectImpl.DeleteComplaintObject(id);
 		return Response.status(200).entity(status).build();
 	}

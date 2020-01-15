@@ -57,10 +57,9 @@ public class ComplaintObjectImpl implements IComplaintObjectLocal,IComplaintObje
 
 	@Override
 	public void DeleteComplaintObject(int idObject) {
-		if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
-		{
+		
 		em.remove(em.find(ComplaintObject.class, idObject));
-		}
+		
 		
 	}
 

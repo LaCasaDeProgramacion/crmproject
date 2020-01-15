@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import javax.persistence.TypedQuery;
 
 import crm.entities.ComplaintComments;
 import crm.entities.Complaints;
+import crm.entities.Roles;
 import crm.entities.User;
 import crm.interfaces.IComplaintCommentsLocal;
 import crm.interfaces.IComplaintCommentsRemote;
@@ -24,12 +26,16 @@ public class ComplaintCommentsImpl implements IComplaintCommentsLocal, IComplain
 
 	@PersistenceContext(unitName = "crmproject-ejb")
 	EntityManager em;
+	@EJB
+	ComplaintsImpl complaintImpl;
 
 	@Override
 	public void addComment(ComplaintComments c, int idComplaint) {
 		
+		
 		User user = em.find(User.class, UserSession.getInstance().getId());
 		Complaints complaint = em.find(Complaints.class, idComplaint);
+		
 		Calendar currenttime = Calendar.getInstance();
 		Date dateCmment = new Date((currenttime.getTime()).getTime());
 		c.setCommentDate(dateCmment);
@@ -37,8 +43,21 @@ public class ComplaintCommentsImpl implements IComplaintCommentsLocal, IComplain
 		c.setComplaint(complaint);
 		c.setLikes(0);
 		em.persist(c);
+		if(UserSession.getInstance().getId() == complaint.getUser().getId() && UserSession.getInstance().getRole().equals(Roles.CLIENT))
+		{
+		if(containsIgnoreCase(c.getComment(), "merci") || containsIgnoreCase(c.getComment(), "résolu")|| containsIgnoreCase(c.getComment(), "solution"))
+		{
+			complaintImpl.TreatComplaint(idComplaint, "treated");
 		}
-		
+		else if(containsIgnoreCase(c.getComment(), "domage"))
+		{
+			complaintImpl.TreatComplaint(idComplaint, "Closed_without_Solution");
+		}
+		}
+	}
+	public static boolean containsIgnoreCase(String str, String subString) {
+        return str.toLowerCase().contains(subString.toLowerCase());
+    }
 
 	
 
@@ -62,14 +81,12 @@ public class ComplaintCommentsImpl implements IComplaintCommentsLocal, IComplain
 	public boolean DeleteComment(int idComment) {
 		
 		ComplaintComments cc=em.find(ComplaintComments.class, idComment);
-		if(cc.getUser().getId()==UserSession.getInstance().getId())
-		{
-		if(cc.getUser().getId()==UserSession.getInstance().getId())
-		{
+		
+		
 		em.remove(cc);
-		}
-		return true;
-		}
+		
+		
+		
 		return false;
 
 	}

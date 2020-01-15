@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -28,59 +29,48 @@ public class TechnicianWS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("alltechnician")
+	@Path("all")
 	@Secured
 	public List<Technician> GetALL() {
 		return technicianws.getAllTechnician();
 	}
 
 	@POST
-	@Path("addtechnician")
+	@Path("add")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response addTechnician(@QueryParam("technicianFirstName") String technicianFirstName,
-			@QueryParam("technicianSecondName") String technicianSecondName,
-			@QueryParam("technicianSpecialty") String technicianSpecialty,
-			@QueryParam("technicianPhoneNumber") String technicianPhoneNumber
-
-	) {
-		Technician t = new Technician(technicianFirstName, technicianSecondName, technicianSpecialty,
-				technicianPhoneNumber);
+	public Response addTechnician(Technician t) {
+		
 
 		technicianws.AddTechnician(t);
 		return Response.status(200).entity(status).build();
 	}
 
 	@PUT
-	@Path("updatetechnician")
+	@Path("updatetechnician/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response updateTechnician(@QueryParam("id") int id, @QueryParam("technicianFirstName") String technicianFirstName,
-			@QueryParam("technicianSecondName") String technicianSecondName,
-			@QueryParam("technicianSpecialty") String technicianSpecialty,
-			@QueryParam("technicianPhoneNumber") String technicianPhoneNumber
-
-	) {
-		Technician t = new Technician(technicianFirstName, technicianSecondName, technicianSpecialty, technicianPhoneNumber);
+	public Response updateTechnician(@PathParam("id") int id,Technician t) {
+		t.setId(id);
 		technicianws.UpdateTechnician(t);
 
 		return Response.status(200).entity(status).build();
 	}
 	
 	@DELETE
-	@Path("deletetechnician")
+	@Path("deletetechnician/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response deleteTechnician(@QueryParam("id") int id) {
+	public Response deleteTechnician(@PathParam("id") int id) {
 		technicianws.DeleteTechnician(id);
 		return Response.status(200).entity(status).build();
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("isavailble")
+	@Path("isavailble/{id}")
 	@Secured
-	public Boolean IsAvailble(@QueryParam("idtech") int idtechnician) {
+	public Boolean IsAvailble(@PathParam("id") int idtechnician) {
 		return technicianws.IsAvailable(idtechnician);
 	}
 }
