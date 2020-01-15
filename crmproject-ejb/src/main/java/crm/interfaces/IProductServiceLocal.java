@@ -14,7 +14,7 @@ public interface IProductServiceLocal {
 	public List<Product> allinactiveProducts();
 	public Product getrandompro();
 	public List<Product> searchForProduct(String productName);
-	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
+	public void addProduct(String productName, String productImage, String productDescription, int productQuantity, double productPrice,
 	String productStatus, int category_id,int store_id)  ;
 	public void deleteProduct(int id);
 	public Product updateproduct(Product p);

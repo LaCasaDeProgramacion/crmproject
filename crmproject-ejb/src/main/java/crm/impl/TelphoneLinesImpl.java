@@ -65,6 +65,7 @@ public class TelphoneLinesImpl implements ITelephoneLinesLocal, ITelphoneLinesRe
 		}
 
 	}
+	
 
 	@Override
 	public void DeleteTelephoneLines(int id) {

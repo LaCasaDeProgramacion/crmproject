@@ -33,21 +33,39 @@ public class StoreWs {
 	StoreImpl storeimpl;
 	  private final String status = "{\"status\":\"ok\"}";
 	  
-	  @Secured
+	
 	  @POST
 	    @Path("addStore")
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addStore(
-	            @QueryParam("store_name")String store_name
-	       
+	            @QueryParam("store_name")String store_name,
+	            @QueryParam("store_image")String store_image
 	           
 	    
 	    ){
 		 
-storeimpl.addStore(store_name);
+storeimpl.addStore(store_name, store_image);
 	        return Response.status(200).entity(status).build();
 	    }
+
 	  
+	  @GET
+		@Produces(MediaType.APPLICATION_JSON)
+		@Path("getstoreyId" )
+	    public Store getprobyId( @QueryParam("store_id")int store_id)
+	    {
+	        
+		  return storeimpl.findstorebyid(store_id);
+	    }
+	  
+
+	  @GET
+		@Produces(MediaType.APPLICATION_JSON)
+		@Path("allstores")
+	    public List<Store> getStores()
+	    {
+	        return storeimpl.allStores();
+	    }
 	  
 	  @GET
 		@Produces(MediaType.APPLICATION_JSON)
@@ -90,7 +108,7 @@ storeimpl.addStore(store_name);
 		return storeimpl.distancebystoreid(store_id);
 	    }
 		 
-	  @Secured
+	  
 	  @DELETE
 	    @Path("deleteStore")
 	    @Produces(MediaType.APPLICATION_JSON)
@@ -121,13 +139,12 @@ storeimpl.addStore(store_name);
 	      return storeimpl.getNearestStore();
 	     }
 
-	  @Secured
+	
 		@PUT
 		@Path("updateStore")
 		public Response updateStore( 
 				@QueryParam("store_id")int store_id,
-				@QueryParam("end")Timestamp end,
-				@QueryParam("start")Timestamp start,
+			
 				@QueryParam("store_city")String store_city,
 				@QueryParam("store_name")String store_name
 		
@@ -135,7 +152,7 @@ storeimpl.addStore(store_name);
 				) {
 			
 		
-			if(storeimpl.updateStore(store_id, end, start, store_city, store_name)==1)
+			if(storeimpl.updateStore(store_id, store_city, store_name)==1)
 			Response.status(200).entity(status).build();
 			return Response.ok("Your product has been Modified!").build();
 		}

@@ -28,7 +28,10 @@ public class CategoryWs {
 	CategoryImpl categoryImpl;
 	
 	
-	  private final String status = "{\"status\":\"ok\"}";
+	private final String status = "{\"status\":\"ok\"}";
+	private final String status1 = "{\"status\":\"error\"}";
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	  
 	  @GET
@@ -38,8 +41,15 @@ public class CategoryWs {
 	    {
 	        return categoryImpl.allCategories();
 	    }
-	  
-	  @Secured
+	  @GET
+		@Produces(MediaType.APPLICATION_JSON)
+		@Path("getcategorybyId" )
+	    public Category getcategorybyId( @QueryParam("category_id")int category_id)
+	    {
+	        
+		  return categoryImpl.findcategorybyid(category_id);
+	    }
+	
 	  @POST
 	    @Path("addCategory")
 	    @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +63,7 @@ public class CategoryWs {
 	        return Response.status(200).entity(status).build();
 	    }
 	  
-		 @Secured
+		
 		  @DELETE
 		    @Path("deleteCategory")
 		    @Produces(MediaType.APPLICATION_JSON)
@@ -64,21 +74,19 @@ public class CategoryWs {
 		        return Response.status(200).entity(status).build();
 		    }
 		 
-		 @Secured
 			@PUT
 			@Path("updateCategory")
-			public Response updateStore( 
+			public Response updateCategory( 
 					@QueryParam("category_id")int category_id,
 					@QueryParam("category_name")String category_name
-			
 
 					) {
 				
 			
-			 Category c = new Category(category_id, category_name);
-				categoryImpl.updateCategory(c);
-
-				return Response.status(200).entity(status).build();
+				if(categoryImpl.updatecateg(category_id, category_name)==1)
+				//Response.status(200).entity(status).build();
+				return Response.ok(statusstart+"Your product has been Modified!"+statusend).build();
+				else  return Response.ok(statusstart+"ERRUEU"+statusend).build();
 			}
 
 }

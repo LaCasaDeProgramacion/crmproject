@@ -90,7 +90,8 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 
 	@Override
 	public void UpdateComplaint(Complaints complaint) {
-		if(complaint.getUser().getId()==UserSession.getInstance().getId())
+		Complaints cm=em.find(Complaints.class, complaint.getId());
+		if(cm.getUser().getId()==UserSession.getInstance().getId())
 		{
 		Query q = em.createQuery("UPDATE Complaints c SET c.complaintBody = :complaintBody WHERE c.id = :id");
 
@@ -142,7 +143,9 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 		}
 		return cm;
 		}
+
 		
+	
 	
 
 	@Override
@@ -201,14 +204,14 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	public boolean TreatComplaint(int idcomplaint, String State) {
 
 
-		if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
-		{
+		/*if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
+		{*/
 		Calendar currenttime = Calendar.getInstance();
 		Date now = new Date((currenttime.getTime()).getTime());
 		ComplaintState cm = ComplaintState.valueOf(State);
 		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
 
-		if (cm == ComplaintState.In_progress) {
+		if (cm.equals(ComplaintState.In_progress)) {
 			complaintBD.setAssignmentDate(now);
 			complaintBD.setComplaintState(cm);
 			em.merge(complaintBD);
@@ -221,7 +224,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 				System.out.println("error");
 				e.printStackTrace();
 			}
-		} else if (cm == ComplaintState.treated || cm == ComplaintState.Closed_without_Solution) {
+		} else if (cm.equals(ComplaintState.treated) || cm.equals(ComplaintState.Closed_without_Solution)) {
 
 			complaintBD.setClosingDate(now);
 			complaintBD.setComplaintState(cm);
@@ -239,8 +242,7 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 			
 		}
 		return true;
-		}
-		return false;
+		
 
 	}
 
@@ -282,8 +284,8 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 	public boolean AffectTechnicien(int idcomplaint) {
 
 
-		if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
-		{
+		/*if(UserSession.getInstance().getRole().equals(Roles.ADMIN))
+		{*/
 		Complaints complaintBD = em.find(Complaints.class, idcomplaint);
 		Technician technician = technicianimpl.getrandomtechnician();
 		complaintBD.setComplaintState(ComplaintState.In_progress);
@@ -310,8 +312,8 @@ public class ComplaintsImpl implements IComplaintLocal, IComplaintRemote {
 			e.printStackTrace();
 		}
 		return true;
-		}
-		return false;
+		/*}
+		return false;*/
 
 	}
 

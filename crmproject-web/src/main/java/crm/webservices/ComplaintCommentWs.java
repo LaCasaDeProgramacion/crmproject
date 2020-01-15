@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -27,39 +28,32 @@ public class ComplaintCommentWs {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getcomments")
+	@Path("get/{id}")
 	@Secured
-	public List<ComplaintComments> getComments(@QueryParam("idcomplaint") int id) {
+	public List<ComplaintComments> getComments(@PathParam("id") int id) {
 		return commentWS.GetCommentsByComplaint(id);
 	}
 
 	@POST
-	@Path("addComment")
+	@Path("addComment/{comment}/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response addComment(@QueryParam("comment") String comment,
-			@QueryParam("idComplaint") int idComplaint
-			
-
-	) {
-		ComplaintComments c = new ComplaintComments();
-		c.setComment(comment);
-
-		commentWS.addComment(c, idComplaint);
+	public Response addComment(@PathParam("comment") String Comment,@PathParam("id") int idComplaint) {	
+		ComplaintComments cm=new ComplaintComments();
+		cm.setComment(Comment);
+		commentWS.addComment(cm, idComplaint);
 		return Response.status(200).entity(status).build();
 	}
 
 	@PUT
-	@Path("updateComment")
+	@Path("updateComment/{id}")
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 
-	public Response updateComment(@QueryParam("id") int id, @QueryParam("comment") String comment
+	public Response updateComment(@PathParam("id") int id,ComplaintComments c
 			
 
-	) {
-		ComplaintComments c = new ComplaintComments();
-		c.setComment(comment);
+	) {		
 		c.setId(id);
 		boolean test=commentWS.updateComment(c);
 
@@ -73,27 +67,25 @@ public class ComplaintCommentWs {
 	}
 
 	@DELETE
-	@Path("deleteComment")
+	@Path("deleteComment/{id}")
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteComment(@QueryParam("id") int id) {
+	public Response deleteComment(@PathParam("id") int id) {
 		boolean test=commentWS.DeleteComment(id);
-		if(test)
-		{
+		
 			return Response.status(200).entity(status).build();
 
-		}
-		return Response.status(200).entity("it s not your comment").build();
+		
 
 			
 	}
 	
 	@PUT
-	@Path("likecomment")
+	@Path("likecomment/{id}")
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 
-	public Response likeComment(@QueryParam("id") int idComment
+	public Response likeComment(@PathParam("id") int idComment
 			
 
 	) {
@@ -104,9 +96,9 @@ public class ComplaintCommentWs {
 	}
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("Getnblike")
+	@Path("Getnblike/{id}")
 	@Secured
-	public int Getnblike(@QueryParam("idcomment") int id) {
+	public int Getnblike(@PathParam("id") int id) {
 		return commentWS.GetNbLikes(id);
 	}
 }

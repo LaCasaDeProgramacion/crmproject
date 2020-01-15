@@ -60,16 +60,18 @@ public class NotificationImpl implements INotificationLocal, INotificationRemote
 	public void MarkNotifAsRead(int idnotif) {
 		NotificationComplaint nc = em.find(NotificationComplaint.class, idnotif);
 		nc.setState(1);
+		em.merge(nc);
 
 	}
 
 	@Override
 	public List<NotificationComplaint> getallnotif() {
-		User userdest = em.find(User.class, 1);
+		User userdest = em.find(User.class, UserSession.getInstance().getId());
 		TypedQuery<NotificationComplaint> q = em.createQuery(
-				"SELECT n FROM NotificationComplaint n WHERE n.UserDestination= :userdest",
+				"SELECT n FROM NotificationComplaint n WHERE n.UserDestination= :userdest AND n.State= :state",
 				NotificationComplaint.class);
 		q.setParameter("userdest", userdest);
+		q.setParameter("state", 0);
 		return (List<NotificationComplaint>) q.getResultList();
 
 	}

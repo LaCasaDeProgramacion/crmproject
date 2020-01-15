@@ -8,6 +8,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -28,30 +29,28 @@ public class TypeComplaintWS {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("alltype")
+	@Path("all")
 	@Secured
 	public List<TypeComplaint> getTypeComplaints() {
 		return typeComplaintImpl.GetAllTypeComplaint();
 	}
 
 	@POST
-	@Path("addTypeComplaint")
+	@Path("add")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response addTypeComplaint(@QueryParam("TypeName") String Name
+	public Response addTypeComplaint(TypeComplaint t
 
 	) {
-		TypeComplaint t=new TypeComplaint();
-		t.setTypeName(Name);
 		typeComplaintImpl.AddTypeCompalaint(t);
 		return Response.status(200).entity(status).build();
 	}
 	
 	@DELETE
-	@Path("deletetypeComplaint")
+	@Path("delete/{id}")
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteComplaint(@QueryParam("id") int id) {
+	public Response deleteComplaint(@PathParam("id") int id) {
 		typeComplaintImpl.DeleteType(id);
 		return Response.status(200).entity(status).build();
 	}

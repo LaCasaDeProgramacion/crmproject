@@ -166,9 +166,13 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 		Query query = em.createQuery("SELECT pp.product FROM ProductsPack pp WHERE pp.pack =:pack ")
 				.setParameter("pack", pack);
+		
 		List<Product> products = query.getResultList();
-
-		return products;
+		if(!products.isEmpty()) {
+			return products;
+		}
+         List<Product> emptylist = new ArrayList<Product>();
+		return emptylist;
 
 	}
 
@@ -283,6 +287,10 @@ public class PackserviceImpl implements IPackServiceRemote {
 				Pack.class);
 		query.setParameter("timestamp", timestamp);
 		List<Pack> results = query.getResultList();
+		for(Pack p : results) {
+		List<Product> productslist = findproductsPack(p.getId());
+		p.setProducts(productslist);
+		}
 		return results;
 	}
 
@@ -312,6 +320,13 @@ public class PackserviceImpl implements IPackServiceRemote {
 		TypedQuery<Pack> query = em
 				.createQuery("select e from Pack e WHERE  e.archivestatus=1 ORDER BY e.createdate DESC", Pack.class);
 		List<Pack> results = query.getResultList();
+		for(Pack p : results) {
+			List<Product> productslist = findproductsPack(p.getId());
+			if(!productslist.isEmpty())
+			p.setProducts(productslist);
+			else
+				p.setProducts(null);
+			}
 		return results;
 	}
 
@@ -342,6 +357,12 @@ public class PackserviceImpl implements IPackServiceRemote {
 
 		List<Pack> results = query.getResultList();
 		return results;
+	}
+
+	@Override
+	public Product getProductbyId(int idprod) {
+		
+		return em.find(Product.class, idprod);
 	}
 
 }

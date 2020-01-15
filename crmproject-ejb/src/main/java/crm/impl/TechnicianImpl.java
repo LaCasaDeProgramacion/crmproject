@@ -69,7 +69,7 @@ public class TechnicianImpl implements ITechnicianLocal, ITechnicianRemote {
 	public Technician getrandomtechnician() {
 		Random r = new Random();
 		Query q = em.createQuery("SELECT t FROM Technician t");
-		return (Technician) q.getResultList().get(r.nextInt(3));
+		return (Technician) q.getResultList().get(r.nextInt(10));
 
 	}
 }

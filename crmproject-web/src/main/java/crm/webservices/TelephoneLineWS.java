@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -30,18 +31,18 @@ public class TelephoneLineWS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("alltellines")
+	@Path("all")
 	@Secured
 	public List<TelephoneLines> getTelLines() {
 		return tellinews.GetAll();
 	}
 
 	@POST
-	@Path("addtellines")
+	@Path("add/{lineNumber}/{codePIN}/{codePUK}/{service}/{user}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response addtelline(@QueryParam("lineNumber") String lineNumber, @QueryParam("codePIN") int codePIN,
-			@QueryParam("codePUK") int codePUK, @QueryParam("service") int idservice, @QueryParam("user") int idUser
+	public Response addtelline(@PathParam("lineNumber") String lineNumber, @PathParam("codePIN") int codePIN,
+			@PathParam("codePUK") int codePUK, @PathParam("service") int idservice, @PathParam("user") int idUser
 
 	) {
 		TelephoneLines t = new TelephoneLines(lineNumber, codePIN, codePUK);
@@ -57,26 +58,26 @@ public class TelephoneLineWS {
 	}
 
 	@PUT
-	@Path("updatetelline")
+	@Path("update/{id}/{lineNumber}/{codePIN}/{codePUK}/{user}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response updateComplaint(@QueryParam("id") int id, @QueryParam("lineNumber") String lineNumber,
-			@QueryParam("codePIN") int codePIN, @QueryParam("codePUK") int codePUK, @QueryParam("user") int user,
-			@QueryParam("validityDate") Date validityDate
+	public Response updateComplaint(@PathParam("id") int id, @PathParam("user") int user,@PathParam("lineNumber") String lineNumber, @PathParam("codePIN") int codePIN,
+			@PathParam("codePUK") int codePUK
+			
 
 	) {
-
-		TelephoneLines t = new TelephoneLines(id, lineNumber, codePIN, codePUK, validityDate);
+		TelephoneLines t = new TelephoneLines(lineNumber, codePIN, codePUK);
+		t.setId(id);
 		tellinews.UpdateTelephoneLines(t, user);
 
 		return Response.status(200).entity(status).build();
 	}
 
 	@DELETE
-	@Path("deletetelline")
+	@Path("delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response deleteTelline(@QueryParam("id") int id) {
+	public Response deleteTelline(@PathParam("id") int id) {
 		tellinews.DeleteTelephoneLines(id);
 		return Response.status(200).entity(status).build();
 	}
@@ -91,17 +92,17 @@ public class TelephoneLineWS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("TellinesByState")
+	@Path("TellinesByState/{state}")
 	@Secured
-	public List<TelephoneLines> GetTelLinesByState(@QueryParam("state") int state) {
+	public List<TelephoneLines> GetTelLinesByState(@PathParam("state") int state) {
 		return tellinews.GetTelLinesByState(state);
 	}
 
 	@PUT
-	@Path("affectservice")
+	@Path("affectservice/{idtel}/{idservice}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response AffectService(@QueryParam("idtelline") int id, @QueryParam("idservice") int idservice
+	public Response AffectService(@PathParam("idtel") int id, @PathParam("idservice") int idservice
 
 	) {
 		tellinews.AffectService(id, idservice);
@@ -110,10 +111,10 @@ public class TelephoneLineWS {
 	}
 
 	@PUT
-	@Path("changelinestate")
+	@Path("changelinestate/{idtel}/{lineState}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response ChangeLineState(@QueryParam("idtelline") int id, @QueryParam("lineState") int lineState
+	public Response ChangeLineState(@PathParam("idtel") int id, @PathParam("lineState") int lineState
 
 	) {
 		tellinews.ChangeLineState(id, lineState);
@@ -122,10 +123,10 @@ public class TelephoneLineWS {
 	}
 
 	@PUT
-	@Path("changelinestate")
+	@Path("changelinestate/{idtel}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Secured
-	public Response ChangeLineState2(@QueryParam("idtelline") int id
+	public Response ChangeLineState2(@PathParam("idtel") int id
 
 	) {
 		tellinews.ChangeLineState(id);
@@ -135,24 +136,24 @@ public class TelephoneLineWS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("nblinebyperiod")
+	@Path("nblinebyperiod/{Ddebut}/{Dfin}")
 	@Secured
-	public int NbLineByperiod(@QueryParam("Ddebut") Date d1, @QueryParam("Dfin") Date d2) {
+	public int NbLineByperiod(@PathParam("Ddebut") Date d1, @PathParam("Dfin") Date d2) {
 		return tellinews.NbLineByperiod(d1, d2);
 	}
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("searchteline")
+	@Path("searchteline/{motcle}")
 	@Secured
-	public List<TelephoneLines> SearchTelline(@QueryParam("motcle") String motcle) {
+	public List<TelephoneLines> SearchTelline(@PathParam("motcle") String motcle) {
 		return tellinews.SearchTelline(motcle);
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getTellinebyid")
+	@Path("getTellinebyid/{id}")
 	@Secured
-	public TelephoneLines GetTelLineById(@QueryParam("id") int id) {
+	public TelephoneLines GetTelLineById(@PathParam("id") int id) {
 		return tellinews.GetTellineById(id);
 	}
 }

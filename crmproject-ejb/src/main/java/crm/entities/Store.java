@@ -45,6 +45,16 @@ public class Store implements Serializable {
 		@Column(name="end")
 	    private Timestamp end;
 		
+		@Column(name="store_image")
+	    private String store_image;
+
+		public String getStore_image() {
+			return store_image;
+		}
+
+		public void setStore_image(String store_image) {
+			this.store_image = store_image;
+		}
 
 		@Column(name="distance")
 	    private double distance;

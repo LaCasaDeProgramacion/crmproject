@@ -29,7 +29,8 @@ import crm.impl.PromotionserviceImpl;
 public class PromotionWs {
 	@EJB
 	PromotionserviceImpl promotionserviceimpl;
-	
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	 @SuppressWarnings("deprecation")
 	 @POST
@@ -73,7 +74,7 @@ public class PromotionWs {
 			 ) {
 		Boolean test = promotionserviceimpl.assignProductTopromotion(productid, promotionid);
 		 if(test==false) {
-			 return Response.status(Status.NOT_ACCEPTABLE).entity("not admin or vendor").build();
+			 return Response.status(Status.OK).entity(statusstart+"not admin or vendor"+statusend).build();
 			 
 		 }else {
 			 return Response.status(Status.OK).entity(promotionserviceimpl.findPromotionById(promotionid)).build();
@@ -113,9 +114,9 @@ public class PromotionWs {
 		 
 		Boolean test = promotionserviceimpl.removePromotion(id);
 		if(test==false) {
-			return Response.status(200).entity("not admin or not vendor").build();
+			return Response.status(200).entity(statusstart+"not admin or not vendor"+statusend).build();
 		}else {
-			return Response.status(200).entity("Deleted promotion with "+id).build();
+			return Response.status(200).entity(statusstart+"Deleted promotion "+statusend).build();
 		}
 	     
 	 }
@@ -205,6 +206,18 @@ public class PromotionWs {
 	 @Produces(MediaType.APPLICATION_JSON)
 	 public List<Promotion> promotionNotUsedYet() {
 		 return promotionserviceimpl.promotionNotUsedYet();
+	 }
+	 @GET
+	 @Path("AssignedPromotions")
+	 @Produces(MediaType.APPLICATION_JSON)
+	 public Response AssignedPromotions () {
+		 List<Promotion> listpromotions =  promotionserviceimpl.AssignedPromotions();
+		 if(listpromotions.isEmpty()) {
+			 return Response.status(Status.OK).entity(statusstart+"null"+statusend).build();
+		 }else {
+			
+				 return Response.status(Status.OK).entity(listpromotions).build();
+		 }
 	 }
 	 
 

@@ -220,7 +220,7 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 		}
 
 	}
-
+ 
 
 
 	@Override
@@ -228,7 +228,7 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
 		ZonedDateTime now = ZonedDateTime.now(z);
 		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
-		TypedQuery<Promotion> query = em.createQuery("select e from Promotion e WHERE DATE(:timestamp) NOT BETWEEN e.validfrom AND e.validuntil OR e.enabledpromotion='0' ORDER BY e.createdate DESC",
+		TypedQuery<Promotion> query = em.createQuery("select e from Promotion e WHERE (DATE(:timestamp) NOT BETWEEN e.validfrom AND e.validuntil OR e.enabledpromotion='0') AND e.product!=null AND e.promotionbycoupon=0  ORDER BY e.createdate DESC",
 				Promotion.class);
 		query.setParameter("timestamp", timestamp);
 		List<Promotion> results = query.getResultList();
@@ -255,6 +255,22 @@ public class PromotionserviceImpl implements IPromotionServiceRemote {
 		}
 
 	}
+
+	@Override
+	public List<Promotion> AssignedPromotions() {
+		ZoneId z = ZoneId.of( TimezoneMapper.latLngToTimezoneString(33.8439408, 9.400138)) ;
+		ZonedDateTime now = ZonedDateTime.now(z);
+		 Timestamp timestamp = Timestamp.valueOf(now.toLocalDateTime());
+		TypedQuery<Promotion> query = em.createQuery("select p from Promotion p  WHERE (DATE(:timestamp)  BETWEEN p.validfrom AND p.validuntil OR p.enabledpromotion='1') AND p.product!=null AND p.promotionbycoupon=0 ORDER BY p.createdate DESC",
+				Promotion.class);
+		query.setParameter("timestamp", timestamp);
+	
+
+	List<Promotion> results = query.getResultList();
+	return results;
+	}
+	
+
 
 
 }

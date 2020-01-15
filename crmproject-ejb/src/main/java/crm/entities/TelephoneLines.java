@@ -45,8 +45,11 @@ public class TelephoneLines implements Serializable {
 	@Column(name = "Solde")
 	private int solde;
 	@ManyToOne
+    @JsonManagedReference(value = "Service")
+
 	Services service;
 	@ManyToOne
+	@JsonManagedReference(value = "user")
 	User user;
 
 	public TelephoneLines(int id, String lineNumber, Date dateCreation, int codePIN, int codePUK, Date validityDate,

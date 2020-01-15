@@ -15,7 +15,7 @@ import crm.entities.Store;
 import io.ipinfo.api.errors.RateLimitedException;
 
 public interface IStoreServiceRemote {
-	public void addStore(String store_name)  ;
+	public void addStore(String store_name,  String store_image)  ;
 	public Store liststorebydate(int store_id);
 	public  double distance( 
             double latstore, 
@@ -26,7 +26,7 @@ public interface IStoreServiceRemote {
 	public String datestore(int store_id);
 	public void deleteStore(int store_id);
 	public List<Store> searchForstore(String store_name);
-	public int updateStore(int store_id, Timestamp end, Timestamp start,String store_city, String store_name);;
+	public int updateStore(int store_id,String store_city, String store_name);;
 	
 	public List<Store> allStores();
 	public List<Store> getNearestStore();

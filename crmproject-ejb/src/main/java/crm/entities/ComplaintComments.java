@@ -38,8 +38,7 @@ public class ComplaintComments implements Serializable{
 	@ManyToOne
 	@JsonIgnore
 	Complaints complaint;
-	@ManyToOne
-	@JsonIgnore
+	@ManyToOne	
 	User user;
 	public int getId() {
 		return id;
