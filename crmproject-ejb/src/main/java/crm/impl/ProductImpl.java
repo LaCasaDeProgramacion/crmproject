@@ -21,10 +21,12 @@ import org.xml.sax.SAXException;
 
 import javax.mail.MessagingException;
 import crm.entities.Category;
+import crm.entities.Pack;
 import crm.entities.Product;
 import crm.entities.Roles;
 import crm.entities.Stock;
 import crm.entities.Store;
+import crm.entities.User;
 import crm.interfaces.IProductServiceLocal;
 import crm.interfaces.IProductServiceRemote;
 import crm.utils.UserSession;
@@ -60,9 +62,9 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	
 	
 	@Override
-	public void addProduct(String productName, String productDescription, int productQuantity, double productPrice,
-			String productStatus, int category_id,int store_id)   {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+	public void addProduct(String productName, String productImage,String productDescription, int productQuantity, double productPrice,
+			String productStatus, int category_id, int store_id)   {
+		//if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 		    Product emp = new Product();
 	Stock stock = new Stock();
 		
@@ -79,6 +81,7 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	        emp.setProductName(productName);
 	        emp.setProductDescription(productDescription);
 	        emp.setProductPrice(productPrice);
+	        emp.setProductImage(productImage);
 	        emp.setProductQuantity(productQuantity);
 	        emp.setProductStatus(productStatus);
 	        emp.setCategory(categ);
@@ -96,14 +99,14 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	      
 		}
 	
-	}
+	//}
 	@Override
 	public void deleteProduct(int id) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+		
 		Query q = em.createQuery("DELETE FROM Product p WHERE p.id = :id");
         q.setParameter("id", id);
         q.executeUpdate();
-		}
+	
 		
 	}
 	
@@ -121,8 +124,29 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 		}
 		
 	
+	public String numberOfViews(int id) {
+		
 	
+		Product p =em.find(Product.class, id);
+		
+		 p.setNumberOfViews(p.getNumberOfViews()+1);
+		 return "done";
+	}
 
+
+	public String settoActive(int id) {
+		
+		
+		Product p =em.find(Product.class, id);
+		if(p.getProductStatus().equals("active"))
+		 p.setProductStatus("inactive");
+		else if (p.getProductStatus().equals("inactive"))
+		 p.setProductStatus("active");
+
+		 return "done";
+	}
+
+	
 	@Override
 	public void activateproduct(Product product) {
 	
@@ -143,6 +167,14 @@ public class ProductImpl implements IProductServiceRemote, IProductServiceLocal 
 	
 		return (List<Product>) q.getResultList();
 	}
+	
+	public List<Product> getTopViewProducts() {
+		int start= 1;
+		int  end = 5;
+		Query q = em.createQuery("SELECT p FROM Product p order by  p.numberOfViews DESC ");
+	
+		return (List<Product>) q.getResultList();
+	}
 	@Override
 	public List<Product> getProductbypricedesc() {
 		Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice DESC");
@@ -160,28 +192,48 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public boolean updatepro(Product product, int id) {
+		if (em.find(User.class, id) != null) {
+			Product producttoupdate = em.find(Product.class, id);
+			producttoupdate.setProductName(product.getProductName());
+			producttoupdate.setProductDescription(product.getProductDescription());
+			producttoupdate.setProductPrice(product.getProductPrice());
+			producttoupdate.setProductQuantity(product.getProductQuantity());
+			producttoupdate.setProductStatus(product.getProductStatus());
+			producttoupdate.setProductDate(product.getProductDate());
+			producttoupdate.setStore(product.getStore());
+			producttoupdate.setCategory(product.getCategory());
+		
+		   em.merge(producttoupdate);
+		   return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public int updateProduct(int id, String productName, String productDescription, int productQuantity,
 			double productPrice, String productStatus, int category_id, int store_id) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+		//if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 	Product p = em.find(Product.class, id);
 	if(p!=null)
 	{
+		System.out.println("*************start update");
 		 	p.setProductName(productName);
 	        p.setProductDescription(productDescription);
 	        p.setProductPrice(productPrice);
 	        p.setProductQuantity(productQuantity);
 	        p.setProductStatus(productStatus);
-	      System.out.println(p);
+	        System.out.println(p);
 	        p.setCategory(em.find(Category.class, category_id));
 	        p.setStore(em.find(Store.class, store_id));
-
-	        p.setNumberOfViews(p.getNumberOfViews());
+	        p.setNumberOfViews(0);
 	        em.merge(p);
+	        System.out.println("*************updated");
 
 	        return 1;
 	}
-		}
+		//}
 	return 0;
 		
 	}
@@ -218,7 +270,10 @@ Query q = em.createQuery("SELECT p FROM Product p order by  p.productPrice ASC")
 		q.setParameter("category_id", category_id);
 		return (List<Product>) q.getResultList();
 	}
-	
+	public Product findpoductbyid(int id) {
+		Product p = em.find(Product.class, id);
+		return p;
+	}
 	public List<Product>searchForProductbyStatus(String productStatus) {
 		Query q = em.createQuery("SELECT p FROM Product p where p.productStatus = :productStatus");
 		q.setParameter("productStatus", productStatus);

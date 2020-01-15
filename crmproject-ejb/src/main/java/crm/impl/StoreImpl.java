@@ -3,6 +3,7 @@ package crm.impl;
 import java.io.File;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,8 +42,8 @@ public class StoreImpl implements IStoreServiceRemote, IStoreServiceLocal{
 	
 	
 	@Override
-	public void addStore(String store_name) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR || UserSession.getInstance().getRole()==Roles.ADMIN) {
+	public void addStore(String store_name, String store_image ) {
+		//if(UserSession.getInstance().getRole()==Roles.VENDOR || UserSession.getInstance().getRole()==Roles.ADMIN) {
 		 Store store = new Store();
 		 
 	
@@ -51,18 +52,19 @@ public class StoreImpl implements IStoreServiceRemote, IStoreServiceLocal{
 		
 		
 		 try {
-	            IPResponse response = ipInfo.lookupIP("197.20.88.115");
+	            IPResponse response = ipInfo.lookupIP("102.108.121.31");
 
 	            
 	           store.setStore_latitude(response.getLatitude());
 	            store.setStore_longitude(response.getLongitude());
 store.setStore_city(response.getCity());
+store.setStore_image(store_image);
 	        } catch (RateLimitedException ex) {
 	            System.out.println(ex);
 	        }
 		 em.persist(store);
 		}
-	    }
+	   // }
 	
 	
 	
@@ -143,7 +145,7 @@ store.setStore_city(response.getCity());
 	public String datestore(int store_id) {
 		
 		
-		
+		long currentMilliseconds = System.currentTimeMillis();
 		Store store = findbyId(store_id);
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -151,7 +153,7 @@ store.setStore_city(response.getCity());
   long end = store.getEnd().getTime();
   
   long start = store.getStart().getTime();
-  int diff = ((int) (end - start)/1000)/60;
+  int diff = ((int) (currentMilliseconds- end)/1000)/60;
   //test
   diff= diff/60;
   return "Le store"+" "+store.getStore_name()+" "+ "se ferme  aprés"+" "+diff+ " "+" heures";
@@ -166,11 +168,11 @@ store.setStore_city(response.getCity());
 
 	@Override
 	public void deleteStore(int store_id) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+		//if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 		Query q = em.createQuery("DELETE FROM Store s WHERE s.store_id = :store_id");
         q.setParameter("store_id", store_id);
         q.executeUpdate();
-		}
+		//}
 		
 	}
 
@@ -186,20 +188,19 @@ store.setStore_city(response.getCity());
 
 
 	@Override
-	public int updateStore(int store_id, Timestamp end, Timestamp start, String store_city, String store_name) {
-		if(UserSession.getInstance().getRole()==Roles.VENDOR) {
+	public int updateStore(int store_id, String store_city, String store_name) {
+		//if(UserSession.getInstance().getRole()==Roles.VENDOR) {
 		Store s = em.find(Store.class, store_id);
 		if(s!=null)
 		{
-			 s.setEnd(end);
-		       s.setStart(start);
+			
 		       s.setStore_city(store_city);
 		       s.setStore_name(store_name);
 		       
 		        em.merge(s).getStore_id();
 		        return 1;
 		}
-		}
+		//}
 		return 0;
 		}
 		
@@ -215,7 +216,10 @@ store.setStore_city(response.getCity());
 		
 	}
 
-
+	public Store findstorebyid(int store_id) {
+		Store p = em.find(Store.class, store_id);
+		return p;
+	}
 
 	@Override
 	public List<Store> getNearestStore() {
@@ -284,7 +288,7 @@ store.setStore_city(response.getCity());
 	
 	 public double distancebystoreid(int store_id) {
 			Store s = new Store();
-			Store store = findbyId(store_id);
+			Store store = em.find(Store.class, store_id);
 			Store sto = em.find(Store.class, store.getStore_id());
 				 IPInfo ipInfo = IPInfo.builder().setToken("930323b76e6a48").setCountryFile(new File("path/to/file.json")).build();
 

@@ -18,11 +18,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import crm.AuthenticateWS.Secured;
 import crm.entities.Category;
 import crm.entities.Product;
 import crm.entities.Store;
+import crm.entities.User;
 import crm.impl.ProductImpl;
 
 
@@ -36,7 +38,10 @@ public class ProductWs   {
 	
 	@EJB
 	ProductImpl productImpl;
-	  private final String status = "{\"status\":\"ok\"}";
+	private final String status = "{\"status\":\"ok\"}";
+	private final String status1 = "{\"status\":\"error\"}";
+	private final String statusstart = "{\"statusrslt\":\"";
+	private final String statusend = "\"}";
 	
 	
 	@GET
@@ -45,6 +50,15 @@ public class ProductWs   {
     public List<Product> getProducts()
     {
         return productImpl.allProducts();
+    }
+	
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("TopviewedProducts")
+    public List<Product> TopviewedProducts()
+    {
+        return productImpl.getTopViewProducts();
     }
 	
 	@GET
@@ -79,10 +93,12 @@ public class ProductWs   {
 	 @POST
 
 	  @Path("addProduct")
-	 	@Secured
+	
 	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response addProduct(
 	            @QueryParam("productName")String productName,
+	            @QueryParam("productImage")String productImage,
+	            @QueryParam("productDate")String productDate,
 	            @QueryParam("productDescription")String productDescription,
 	            @QueryParam("productQuantity")int productQuantity,
 	            @QueryParam("productPrice")double productPrice,
@@ -92,11 +108,11 @@ public class ProductWs   {
 	    
 	    ){
 		 
-		 productImpl.addProduct(productName, productDescription, productQuantity, productPrice, productStatus, category_id,store_id);
+		 productImpl.addProduct(productName,productImage, productDescription, productQuantity, productPrice, productStatus, category_id,store_id);
 	        return Response.status(200).entity(status).build();
 	    }
 	 
-	 @Secured
+
 		@PUT
 		@Path("updateProduct")
 		public Response updateProduct( 
@@ -114,12 +130,12 @@ public class ProductWs   {
 		
 			if(productImpl.updateProduct(id, productName, productDescription, productQuantity, productPrice, productStatus, category_id, store_id)==1)
 			//Response.status(200).entity(status).build();
-			return Response.ok("Your product has been Modified!").build();
-			else  return Response.ok("ERRUEU").build();
+			return Response.ok(statusstart+"Your product has been Modified!"+statusend).build();
+			else  return Response.ok(statusstart+"ERRUEU"+statusend).build();
 		}
 	 
 	 
-	 @Secured
+
 	  @DELETE
 	    @Path("deleteProduct")
 	    @Produces(MediaType.APPLICATION_JSON)
@@ -130,8 +146,24 @@ public class ProductWs   {
 	        return Response.status(200).entity(status).build();
 	    }
 
-	  
-	 @Secured
+
+		 @POST
+		    @Path("numberofViews")
+		    @Produces(MediaType.APPLICATION_JSON)
+		  
+		    public Response nbviews(@QueryParam(value="id")int id)  {
+			return Response.status(Status.OK).entity(statusstart+productImpl.numberOfViews(id)+statusend).build() ;
+		    }
+	 
+
+		 @POST
+		    @Path("setToActive")
+		    @Produces(MediaType.APPLICATION_JSON)
+		  
+		    public Response setToActive(@QueryParam(value="id")int id)  {
+			return Response.status(Status.OK).entity(statusstart+productImpl.settoActive(id)+statusend).build() ;
+		    }
+		 
 		 @PUT
 		    @Path("activateproduct")
 		    @Produces(MediaType.APPLICATION_JSON)
@@ -155,6 +187,8 @@ public class ProductWs   {
 		        return productImpl.getProductbypricedesc();
 		    }
 		 
+		 
+		 
 		 @GET
 			@Produces(MediaType.APPLICATION_JSON)
 			@Path("getProductByPriceAsc")
@@ -163,7 +197,51 @@ public class ProductWs   {
 		        return productImpl.getProductbypricedasc();
 		    }
 		 
+
+		 @GET
+			@Produces(MediaType.APPLICATION_JSON)
+			@Path("getprobyId" )
+		    public Product getprobyId( @QueryParam("id")int id)
+		    {
+		        
+			  return productImpl.findpoductbyid(id);
+		    }
 		 
+		 /*
+		 @PUT
+			@Path("updatePro")
+			@Produces(MediaType.APPLICATION_JSON)
+			public Response updateUser(
+					 @QueryParam("id") int id,
+					   @QueryParam("productName")String productName,
+					   @QueryParam("productDescription")String productDescription,
+					   @QueryParam("productImage")String productImage,
+				       @QueryParam("productPrice")double productPrice,
+				       @QueryParam("productDate")Date productDate,
+				       @QueryParam("store") Store store,
+				       @QueryParam("category") Category category,
+				       @QueryParam("productQuantity") int productQuantity,
+				       @QueryParam("productStatus") String productStatus
+					
+					) {
+						Product us = new Product();
+						us.setProductName(productName);
+						us.setProductDescription(productDescription);
+						us.setProductImage(productImage);
+						us.setProductImage(productImage);
+						us.setProductPrice(productPrice);
+						us.setProductDate(productDate);
+						us.setStore(store);
+						us.setCategory(category);
+						us.setProductQuantity(productQuantity);
+						us.setProductStatus(productStatus);
+				        Boolean test = productImpl.updatepro(us, id);
+				        if(test) {
+				        	return Response.status(Status.OK).entity(statusstart+test+statusend).build() ;
+				        }
+				return Response.status(Status.OK).entity(statusstart+test+statusend).build() ;
+			}
+			*/
 		 @GET
 			@Produces(MediaType.APPLICATION_JSON)
 			@Path("getproductavailability" )
